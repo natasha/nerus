@@ -45,6 +45,7 @@ Each annotated article from original dataset stored as JSON file with following 
 }
 ```
 
+We decided to not use any tokenization - mostly because each of used toolkits have built-in tokenizer and, so `span` of each entity is actual position inside article's `content`. 
 
 ## Statistics (actual on 06.10.18)
 
