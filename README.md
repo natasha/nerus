@@ -1,5 +1,4 @@
-Silver standard russian named entity recognition corpus
-
+# Silver standard russian named entity recognition corpus [![Download russian named entity recognition corpus](https://img.shields.io/badge/download-v1.0-green.svg)](https://github.com/bureaucratic-labs/russian-ner-corpus/releases)
 ## About
 
 This corpus was bootstapped from [Lenta.ru news dataset](https://github.com/yutkin/Lenta.Ru-News-Dataset), using several freely available NER toolkits for russian language:
