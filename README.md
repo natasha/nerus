@@ -59,6 +59,15 @@ Total entities with A = 3:
    LOC | 471528
 ```
 
+A = 2:
+```
+   tag |  count
+-------+---------
+   PER | 1280616
+   ORG |  753189
+   LOC | 1787637
+```
+
 
 ## License
 
