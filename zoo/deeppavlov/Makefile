@@ -17,6 +17,8 @@ push-cpu:
 push-gpu:
 	docker push $(GPU_IMAGE)
 
+push: push-cpu push-gpu
+
 run-cpu:
 	docker run -it --rm -p 8081:6004 $(CPU_IMAGE)
 
