@@ -1,0 +1,5 @@
+FROM natasha/deeppavlov-ner-ru
+
+# for some reason original deeppavlov/ner_ru does not use GPU
+# 1.10.0 is same as tensorflow in ner_ru
+RUN pip install --no-cache-dir tensorflow-gpu==1.10.0

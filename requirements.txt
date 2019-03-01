@@ -1,7 +1,9 @@
 
 intervaltree==2.1.0
+requests==2.18.4
 
 -e git+git@github.com:natasha/razdel.git@c8cc973b607fe9480e3e5fb15d04be118dfe4be8#egg=razdel
+-e git+git@github.com:pullenti/pullenti-client.git@079f8dee6905b836e62676b349f18dd75bd3e2f0#egg=pullenti_client
 
 # dev
 pytest==3.1.2

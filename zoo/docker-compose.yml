@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  pullenti:
+    image: pullenti/pullenti-server
+    ports:
+      - 8080:8080
+
+  deeppavlov:
+    image: natasha/deeppavlov-ner-ru
+    ports:
+      - 8081:6004
+
+  texterra:
+    image: natasha/texterra-russian
+    ports:
+      - 8082:8082
+
+  mitie:
+    image: natasha/mitie-ner-ru
+    ports:
+      - 8083:8080
+
+  tomita:
+    image: natasha/tomita-algfio
+    ports:
+      - 8084:8080
+
+  tomita:
+    image: natasha/natasha:0.10.0
+    ports:
+      - 8085:8080
