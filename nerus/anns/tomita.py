@@ -14,7 +14,7 @@ from nerus.const import (
     TOMITA_URL,
 )
 from nerus.utils import Record
-from nerus.io import parse_xml
+from nerus.etl import parse_xml
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
@@ -134,6 +134,10 @@ def call(texts):
 ##########
 
 
+def warmup():
+    warmup_container(call)
+
+
 def start():
     start_container(
         TOMITA_IMAGE,
@@ -141,7 +145,7 @@ def start():
         TOMITA_CONTAINER_PORT,
         TOMITA_PORT
     )
-    warmup_container(call)
+    warmup()
 
 
 def stop():

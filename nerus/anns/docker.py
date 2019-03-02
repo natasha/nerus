@@ -6,7 +6,6 @@ from time import sleep
 import requests
 
 from nerus.log import log
-from nerus.const import WARMUP_TEXTS
 
 
 def list_containers():
@@ -23,7 +22,7 @@ def container_exists(name):
 
 def start_container(image, name, container_port, port):
     if container_exists(name):
-        log('Running %s' % name)
+        log('Running %s', name)
         return
 
     command = [
@@ -68,13 +67,15 @@ def stop_container(name):
         raise
 
 
+PUTIN = ['Путин']
+
+
 def warmup_container(call, retries=10, delay=2):
-    log('Warming up with %s', call.__name__)
     for retry in range(retries):
         try:
-            list(call(WARMUP_TEXTS))
+            list(call(PUTIN))
         except (requests.ConnectionError, requests.ReadTimeout):
-            log('Retry %d / %d', retry, retries)
+            log('Warmup call %d / %d', retry, retries)
             sleep(delay)
         else:
             log('Success!')

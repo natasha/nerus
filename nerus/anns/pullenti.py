@@ -5,6 +5,10 @@ from pullenti_client.result import (
     Match as PullentiMatch_,
     Result as PullentiMarkup_,
 )
+from pullenti_client.referent import (
+    Slot as PullentiSlot_,
+    Referent as PullentiReferent_
+)
 
 from nerus.const import (
     PULLENTI,
@@ -68,7 +72,7 @@ class PullentiMatch(PullentiMatch_):
     @classmethod
     def from_client(self, match):
         return PullentiMatch(
-            match.referent,
+            PullentiReferent.from_client(match.referent),
             PullentiSpan.from_client(match.span),
             [PullentiMatch.from_client(_) for _ in match.children]
         )
@@ -103,25 +107,25 @@ class PullentiMarkup(PullentiMarkup_):
         )
 
 
-########
-#
-#   CONTAINER
-#
-##########
+class PullentiSlot(PullentiSlot_):
+    @classmethod
+    def from_client(cls, slot):
+        value = slot.value
+        if isinstance(value, PullentiReferent_):
+            value = PullentiReferent.from_client(value)
+        return PullentiSlot(
+            slot.key,
+            value
+        )
 
 
-def start():
-    start_container(
-        PULLENTI_IMAGE,
-        PULLENTI,
-        PULLENTI_CONTAINER_PORT,
-        PULLENTI_PORT
-    )
-    warmup_container(call)
-
-
-def stop():
-    stop_container(PULLENTI)
+class PullentiReferent(PullentiReferent_):
+    @classmethod
+    def from_client(cls, referent):
+        return PullentiReferent(
+            referent.label,
+            [PullentiSlot.from_client(_) for _ in referent.slots]
+        )
 
 
 #########
@@ -136,3 +140,28 @@ def call(texts):
     for text in texts:
         result = client(text)
         yield PullentiMarkup.from_client(result)
+
+
+########
+#
+#   CONTAINER
+#
+##########
+
+
+def warmup():
+    warmup_container(call)
+
+
+def start():
+    start_container(
+        PULLENTI_IMAGE,
+        PULLENTI,
+        PULLENTI_CONTAINER_PORT,
+        PULLENTI_PORT
+    )
+    warmup()
+
+
+def stop():
+    stop_container(PULLENTI)

@@ -3,14 +3,27 @@ import re
 
 from nerus.path import (
     join_path,
-    list_dir
+    list_dir,
+    exists,
+    basename,
+    rm
 )
-from nerus.io import (
+from nerus.etl import (
     load_text,
-    load_lines
+    load_lines,
+    download,
+    unzip,
 )
 from nerus.utils import Record
-from nerus.const import FACTRU
+from nerus.const import (
+    FACTRU,
+    FACTRU_URL,
+    FACTRU_DIR,
+    FACTRU_TESTSET,
+    FACTRU_DEVSET,
+
+    CORPORA_DIR
+)
 from nerus.sent import (
     sentenize,
     sent_spans
@@ -132,7 +145,7 @@ def parse_objects(lines, spans):
         yield FactruObject(id, type, spans)
 
 
-def load(id, dir, set):
+def load_id(id, dir, set):
     path = txt_path(id, dir, set)
     text = load_text(path)
     path = spans_path(id, dir, set)
@@ -142,3 +155,22 @@ def load(id, dir, set):
     lines = load_lines(path)
     objects = list(parse_objects(lines, spans))
     return FactruMarkup(id, text, objects)
+
+
+def load(dir=FACTRU_DIR, sets=[FACTRU_DEVSET, FACTRU_TESTSET]):
+    for set in sets:
+        for id in list_ids(dir, set):
+            yield load_id(id, dir, set)
+
+
+def get():
+    dir = join_path(CORPORA_DIR, FACTRU_DIR)
+    if exists(dir):
+        return dir
+
+    path = join_path(CORPORA_DIR, basename(FACTRU_URL))
+    download(FACTRU_URL, path)
+    unzip(path, CORPORA_DIR)
+    rm(path)
+
+    return dir

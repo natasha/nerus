@@ -96,13 +96,11 @@ def call(texts, size=TEXTERRA_CHUNK, timeout=120):
 #########
 
 
-def start():
-    start_container(
-        TEXTERRA_IMAGE,
-        TEXTERRA,
-        TEXTERRA_CONTAINER_PORT,
-        TEXTERRA_PORT
-    )
+def warmup_call(texts):
+    return call(texts, size=1, timeout=10)
+
+
+def warmup():
     warmup_container(
         warmup_call,
         retries=20,
@@ -110,9 +108,15 @@ def start():
     )
 
 
+def start():
+    start_container(
+        TEXTERRA_IMAGE,
+        TEXTERRA,
+        TEXTERRA_CONTAINER_PORT,
+        TEXTERRA_PORT
+    )
+    warmup()
+
+
 def stop():
     stop_container(TEXTERRA)
-
-
-def warmup_call(texts):
-    return call(texts, size=1, timeout=10)

@@ -4,3 +4,7 @@
 *.egg-info/
 *.pyc
 __pycache__
+.ipynb_checkpoints
+
+data
+eval.ipynb

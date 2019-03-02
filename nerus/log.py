@@ -1,9 +1,19 @@
 
-import sys
-from datetime import datetime
+import logging
+
+from tqdm import tqdm as log_progress  # noqa
 
 
-def log(format, *args):
-    message = format % args
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(timestamp, message, file=sys.stderr)
+# https://github.com/tqdm/tqdm/issues/461#issuecomment-334343230
+log_progress.get_lock().locks = []
+
+logger = logging.getLogger('nerus')
+logger.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+log = logger.info

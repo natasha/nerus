@@ -77,27 +77,6 @@ def parse(text, data):
 
 #########
 #
-#   CONTAINER
-#
-#########
-
-
-def start():
-    start_container(
-        NATASHA_IMAGE,
-        NATASHA,
-        NATASHA_CONTAINER_PORT,
-        NATASHA_PORT
-    )
-    warmup_container(call)
-
-
-def stop():
-    stop_container(NATASHA)
-
-
-#########
-#
 #   CALL
 #
 ########
@@ -121,3 +100,28 @@ def call(texts):
     for text in texts:
         data = post(text)
         yield parse(text, data)
+
+
+#########
+#
+#   CONTAINER
+#
+#########
+
+
+def warmup():
+    warmup_container(call)
+
+
+def start():
+    start_container(
+        NATASHA_IMAGE,
+        NATASHA,
+        NATASHA_CONTAINER_PORT,
+        NATASHA_PORT
+    )
+    warmup()
+
+
+def stop():
+    stop_container(NATASHA)

@@ -90,6 +90,14 @@ def call(texts, size=DEEPPAVLOV_CHUNK):
 #############
 
 
+def warmup():
+    warmup_container(
+        call,
+        retries=15,
+        delay=10
+    )
+
+
 def start():
     start_container(
         DEEPPAVLOV_IMAGE,
@@ -97,11 +105,7 @@ def start():
         DEEPPAVLOV_CONTAINER_PORT,
         DEEPPAVLOV_PORT
     )
-    warmup_container(
-        call,
-        retries=15,
-        delay=10
-    )
+    warmup()
 
 
 def stop():

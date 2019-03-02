@@ -25,6 +25,9 @@ from .docker import (
 )
 
 
+CHUNK = 1
+
+
 class MitieMarkup(Record):
     __attributes__ = ['text', 'spans']
     label = MITIE
@@ -88,6 +91,10 @@ def call(texts):
 #########
 
 
+def warmup():
+    warmup_container(call)
+
+
 def start():
     start_container(
         MITIE_IMAGE,
@@ -95,7 +102,7 @@ def start():
         MITIE_CONTAINER_PORT,
         MITIE_PORT
     )
-    warmup_container(call)
+    warmup()
 
 
 def stop():

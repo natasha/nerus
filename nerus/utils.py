@@ -1,4 +1,6 @@
 
+from collections import OrderedDict
+
 
 class Record(object):
     __attributes__ = []
@@ -55,6 +57,20 @@ class Record(object):
                             printer.break_()
                 printer.break_()
             printer.text(')')
+
+    @property
+    def as_json(self):
+        data = OrderedDict()
+        for key in self.__attributes__:
+            value = getattr(self, key)
+            if value is None:
+                continue
+            if isinstance(value, Record):
+                value = value.as_json
+            elif isinstance(value, list):
+                value = [_.as_json for _ in value]
+            data[key] = value
+        return data
 
 
 ########

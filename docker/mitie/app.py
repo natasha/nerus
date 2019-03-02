@@ -23,7 +23,7 @@ NER = None
 def log(format, *args):
     message = format % args
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(timestamp, message, file=sys.stderr)
+    print(timestamp, message, file=sys.stderr, flush=True)
 
 
 def process(text, model):

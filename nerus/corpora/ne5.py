@@ -3,14 +3,27 @@ import re
 
 from nerus.path import (
     list_dir,
-    join_path
+    join_path,
+    exists,
+    basename,
+    rm
 )
-from nerus.const import NE5
+from nerus.const import (
+    NE5,
+    NE5_DIR,
+    NE5_URL,
+
+    CORPORA_DIR
+)
 from nerus.sent import (
     sentenize,
     sent_spans
 )
-from nerus.io import load_lines
+from nerus.etl import (
+    load_lines,
+    download,
+    unzip
+)
 from nerus.utils import Record
 
 
@@ -82,10 +95,28 @@ def load_text(path):
         return file.read()
 
 
-def load(id, dir):
+def load_id(id, dir):
     path = txt_path(id, dir)
     text = load_text(path)
     path = ann_path(id, dir)
     lines = load_lines(path)
     spans = list(parse_spans(lines))
     return Ne5Markup(id, text, spans)
+
+
+def load(dir=NE5_DIR):
+    for id in list_ids(dir):
+        yield load_id(id, dir)
+
+
+def get():
+    dir = join_path(CORPORA_DIR, NE5_DIR)
+    if exists(dir):
+        return dir
+
+    path = join_path(CORPORA_DIR, basename(NE5_DIR))
+    download(NE5_URL, path)
+    unzip(path, CORPORA_DIR)
+    rm(path)
+
+    return dir
