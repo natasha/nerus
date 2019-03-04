@@ -10,30 +10,22 @@ from nerus.const import (
     TEXTERRA_IMAGE,
     TEXTERRA_URL,
 )
-from nerus.utils import (
-    Record,
-    group_chunks
-)
+from nerus.utils import group_chunks
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-class TexterraMarkup(Record):
-    __attributes__ = ['text', 'spans']
+class TexterraMarkup(AnnotatorMarkup):
     label = TEXTERRA
-
-    def __init__(self, text, spans):
-        self.text = text
-        self.spans = spans
 
     @property
     def sents(self):
@@ -60,10 +52,10 @@ def parse(data):
         yield TexterraMarkup(text, spans)
 
 
-def post(texts, timeout):
+def post(texts, host, port, timeout):
     url = TEXTERRA_URL.format(
-        host=TEXTERRA_HOST,
-        port=TEXTERRA_PORT
+        host=host,
+        port=port
     )
     payload = [{'text': _} for _ in texts]
     response = requests.post(
@@ -75,48 +67,21 @@ def post(texts, timeout):
     return response.json()
 
 
-#########
-#
-#    CALL
-#
-######
-
-
-def call(texts, size=TEXTERRA_CHUNK, timeout=120):
+def call(texts, host=TEXTERRA_HOST, port=TEXTERRA_PORT,
+         size=TEXTERRA_CHUNK, timeout=120):
     for chunk in group_chunks(texts, size):
-        data = post(chunk, timeout)
+        data = post(chunk, host, port, timeout)
         for markup in parse(data):
             yield markup
 
 
-########
-#
-#   CONTAINER
-#
-#########
+class TexterraAnnotator(Annotator):
+    name = TEXTERRA
+    host = TEXTERRA_HOST
+    port = TEXTERRA_PORT
+    call = staticmethod(call)
 
 
-def warmup_call(texts):
-    return call(texts, size=1, timeout=10)
-
-
-def warmup():
-    warmup_container(
-        warmup_call,
-        retries=20,
-        delay=5
-    )
-
-
-def start():
-    start_container(
-        TEXTERRA_IMAGE,
-        TEXTERRA,
-        TEXTERRA_CONTAINER_PORT,
-        TEXTERRA_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(TEXTERRA)
+class TexterraContainerAnnotator(TexterraAnnotator, ContainerAnnotator):
+    image = TEXTERRA_IMAGE
+    container_port = TEXTERRA_CONTAINER_PORT

@@ -24,10 +24,16 @@ from nerus.etl import (
     download,
     unzip
 )
-from nerus.utils import Record
+from nerus.span import Span
+from nerus.markup import Markup
+
+from .base import (
+    CorpusRecord,
+    CorpusSchema
+)
 
 
-class Ne5Span(Record):
+class Ne5Span(Span):
     __attributes__ = ['index', 'type', 'start', 'stop', 'text']
 
     def __init__(self, index, type, start, stop, text):
@@ -46,8 +52,12 @@ class Ne5Span(Record):
         )
 
 
-class Ne5Markup(Record):
+class Ne5Markup(CorpusRecord, Markup):
     __attributes__ = ['id', 'text', 'spans']
+    __annotations__ = {
+        'spans': [Ne5Span]
+    }
+
     label = NE5
 
     def __init__(self, id, text, spans):
@@ -120,3 +130,9 @@ def get():
     rm(path)
 
     return dir
+
+
+class Ne5Schema(CorpusSchema):
+    name = NE5
+    get = get
+    load = load

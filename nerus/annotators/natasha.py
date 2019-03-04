@@ -10,22 +10,48 @@ from nerus.const import (
     NATASHA_IMAGE,
     NATASHA_URL,
 )
-from nerus.utils import Record
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-class NatashaMarkup(Record):
+class NatashaMatch(Span):
+    __attributes__ = ['start', 'stop', 'type', 'fact']
+    __annotations__ = {
+        'start': int,
+        'stop': int,
+        'fact': dict
+    }
+
+    def __init__(self, start, stop, type, fact):
+        self.start = start
+        self.stop = stop
+        self.type = type
+        self.fact = fact
+
+    def offset(self, delta):
+        return NatashaMatch(
+            self.start + delta,
+            self.stop + delta,
+            self.type,
+            self.fact
+        )
+
+
+class NatashaMarkup(AnnotatorMarkup):
     __attributes__ = ['text', 'matches']
+    __annotations__ = {
+        'matches': [NatashaMatch]
+    }
+
     label = NATASHA
 
     def __init__(self, text, matches):
@@ -44,24 +70,6 @@ class NatashaMarkup(Record):
             yield NatashaMarkup(sent.text, list(matches))
 
 
-class NatashaMatch(Record):
-    __attributes__ = ['start', 'stop', 'type', 'fact']
-
-    def __init__(self, start, stop, type, fact):
-        self.start = start
-        self.stop = stop
-        self.type = type
-        self.fact = fact
-
-    def offset(self, delta):
-        return NatashaMatch(
-            self.start + delta,
-            self.stop + delta,
-            self.type,
-            self.fact
-        )
-
-
 def parse_matches(data):
     for item in data:
         type = item['type']
@@ -75,17 +83,10 @@ def parse(text, data):
     return NatashaMarkup(text, matches)
 
 
-#########
-#
-#   CALL
-#
-########
-
-
-def post(text):
+def post(text, host, port):
     url = NATASHA_URL.format(
-        host=NATASHA_HOST,
-        port=NATASHA_PORT
+        host=host,
+        port=port
     )
     payload = text.encode('utf8')
     response = requests.post(
@@ -96,32 +97,19 @@ def post(text):
     return response.json()
 
 
-def call(texts):
+def call(texts, host=NATASHA_HOST, port=NATASHA_PORT):
     for text in texts:
-        data = post(text)
+        data = post(text, host, port)
         yield parse(text, data)
 
 
-#########
-#
-#   CONTAINER
-#
-#########
+class NatashaAnnotator(Annotator):
+    name = NATASHA
+    host = NATASHA_HOST
+    port = NATASHA_PORT
+    call = staticmethod(call)
 
 
-def warmup():
-    warmup_container(call)
-
-
-def start():
-    start_container(
-        NATASHA_IMAGE,
-        NATASHA,
-        NATASHA_CONTAINER_PORT,
-        NATASHA_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(NATASHA)
+class NatashaContainerAnnotator(NatashaAnnotator, ContainerAnnotator):
+    image = NATASHA_IMAGE
+    container_port = NATASHA_CONTAINER_PORT

@@ -18,20 +18,50 @@ from nerus.const import (
     PULLENTI_CONTAINER_PORT,
     PULLENTI_IMAGE,
 )
+from nerus.utils import Record
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-class PullentiSpan(PullentiSpan_):
+class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
+    label = PULLENTI
+
+    @property
+    def spans(self):
+        for match in self.walk():
+            start, stop = match.span
+            yield Span(start, stop, match.referent.label)
+
+    @property
+    def sents(self):
+        for sent in sentenize(self.text):
+            matches = sent_spans(sent, self.matches)
+            yield PullentiMarkup(sent.text, list(matches))
+
+    @property
+    def depth(self):
+        if not self.matches:
+            return
+        return max(_.depth for _ in self.matches)
+
+    @classmethod
+    def from_client(cls, result):
+        return PullentiMarkup(
+            result.text,
+            [PullentiMatch.from_client(_) for _ in result.matches]
+        )
+
+
+class PullentiSpan(PullentiSpan_, Span):
     def offset(self, delta):
         return PullentiSpan(
             self.start + delta,
@@ -46,7 +76,7 @@ class PullentiSpan(PullentiSpan_):
         )
 
 
-class PullentiMatch(PullentiMatch_):
+class PullentiMatch(PullentiMatch_, Record):
     def offset(self, delta):
         return PullentiMatch(
             self.referent,
@@ -78,36 +108,7 @@ class PullentiMatch(PullentiMatch_):
         )
 
 
-class PullentiMarkup(PullentiMarkup_):
-    label = PULLENTI
-
-    @property
-    def spans(self):
-        for match in self.walk():
-            start, stop = match.span
-            yield Span(start, stop, match.referent.label)
-
-    @property
-    def sents(self):
-        for sent in sentenize(self.text):
-            matches = sent_spans(sent, self.matches)
-            yield PullentiMarkup(sent.text, list(matches))
-
-    @property
-    def depth(self):
-        if not self.matches:
-            return
-        return max(_.depth for _ in self.matches)
-
-    @classmethod
-    def from_client(cls, result):
-        return PullentiMarkup(
-            result.text,
-            [PullentiMatch.from_client(_) for _ in result.matches]
-        )
-
-
-class PullentiSlot(PullentiSlot_):
+class PullentiSlot(PullentiSlot_, Record):
     @classmethod
     def from_client(cls, slot):
         value = slot.value
@@ -119,7 +120,7 @@ class PullentiSlot(PullentiSlot_):
         )
 
 
-class PullentiReferent(PullentiReferent_):
+class PullentiReferent(PullentiReferent_, Record):
     @classmethod
     def from_client(cls, referent):
         return PullentiReferent(
@@ -128,40 +129,20 @@ class PullentiReferent(PullentiReferent_):
         )
 
 
-#########
-#
-#   CALL
-#
-#########
-
-
-def call(texts):
-    client = PullentiClient(PULLENTI_HOST, PULLENTI_PORT)
+def call(texts, host=PULLENTI_HOST, port=PULLENTI_PORT):
+    client = PullentiClient(host, port)
     for text in texts:
         result = client(text)
         yield PullentiMarkup.from_client(result)
 
 
-########
-#
-#   CONTAINER
-#
-##########
+class PullentiAnnotator(Annotator):
+    name = PULLENTI
+    host = PULLENTI_HOST
+    port = PULLENTI_PORT
+    call = staticmethod(call)
 
 
-def warmup():
-    warmup_container(call)
-
-
-def start():
-    start_container(
-        PULLENTI_IMAGE,
-        PULLENTI,
-        PULLENTI_CONTAINER_PORT,
-        PULLENTI_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(PULLENTI)
+class PullentiContainerAnnotator(PullentiAnnotator, ContainerAnnotator):
+    image = PULLENTI_IMAGE
+    container_port = PULLENTI_CONTAINER_PORT

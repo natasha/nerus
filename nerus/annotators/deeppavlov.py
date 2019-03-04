@@ -12,7 +12,6 @@ from nerus.const import (
     DEEPPAVLOV_URL,
 )
 from nerus.utils import (
-    Record,
     strict_zip,
     group_chunks
 )
@@ -23,20 +22,15 @@ from nerus.sent import (
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-class DeeppavlovMarkup(Record):
-    __attributes__ = ['text', 'spans']
+class DeeppavlovMarkup(AnnotatorMarkup):
     label = DEEPPAVLOV
-
-    def __init__(self, text, spans):
-        self.text = text
-        self.spans = spans
 
     @property
     def sents(self):
@@ -55,17 +49,10 @@ def parse(texts, data):
         yield DeeppavlovMarkup(text, spans)
 
 
-###########
-#
-#    CALL
-#
-#########
-
-
-def post(texts):
+def post(texts, host, port):
     url = DEEPPAVLOV_URL.format(
-        host=DEEPPAVLOV_HOST,
-        port=DEEPPAVLOV_PORT
+        host=host,
+        port=port
     )
     payload = {'text1': texts}
     response = requests.post(
@@ -76,37 +63,20 @@ def post(texts):
     return response.json()
 
 
-def call(texts, size=DEEPPAVLOV_CHUNK):
+def call(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT, size=DEEPPAVLOV_CHUNK):
     for chunk in group_chunks(texts, size):
-        data = post(chunk)
+        data = post(chunk, host, port)
         for markup in parse(chunk, data):
             yield markup
 
 
-##########
-#
-#   CONTAINER
-#
-#############
+class DeeppavlovAnnotator(Annotator):
+    name = DEEPPAVLOV
+    host = DEEPPAVLOV_HOST
+    port = DEEPPAVLOV_PORT
+    call = staticmethod(call)
 
 
-def warmup():
-    warmup_container(
-        call,
-        retries=15,
-        delay=10
-    )
-
-
-def start():
-    start_container(
-        DEEPPAVLOV_IMAGE,
-        DEEPPAVLOV,
-        DEEPPAVLOV_CONTAINER_PORT,
-        DEEPPAVLOV_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(DEEPPAVLOV)
+class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):
+    image = DEEPPAVLOV_IMAGE
+    container_port = DEEPPAVLOV_CONTAINER_PORT

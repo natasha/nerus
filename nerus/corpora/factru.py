@@ -14,6 +14,7 @@ from nerus.etl import (
     download,
     unzip,
 )
+from nerus.markup import Markup
 from nerus.utils import Record
 from nerus.const import (
     FACTRU,
@@ -33,8 +34,13 @@ from nerus.span import (
     offset_spans
 )
 
+from .base import (
+    CorpusRecord,
+    CorpusSchema
+)
 
-class FactruSpan(Record):
+
+class FactruSpan(Span):
     __attributes__ = ['id', 'type', 'start', 'stop']
 
     def __init__(self, id, type, start, stop):
@@ -53,6 +59,9 @@ class FactruSpan(Record):
 
 class FactruObject(Record):
     __attributes__ = ['id', 'type', 'spans']
+    __annotations__ = {
+        'spans': [FactruSpan]
+    }
 
     def __init__(self, id, type, spans):
         self.id = id
@@ -75,8 +84,12 @@ class FactruObject(Record):
         return max(_.stop for _ in self.spans)
 
 
-class FactruMarkup(Record):
+class FactruMarkup(CorpusRecord, Markup):
     __attributes__ = ['id', 'text', 'objects']
+    __annotations__ = {
+        'objects': [FactruObject]
+    }
+
     label = FACTRU
 
     def __init__(self, id, text, objects):
@@ -174,3 +187,9 @@ def get():
     rm(path)
 
     return dir
+
+
+class FactruSchema(CorpusSchema):
+    name = FACTRU
+    get = get
+    load = load

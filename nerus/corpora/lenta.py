@@ -1,5 +1,4 @@
 
-from nerus.utils import Record
 from nerus.const import (
     LENTA,
     LENTA_FILENAME,
@@ -17,8 +16,13 @@ from nerus.path import (
     join_path
 )
 
+from .base import (
+    CorpusRecord,
+    CorpusSchema
+)
 
-class LentaRecord(Record):
+
+class LentaRecord(CorpusRecord):
     __attributes__ = ['url', 'title', 'text', 'topic', 'tags']
     label = LENTA
 
@@ -48,3 +52,9 @@ def get():
 
     download(LENTA_URL, path)
     return path
+
+
+class LentaSchema(CorpusSchema):
+    name = LENTA
+    get = get
+    load = load

@@ -1,6 +1,40 @@
-version: '3'
+# to use extends
+# https://docs.docker.com/compose/extends/#extending-services
+version: '2.1'
 
 services:
+  mongo:
+    image: mongo:4.0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: Yax6mUVzdXzsCCo
+    ports:
+      - 27017:27017
+    command: --wiredTigerCacheSizeGB=${DB_CACHE}
+
+  redis:
+    image: redis
+    command: redis-server --requirepass ENvHwwFLhiKe7hE
+    restart: always
+    ports:
+      - 6379:6379
+
+  rq:
+    image: alexkuk/rq-dashboard
+    restart: always
+    environment:
+      REDIS_URL: redis://:ENvHwwFLhiKe7hE@redis
+      USERNAME:
+      PASSWORD:
+      PORT: 80
+    ports:
+      - 8060:80
+
+  ##########
+  #   ANNOTATORS
+  ##########
+
   pullenti:
     image: pullenti/pullenti-server
     restart: always
@@ -37,41 +71,68 @@ services:
     ports:
       - 8085:8080
 
-  mongo:
-    image: mongo:4.0
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: Yax6mUVzdXzsCCo
-    ports:
-      - 27017:27017
-    command: --wiredTigerCacheSizeGB=${DB_CACHE}
+  ###########
+  #   WORKERS
+  ##########
 
   worker:
     image: natasha/nerus-worker
     restart: always
     environment:
+      QUEUE_HOST: redis
+      QUEUE_PORT: 6379
+      QUEUE_PASSWORD: ENvHwwFLhiKe7hE
       DB_HOST: mongo
       DB_PORT: 27017
       DB_USERNAME: root
       DB_PASSWORD: Yax6mUVzdXzsCCo
 
-      WORKER_ANNS: mitie,tomita,pullenti
-
-      PULLENTI_HOST: pullenti
-      PULLENTI_PORT: 8080
-
+  deeppavlov_worker:
+    extends: worker
+    environment:
       DEEPPAVLOV_HOST: deeppavlov
       DEEPPAVLOV_PORT: 6004
+      DEEPPAVLOV_CHUNK: ${DEEPPAVLOV_CHUNK}
+      WORKER_ANNOTATOR: deeppavlov
+      WORKER_QUEUE: deeppavlov
 
+  pullenti_worker:
+    extends: worker
+    environment:
+      PULLENTI_HOST: pullenti
+      PULLENTI_PORT: 8080
+      WORKER_ANNOTATOR: pullenti
+      WORKER_QUEUE: pullenti
+
+  texterra_worker:
+    extends: worker
+    environment:
       TEXTERRA_HOST: texterra
       TEXTERRA_PORT: 8080
+      TEXTERRA_CHUNK: ${TEXTERRA_CHUNK}
+      WORKER_ANNOTATOR: texterra
+      WORKER_QUEUE: texterra
 
+  mitie_worker:
+    extends: worker
+    environment:
       MITIE_HOST: mitie
       MITIE_PORT: 8080
+      WORKER_ANNOTATOR: mitie
+      WORKER_QUEUE: mitie
 
+  tomita_worker:
+    extends: worker
+    environment:
       TOMITA_HOST: tomita
       TOMITA_PORT: 8080
+      WORKER_ANNOTATOR: tomita 
+      WORKER_QUEUE: tomita
 
+  natasha_worker:
+    extends: worker
+    environment:
       NATASHA_HOST: natasha
       NATASHA_PORT: 8080
+      WORKER_ANNOTATOR: natasha
+      WORKER_QUEUE: natasha

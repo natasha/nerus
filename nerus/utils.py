@@ -2,6 +2,19 @@
 from collections import OrderedDict
 
 
+def parse_annotation(annotation):
+    type = annotation or str
+
+    repeatable = False
+    if isinstance(annotation, list):  # [Fact]
+        repeatable = True
+        type = annotation[0]
+
+    is_record = issubclass(type, Record)
+
+    return type, repeatable, is_record
+
+
 class Record(object):
     __attributes__ = []
 
@@ -62,15 +75,45 @@ class Record(object):
     def as_json(self):
         data = OrderedDict()
         for key in self.__attributes__:
+            annotation = self.__annotations__.get(key)
+            _, repeatable, is_record = parse_annotation(annotation)
+
             value = getattr(self, key)
             if value is None:
                 continue
-            if isinstance(value, Record):
-                value = value.as_json
-            elif isinstance(value, list):
+
+            if repeatable and is_record:
                 value = [_.as_json for _ in value]
+            elif is_record:
+                value = value.as_json
+
             data[key] = value
         return data
+
+    @classmethod
+    def from_json(cls, data):
+        args = []
+        for key in cls.__attributes__:
+            annotation = cls.__annotations__.get(key)
+            type, repeatable, is_record = parse_annotation(annotation)
+            value = data.get(key)
+            if value is None and repeatable:
+                value = []
+            elif value is not None:
+                if repeatable and is_record:
+                    value = [type.from_json(_) for _ in value]
+                elif is_record:
+                    value = type.from_json(value)
+            args.append(value)
+        return cls(*args)
+
+    @property
+    def as_bson(self):
+        return self.as_json
+
+    @classmethod
+    def from_bson(cls, data):
+        return cls.from_bson(data)
 
 
 ########

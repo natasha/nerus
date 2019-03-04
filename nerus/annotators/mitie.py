@@ -10,7 +10,6 @@ from nerus.const import (
     MITIE_IMAGE,
     MITIE_URL,
 )
-from nerus.utils import Record
 from nerus.token import find_tokens
 from nerus.span import Span
 from nerus.sent import (
@@ -18,23 +17,15 @@ from nerus.sent import (
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-CHUNK = 1
-
-
-class MitieMarkup(Record):
-    __attributes__ = ['text', 'spans']
+class MitieMarkup(AnnotatorMarkup):
     label = MITIE
-
-    def __init__(self, text, spans):
-        self.text = text
-        self.spans = spans
 
     @property
     def sents(self):
@@ -57,17 +48,10 @@ def parse(text, data):
     return MitieMarkup(text, spans)
 
 
-##########
-#
-#   CALL
-#
-#########
-
-
-def post(text):
+def post(text, host, port):
     url = MITIE_URL.format(
-        host=MITIE_HOST,
-        port=MITIE_PORT
+        host=host,
+        port=port
     )
     payload = text.encode('utf8')
     response = requests.post(
@@ -78,32 +62,19 @@ def post(text):
     return response.json()
 
 
-def call(texts):
+def call(texts, host=MITIE_HOST, port=MITIE_PORT):
     for text in texts:
-        data = post(text)
+        data = post(text, host, port)
         yield parse(text, data)
 
 
-###########
-#
-#   CONTAINER
-#
-#########
+class MitieAnnotator(Annotator):
+    name = MITIE
+    host = MITIE_HOST
+    port = MITIE_PORT
+    call = staticmethod(call)
 
 
-def warmup():
-    warmup_container(call)
-
-
-def start():
-    start_container(
-        MITIE_IMAGE,
-        MITIE,
-        MITIE_CONTAINER_PORT,
-        MITIE_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(MITIE)
+class MitieContainerAnnotator(MitieAnnotator, ContainerAnnotator):
+    image = MITIE_IMAGE
+    container_port = MITIE_CONTAINER_PORT

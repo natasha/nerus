@@ -1,6 +1,7 @@
 
 
 from .utils import Record
+from .span import Span
 from .sent import (
     sentenize,
     sent_spans
@@ -8,10 +9,12 @@ from .sent import (
 
 
 class Markup(Record):
-    __attributes__ = ['id', 'text', 'spans']
+    __attributes__ = ['text', 'spans']
+    __annotations__ = {
+        'spans': [Span]
+    }
 
-    def __init__(self, id, text, spans):
-        self.id = id
+    def __init__(self, text, spans):
         self.text = text
         self.spans = spans
 

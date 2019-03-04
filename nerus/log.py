@@ -1,4 +1,5 @@
 
+import sys
 import logging
 
 from tqdm import tqdm as log_progress  # noqa
@@ -17,3 +18,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 log = logger.info
+
+
+def dot():
+    print('.', end='', file=sys.stderr, flush=True)

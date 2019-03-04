@@ -7,6 +7,10 @@ from .utils import Record
 
 class Span(Record):
     __attributes__ = ['start', 'stop', 'type']
+    __annotations__ = {
+        'start': int,
+        'stop': int
+    }
 
     def __init__(self, start, stop, type=None):
         self.start = start

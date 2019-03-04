@@ -13,7 +13,6 @@ from nerus.const import (
     TOMITA_IMAGE,
     TOMITA_URL,
 )
-from nerus.utils import Record
 from nerus.etl import parse_xml
 from nerus.span import Span
 from nerus.sent import (
@@ -21,34 +20,14 @@ from nerus.sent import (
     sent_spans
 )
 
-from .docker import (
-    start_container,
-    stop_container,
-    warmup_container
+from .base import (
+    AnnotatorMarkup,
+    Annotator,
+    ContainerAnnotator
 )
 
 
-class TomitaMarkup(Record):
-    __attributes__ = ['text', 'facts']
-    label = TOMITA
-
-    def __init__(self, text, facts):
-        self.text = text
-        self.facts = facts
-
-    @property
-    def spans(self):
-        for fact in self.facts:
-            yield Span(fact.start, fact.stop, PER)
-
-    @property
-    def sents(self):
-        for sent in sentenize(self.text):
-            facts = sent_spans(sent, self.facts)
-            yield TomitaMarkup(sent.text, list(facts))
-
-
-class TomitaFact(Record):
+class TomitaFact(Span):
     __attributes__ = [
         'start', 'stop',
         'first', 'last', 'middle', 'known_surname'
@@ -72,6 +51,30 @@ class TomitaFact(Record):
             self.middle,
             self.known_surname
         )
+
+
+class TomitaMarkup(AnnotatorMarkup):
+    __attributes__ = ['text', 'facts']
+    __annotations__ = {
+        'facts': [TomitaFact]
+    }
+
+    label = TOMITA
+
+    def __init__(self, text, facts):
+        self.text = text
+        self.facts = facts
+
+    @property
+    def spans(self):
+        for fact in self.facts:
+            yield Span(fact.start, fact.stop, PER)
+
+    @property
+    def sents(self):
+        for sent in sentenize(self.text):
+            facts = sent_spans(sent, self.facts)
+            yield TomitaMarkup(sent.text, list(facts))
 
 
 def parse_facts(xml):
@@ -108,10 +111,10 @@ def parse(text, xml):
     return TomitaMarkup(text, facts)
 
 
-def call_(text):
+def call_(text, host, port):
     url = TOMITA_URL.format(
-        host=TOMITA_HOST,
-        port=TOMITA_PORT
+        host=host,
+        port=port
     )
     payload = text.encode('utf8')
     response = requests.post(
@@ -121,32 +124,19 @@ def call_(text):
     return parse_xml(response.text)
 
 
-def call(texts):
+def call(texts, host=TOMITA_HOST, port=TOMITA_PORT):
     for text in texts:
-        data = call_(text)
+        data = call_(text, host, port)
         yield parse(text, data)
 
 
-##########
-#
-#    CONTAINER
-#
-##########
+class TomitaAnnotator(Annotator):
+    name = TOMITA
+    host = TOMITA_HOST
+    port = TOMITA_PORT
+    call = staticmethod(call)
 
 
-def warmup():
-    warmup_container(call)
-
-
-def start():
-    start_container(
-        TOMITA_IMAGE,
-        TOMITA,
-        TOMITA_CONTAINER_PORT,
-        TOMITA_PORT
-    )
-    warmup()
-
-
-def stop():
-    stop_container(TOMITA)
+class TomitaContainerAnnotator(TomitaAnnotator, ContainerAnnotator):
+    image = TOMITA_IMAGE
+    container_port = TOMITA_CONTAINER_PORT
