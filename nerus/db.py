@@ -8,7 +8,6 @@ from .const import (
     DB_USERNAME,
     DB_PASSWORD,
 
-    TEXT,
     _ID
 )
 
@@ -22,7 +21,7 @@ def get_db(host=DB_HOST, port=DB_PORT):
     return client[DB_NAME]
 
 
-class Buffer:
+class InsertBuffer:
     def __init__(self, collection, size):
         self.collection = collection
         self.size = size
@@ -41,7 +40,7 @@ class Buffer:
 
 
 def chunk_insert(collection, docs, size):
-    buffer = Buffer(collection, size)
+    buffer = InsertBuffer(collection, size)
     for doc in docs:
         buffer.append(doc)
         buffer.maybe_flush()
@@ -49,7 +48,7 @@ def chunk_insert(collection, docs, size):
 
 
 def query_index(collection, ids):
-    return collection.find({_ID: {'$in': ids}})
+    return collection.find({_ID: {'$in': list(ids)}})
 
 
 def read_index(collection, offset=0, count=None):
@@ -60,16 +59,32 @@ def read_index(collection, offset=0, count=None):
         yield doc[_ID]
 
 
-def doc_texts(docs):
+def docs_index(docs):
     for doc in docs:
-        yield doc[TEXT]
+        yield doc[_ID]
 
 
-def as_bsons(records):
-    for record in records:
-        yield record.as_bson
+class DiffBuffer:
+    def __init__(self, collection, size):
+        self.collection = collection
+        self.size = size
+
+        self.ids = set()
+        self.add = self.ids.add
+
+    def maybe_flush(self):
+        if len(self.ids) >= self.size:
+            yield from self.flush()
+
+    def flush(self):
+        docs = query_index(self.collection, self.ids)
+        ids = set(docs_index(docs))
+        return self.ids - ids
 
 
-def from_bsons(docs, Record):
-    for doc in docs:
-        yield Record.from_bson(doc)
+def diff_index(collection, ids):
+    buffer = DiffBuffer(collection, size=1000)
+    for id in ids:
+        buffer.add(id)
+        yield from buffer.maybe_flush()
+    yield from buffer.flush()

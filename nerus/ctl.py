@@ -6,7 +6,11 @@ from .log import (
     log,
     log_progress
 )
-from .utils import group_chunks
+from .utils import (
+    head,
+    iter_len,
+    group_chunks
+)
 from .const import (
     CORPUS,
     CORPORA,
@@ -17,7 +21,7 @@ from .db import (
     get_db,
     chunk_insert,
     read_index,
-    as_bsons
+    diff_index
 )
 from .queue import (
     get_queue,
@@ -33,13 +37,18 @@ def insert_corpus(args):
     insert_corpus_(args.corpus)
 
 
+def encode_corpus(corpus):
+    for record in corpus:
+        yield record.as_bson
+
+
 def insert_corpus_(name):
     schema = find_corpus(name)
     path = schema.get()
     corpus = schema.load(path)
 
     db = get_db()
-    docs = as_bsons(corpus)
+    docs = encode_corpus(corpus)
     log('Insert %s -> db.%s', name, CORPUS)
     chunk_insert(db[CORPUS], log_progress(docs), 1000)
 
@@ -50,18 +59,40 @@ def run_worker(args):
 
 
 def enqueue_tasks(args):
-    enqueue_tasks_(args.annotator, args.offset, args.count, args.chunk)
+    annotators = args.annotators
+    if not annotators:
+        annotators = ANNOTATORS
+    else:
+        annotators = [annotators]
+    for annotator in annotators:
+        enqueue_tasks_(annotator, args.offset, args.count, args.chunk, args.dry_run)
 
 
-def enqueue_tasks_(queue, offset, count, chunk):
-    log('Enqueue %s <- corpus[%d:+%r:%d]' % (queue, offset, count, chunk))
+def enqueue_tasks_(annotator, offset, count, chunk, dry_run=False):
+    log(
+        '%s <- offset: %d, count: %d, chunk: %d',
+        annotator, offset, count or -1, chunk
+    )
+
     db = get_db()
-    ids = read_index(db[CORPUS], offset, count)
-    ids = log_progress(ids)
+    ids = read_index(db[CORPUS], offset)
+    ids = log_progress(ids, label='Corpus', hide=True)
+
+    ids = diff_index(db[annotator], ids)
+    ids = log_progress(ids, label='Todo', hide=True)
+
+    ids = head(ids, count)
     chunks = group_chunks(ids, size=chunk)
-    queue = get_queue(queue)
-    for chunk in chunks:
-        enqueue(queue, task, chunk)
+
+    if dry_run:
+        log('%s <- chunks planned: %d', annotator, iter_len(chunks))
+    else:
+        queue = get_queue(annotator)
+        count = 0
+        for chunk in chunks:
+            enqueue(queue, task, chunk)
+            count += 1
+        log('%s <- chunks: %d', annotator, count)
 
 
 def main():
@@ -81,10 +112,11 @@ def main():
 
     sub = subs.add_parser('q')
     sub.set_defaults(function=enqueue_tasks)
-    sub.add_argument('annotator', choices=ANNOTATORS)
-    sub.add_argument('--offset', default=0, type=int)
+    sub.add_argument('annotators', nargs='?', choices=ANNOTATORS)
+    sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)
+    sub.add_argument('--dry-run', action='store_true')
 
     args = sys.argv[1:]
     args = parser.parse_args(args)

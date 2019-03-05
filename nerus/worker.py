@@ -1,9 +1,10 @@
 
+from .utils import strict_zip
 from .const import (
     WORKER_ANNOTATOR,
     WORKER_QUEUE,
-
     CORPUS,
+    _ID, TEXT
 )
 from .queue import (
     get_queue,
@@ -14,24 +15,37 @@ from .db import (
 
     query_index,
     chunk_insert,
-
-    doc_texts,
-    as_bsons
 )
 from .annotators import find as find_annotator
+
+
+def decode_corpus(docs):
+    ids = []
+    texts = []
+    for doc in docs:
+        ids.append(doc[_ID])
+        texts.append(doc[TEXT])
+    return ids, texts
+
+
+def encode_markups(markups, ids):
+    for markup, id in strict_zip(markups, ids):
+        doc = markup.as_bson
+        doc[_ID] = id
+        yield doc
 
 
 def task(ids, annotator=WORKER_ANNOTATOR):
     db = get_db()
     docs = query_index(db[CORPUS], ids)
 
-    texts = doc_texts(docs)
+    ids, texts = decode_corpus(docs)
     constructor = find_annotator(annotator)
     annotator = constructor()
-    markups = annotator(texts)
+    markups = list(annotator(texts))
 
-    docs = as_bsons(markups)
-    chunk_insert(db[annotator.name], docs, 10)
+    docs = encode_markups(markups, ids)
+    chunk_insert(db[annotator.name], docs, 100)
 
 
 def run(queue=WORKER_QUEUE, annotator=WORKER_ANNOTATOR):

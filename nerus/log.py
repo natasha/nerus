@@ -2,11 +2,8 @@
 import sys
 import logging
 
-from tqdm import tqdm as log_progress  # noqa
+from tqdm import tqdm
 
-
-# https://github.com/tqdm/tqdm/issues/461#issuecomment-334343230
-log_progress.get_lock().locks = []
 
 logger = logging.getLogger('nerus')
 logger.setLevel(logging.DEBUG)
@@ -22,3 +19,9 @@ log = logger.info
 
 def dot():
     print('.', end='', file=sys.stderr, flush=True)
+
+
+def log_progress(items, label=None, hide=False):
+    # https://github.com/tqdm/tqdm/issues/461#issuecomment-334343230
+    tqdm.get_lock().locks = []
+    return tqdm(items, desc=label, leave=not hide)

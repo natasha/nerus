@@ -1,5 +1,6 @@
 
 from collections import OrderedDict
+from itertools import islice as head  # noqa
 
 
 def parse_annotation(annotation):
@@ -17,6 +18,7 @@ def parse_annotation(annotation):
 
 class Record(object):
     __attributes__ = []
+    __annotations__ = {}
 
     def __eq__(self, other):
         return (
@@ -113,7 +115,7 @@ class Record(object):
 
     @classmethod
     def from_bson(cls, data):
-        return cls.from_bson(data)
+        return cls.from_json(data)
 
 
 ########
@@ -124,10 +126,10 @@ class Record(object):
 
 
 def strict_zip(*items):
-    head = first(items)
+    head = first(items)  # noqa
     for item in items:
         if len(head) != len(item):
-            raise ValueError('expected same size, first: {head}, item: {item}'.format(
+            raise ValueError('expected same size, head: {head}, item: {item}'.format(
                 head=len(head),
                 item=len(item)
             ))

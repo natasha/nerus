@@ -32,35 +32,6 @@ from .base import (
 )
 
 
-class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
-    label = PULLENTI
-
-    @property
-    def spans(self):
-        for match in self.walk():
-            start, stop = match.span
-            yield Span(start, stop, match.referent.label)
-
-    @property
-    def sents(self):
-        for sent in sentenize(self.text):
-            matches = sent_spans(sent, self.matches)
-            yield PullentiMarkup(sent.text, list(matches))
-
-    @property
-    def depth(self):
-        if not self.matches:
-            return
-        return max(_.depth for _ in self.matches)
-
-    @classmethod
-    def from_client(cls, result):
-        return PullentiMarkup(
-            result.text,
-            [PullentiMatch.from_client(_) for _ in result.matches]
-        )
-
-
 class PullentiSpan(PullentiSpan_, Span):
     def offset(self, delta):
         return PullentiSpan(
@@ -73,6 +44,40 @@ class PullentiSpan(PullentiSpan_, Span):
         return PullentiSpan(
             span.start,
             span.stop
+        )
+
+
+class PullentiSlot(PullentiSlot_, Record):
+    @classmethod
+    def from_client(cls, slot):
+        value = slot.value
+        if isinstance(value, PullentiReferent_):
+            value = PullentiReferent.from_client(value)
+        return PullentiSlot(
+            slot.key,
+            value
+        )
+
+    @classmethod
+    def from_json(cls, data):
+        # since standart mechanism does not support loops
+        # Referent -> Slot -> Referent
+        key, value = [data[_] for _ in cls.__attributes__]
+        if not isinstance(value, str):
+            value = PullentiReferent.from_json(value)
+        return cls(key, value)
+
+
+class PullentiReferent(PullentiReferent_, Record):
+    __annotations__ = {
+        'slots': [PullentiSlot]
+    }
+
+    @classmethod
+    def from_client(cls, referent):
+        return PullentiReferent(
+            referent.label,
+            [PullentiSlot.from_client(_) for _ in referent.slots]
         )
 
 
@@ -107,25 +112,47 @@ class PullentiMatch(PullentiMatch_, Record):
             [PullentiMatch.from_client(_) for _ in match.children]
         )
 
-
-class PullentiSlot(PullentiSlot_, Record):
     @classmethod
-    def from_client(cls, slot):
-        value = slot.value
-        if isinstance(value, PullentiReferent_):
-            value = PullentiReferent.from_client(value)
-        return PullentiSlot(
-            slot.key,
-            value
-        )
+    def from_json(cls, data):
+        # standart mechanism does not support recursion
+        # match -> children
+        referent, span, children = [data[_] for _ in cls.__attributes__]
+        referent = PullentiReferent.from_json(referent)
+        span = PullentiSpan.from_json(span)
+        children = [PullentiMatch.from_json(_) for _ in children]
+        return cls(referent, span, children)
 
 
-class PullentiReferent(PullentiReferent_, Record):
+class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
+    __annotations__ = {
+        'matches': [PullentiMatch]
+    }
+
+    label = PULLENTI
+
+    @property
+    def spans(self):
+        for match in self.walk():
+            start, stop = match.span
+            yield Span(start, stop, match.referent.label)
+
+    @property
+    def sents(self):
+        for sent in sentenize(self.text):
+            matches = sent_spans(sent, self.matches)
+            yield PullentiMarkup(sent.text, list(matches))
+
+    @property
+    def depth(self):
+        if not self.matches:
+            return
+        return max(_.depth for _ in self.matches)
+
     @classmethod
-    def from_client(cls, referent):
-        return PullentiReferent(
-            referent.label,
-            [PullentiSlot.from_client(_) for _ in referent.slots]
+    def from_client(cls, result):
+        return PullentiMarkup(
+            result.text,
+            [PullentiMatch.from_client(_) for _ in result.matches]
         )
 
 
