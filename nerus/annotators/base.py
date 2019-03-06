@@ -51,8 +51,8 @@ class Annotator(Record):
     @property
     def ready(self):
         try:
-            for _ in self(PUTIN):
-                return True
+            self(PUTIN)
+            return True
         except (requests.ConnectionError, requests.ReadTimeout):
             return False
 

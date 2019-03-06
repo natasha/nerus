@@ -83,7 +83,7 @@ def test_annotators(constructor, etalon):
 
 @pytest.mark.parametrize('_, etalon', TESTS)
 def test_serialization(_, etalon):
-        Markup = type(etalon)
-        data = etalon.as_bson
-        guess = Markup.from_bson(data)
-        assert guess == etalon
+    Markup = type(etalon)
+    data = etalon.as_bson
+    guess = Markup.from_bson(data)
+    assert guess == etalon
