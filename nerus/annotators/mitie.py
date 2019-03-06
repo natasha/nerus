@@ -41,7 +41,7 @@ def parse_spans(tokens, spans):
         yield Span(start, stop, type)
 
 
-MITIE_STRIP = '\xa0\t '
+MITIE_STRIP = '\xa0\t\r\n '
 
 
 def parse(text, data):
