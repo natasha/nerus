@@ -42,7 +42,7 @@ def task(ids, annotator=WORKER_ANNOTATOR):
     ids, texts = decode_corpus(docs)
     constructor = find_annotator(annotator)
     annotator = constructor()
-    markups = list(annotator(texts))
+    markups = list(annotator.map(texts))
 
     docs = encode_markups(markups, ids)
     chunk_insert(db[annotator.name], docs, 100)
