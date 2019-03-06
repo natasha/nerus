@@ -19,7 +19,7 @@ from nerus.sent import (
 
 from .base import (
     AnnotatorMarkup,
-    Annotator,
+    ChunkAnnotator,
     ContainerAnnotator
 )
 
@@ -67,19 +67,21 @@ def post(texts, host, port, timeout):
     return response.json()
 
 
-def call(texts, host=TEXTERRA_HOST, port=TEXTERRA_PORT,
-         size=TEXTERRA_CHUNK, timeout=120):
+def map(texts, host=TEXTERRA_HOST, port=TEXTERRA_PORT, size=TEXTERRA_CHUNK, timeout=120):
     for chunk in group_chunks(texts, size):
         data = post(chunk, host, port, timeout)
         for markup in parse(data):
             yield markup
 
 
-class TexterraAnnotator(Annotator):
+class TexterraAnnotator(ChunkAnnotator):
     name = TEXTERRA
     host = TEXTERRA_HOST
     port = TEXTERRA_PORT
-    call = staticmethod(call)
+    chunk = TEXTERRA_CHUNK
+
+    def map(self, texts):
+        return map(texts, self.host, self.port, self.chunk)
 
 
 class TexterraContainerAnnotator(TexterraAnnotator, ContainerAnnotator):

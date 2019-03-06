@@ -24,7 +24,7 @@ from nerus.sent import (
 
 from .base import (
     AnnotatorMarkup,
-    Annotator,
+    ChunkAnnotator,
     ContainerAnnotator
 )
 
@@ -63,18 +63,21 @@ def post(texts, host, port):
     return response.json()
 
 
-def call(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT, size=DEEPPAVLOV_CHUNK):
+def map(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT, size=DEEPPAVLOV_CHUNK):
     for chunk in group_chunks(texts, size):
         data = post(chunk, host, port)
         for markup in parse(chunk, data):
             yield markup
 
 
-class DeeppavlovAnnotator(Annotator):
+class DeeppavlovAnnotator(ChunkAnnotator):
     name = DEEPPAVLOV
     host = DEEPPAVLOV_HOST
     port = DEEPPAVLOV_PORT
-    call = staticmethod(call)
+    chunk = DEEPPAVLOV_CHUNK
+
+    def map(self, texts):
+        return map(texts, self.host, self.port, self.chunk)
 
 
 class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):

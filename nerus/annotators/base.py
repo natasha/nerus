@@ -25,13 +25,13 @@ class AnnotatorMarkup(Markup):
     label = None
 
 
+PUTIN = 'Путин'
+
+
 class Annotator(Record):
     __attributes__ = ['host', 'port']
 
     name = None
-    host = None
-    port = None
-    call = None
 
     def __init__(self, host=None, port=None):
         if not host:
@@ -41,12 +41,12 @@ class Annotator(Record):
             port = self.port
         self.port = port
 
-    def __call__(self, texts):
-        return self.call(
-            texts,
-            host=self.host,
-            port=self.port
-        )
+    def __call__(self, text):
+        raise NotImplementedError
+
+    def map(self, texts):
+        for text in texts:
+            yield self(text)
 
     @property
     def ready(self):
@@ -68,7 +68,14 @@ class Annotator(Record):
             raise AnnotatorError('failed to start')
 
 
-PUTIN = ['Путин']
+class ChunkAnnotator(Annotator):
+    __attributes__ = ['host', 'port', 'chunk']
+
+    def map(self, texts):
+        raise NotImplementedError
+
+    def __call__(self, text):
+        return next(self.map([text]))
 
 
 class ContainerAnnotator(Annotator):

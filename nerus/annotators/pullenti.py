@@ -27,7 +27,7 @@ from nerus.sent import (
 
 from .base import (
     AnnotatorMarkup,
-    Annotator,
+    ChunkAnnotator,
     ContainerAnnotator
 )
 
@@ -156,18 +156,21 @@ class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
         )
 
 
-def call(texts, host=PULLENTI_HOST, port=PULLENTI_PORT):
+def map(texts, host=PULLENTI_HOST, port=PULLENTI_PORT):
     client = PullentiClient(host, port)
     for text in texts:
         result = client(text)
         yield PullentiMarkup.from_client(result)
 
 
-class PullentiAnnotator(Annotator):
+class PullentiAnnotator(ChunkAnnotator):
     name = PULLENTI
     host = PULLENTI_HOST
     port = PULLENTI_PORT
-    call = staticmethod(call)
+    chunk = None
+
+    def map(self, texts):
+        return map(texts, self.host, self.port)
 
 
 class PullentiContainerAnnotator(PullentiAnnotator, ContainerAnnotator):

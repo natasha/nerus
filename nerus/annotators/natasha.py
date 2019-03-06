@@ -97,17 +97,18 @@ def post(text, host, port):
     return response.json()
 
 
-def call(texts, host=NATASHA_HOST, port=NATASHA_PORT):
-    for text in texts:
-        data = post(text, host, port)
-        yield parse(text, data)
+def call(text, host=NATASHA_HOST, port=NATASHA_PORT):
+    data = post(text, host, port)
+    return parse(text, data)
 
 
 class NatashaAnnotator(Annotator):
     name = NATASHA
     host = NATASHA_HOST
     port = NATASHA_PORT
-    call = staticmethod(call)
+
+    def __call__(self, text):
+        return call(text, self.host, self.port)
 
 
 class NatashaContainerAnnotator(NatashaAnnotator, ContainerAnnotator):

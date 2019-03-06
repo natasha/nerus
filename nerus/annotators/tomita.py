@@ -124,17 +124,18 @@ def call_(text, host, port):
     return parse_xml(response.text)
 
 
-def call(texts, host=TOMITA_HOST, port=TOMITA_PORT):
-    for text in texts:
-        data = call_(text, host, port)
-        yield parse(text, data)
+def call(text, host=TOMITA_HOST, port=TOMITA_PORT):
+    data = call_(text, host, port)
+    return parse(text, data)
 
 
 class TomitaAnnotator(Annotator):
     name = TOMITA
     host = TOMITA_HOST
     port = TOMITA_PORT
-    call = staticmethod(call)
+
+    def __call__(self, text):
+        return call(text, self.host, self.port)
 
 
 class TomitaContainerAnnotator(TomitaAnnotator, ContainerAnnotator):

@@ -62,17 +62,18 @@ def post(text, host, port):
     return response.json()
 
 
-def call(texts, host=MITIE_HOST, port=MITIE_PORT):
-    for text in texts:
-        data = post(text, host, port)
-        yield parse(text, data)
+def call(text, host=MITIE_HOST, port=MITIE_PORT):
+    data = post(text, host, port)
+    return parse(text, data)
 
 
 class MitieAnnotator(Annotator):
     name = MITIE
     host = MITIE_HOST
     port = MITIE_PORT
-    call = staticmethod(call)
+
+    def __call__(self, text):
+        return call(text, self.host, self.port)
 
 
 class MitieContainerAnnotator(MitieAnnotator, ContainerAnnotator):
