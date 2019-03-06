@@ -62,8 +62,6 @@ def enqueue_tasks(args):
     annotators = args.annotators
     if not annotators:
         annotators = ANNOTATORS
-    else:
-        annotators = [annotators]
     for annotator in annotators:
         enqueue_tasks_(annotator, args.offset, args.count, args.chunk, args.dry_run)
 
@@ -76,10 +74,10 @@ def enqueue_tasks_(annotator, offset, count, chunk, dry_run=False):
 
     db = get_db()
     ids = read_index(db[CORPUS], offset)
-    ids = log_progress(ids, label='Corpus', hide=True)
+    ids = log_progress(ids, label='Corpus')
 
     ids = diff_index(db[annotator], ids)
-    ids = log_progress(ids, label='Todo', hide=True)
+    ids = log_progress(ids, label='Todo')
 
     ids = head(ids, count)
     chunks = group_chunks(ids, size=chunk)
@@ -112,7 +110,7 @@ def main():
 
     sub = subs.add_parser('q')
     sub.set_defaults(function=enqueue_tasks)
-    sub.add_argument('annotators', nargs='?', choices=ANNOTATORS)
+    sub.add_argument('annotators', nargs='*', choices=ANNOTATORS)
     sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)

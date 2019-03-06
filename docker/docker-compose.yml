@@ -25,8 +25,8 @@ services:
     restart: always
     environment:
       REDIS_URL: redis://:ENvHwwFLhiKe7hE@redis
-      USERNAME:
-      PASSWORD:
+      USERNAME: nerus
+      PASSWORD: nerus
       PORT: 80
     ports:
       - 8060:80
@@ -75,20 +75,26 @@ services:
   #   WORKERS
   ##########
 
-  worker:
+  natasha_worker:
     image: natasha/nerus-worker
     restart: always
     environment:
       QUEUE_HOST: redis
       QUEUE_PORT: 6379
       QUEUE_PASSWORD: ENvHwwFLhiKe7hE
+
       DB_HOST: mongo
       DB_PORT: 27017
       DB_USERNAME: root
       DB_PASSWORD: Yax6mUVzdXzsCCo
 
+      NATASHA_HOST: natasha
+      NATASHA_PORT: 8080
+      WORKER_ANNOTATOR: natasha
+      WORKER_QUEUE: natasha
+
   deeppavlov_worker:
-    extends: worker
+    extends: natasha_worker
     environment:
       DEEPPAVLOV_HOST: deeppavlov
       DEEPPAVLOV_PORT: 6004
@@ -97,7 +103,7 @@ services:
       WORKER_QUEUE: deeppavlov
 
   pullenti_worker:
-    extends: worker
+    extends: natasha_worker
     environment:
       PULLENTI_HOST: pullenti
       PULLENTI_PORT: 8080
@@ -105,7 +111,7 @@ services:
       WORKER_QUEUE: pullenti
 
   texterra_worker:
-    extends: worker
+    extends: natasha_worker
     environment:
       TEXTERRA_HOST: texterra
       TEXTERRA_PORT: 8080
@@ -114,7 +120,7 @@ services:
       WORKER_QUEUE: texterra
 
   mitie_worker:
-    extends: worker
+    extends: natasha_worker
     environment:
       MITIE_HOST: mitie
       MITIE_PORT: 8080
@@ -122,17 +128,9 @@ services:
       WORKER_QUEUE: mitie
 
   tomita_worker:
-    extends: worker
+    extends: natasha_worker
     environment:
       TOMITA_HOST: tomita
       TOMITA_PORT: 8080
       WORKER_ANNOTATOR: tomita 
       WORKER_QUEUE: tomita
-
-  natasha_worker:
-    extends: worker
-    environment:
-      NATASHA_HOST: natasha
-      NATASHA_PORT: 8080
-      WORKER_ANNOTATOR: natasha
-      WORKER_QUEUE: natasha

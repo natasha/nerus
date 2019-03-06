@@ -79,7 +79,8 @@ class DiffBuffer:
     def flush(self):
         docs = query_index(self.collection, self.ids)
         ids = set(docs_index(docs))
-        return self.ids - ids
+        yield from self.ids - ids
+        self.ids.clear()
 
 
 def diff_index(collection, ids):

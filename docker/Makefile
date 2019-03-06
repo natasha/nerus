@@ -6,6 +6,3 @@ images:
 
 push:
 	for i in $(ANNS); do make -C $$i push; done
-
-run:
-	docker-compose up --rm

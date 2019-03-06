@@ -9,6 +9,7 @@ from .path import (
 
 
 LOCALHOST = 'localhost'
+WORKER_HOST = getenv('WORKER_HOST', LOCALHOST)
 
 
 #######
@@ -92,7 +93,7 @@ CORPORA_DIR = norm_path(join_path(get_dir(__file__), '..', 'data'))
 #######
 
 
-ANNOTATORS_HOST = LOCALHOST
+ANNOTATORS_HOST = WORKER_HOST
 ANNOTATORS_BASE_PORT = 8080
 
 
@@ -227,7 +228,7 @@ WORKER_QUEUE = getenv('WORKER_QUEUE', NATASHA)
 ########
 
 
-QUEUE_HOST = getenv('QUEUE_HOST', LOCALHOST)
+QUEUE_HOST = getenv('QUEUE_HOST', WORKER_HOST)
 QUEUE_PORT = int(getenv('QUEUE_PORT', 6379))
 QUEUE_PASSWORD = getenv('QUEUE_PASSWORD', 'ENvHwwFLhiKe7hE')
 
@@ -243,7 +244,7 @@ CORPUS = 'corpus'
 TEXT = 'text'
 _ID = '_id'
 
-DB_HOST = getenv('DB_HOST', LOCALHOST)
+DB_HOST = getenv('DB_HOST', WORKER_HOST)
 DB_PORT = int(getenv('DB_PORT', 27017))
 DB_NAME = 'db'
 DB_USERNAME = getenv('DB_USERNAME', 'root')
