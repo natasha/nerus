@@ -11,3 +11,6 @@ ansible-playbook -i hosts worker.yml
 # Ctl
 
 ssh -v -i ~/.ssh/aws-default-frank.pem ubuntu@ec2-34-217-65-115.us-west-2.compute.amazonaws.com
+
+ssh -v alexkuk@84.201.129.88
+sudo su

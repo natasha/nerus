@@ -1,9 +1,13 @@
 [hosts]
-worker ansible_host=ec2-3-120-159-192.eu-central-1.compute.amazonaws.com
+# worker ansible_host=ec2-3-120-159-192.eu-central-1.compute.amazonaws.com
+worker ansible_host=84.201.129.88
 
 [hosts:vars]
-ansible_user=ubuntu
-ansible_private_key_file = ~/.ssh/aws-default-frank.pem
+# ansible_user=ubuntu
+# ansible_private_key_file = ~/.ssh/aws-default-frank.pem
+
+ansible_user=alexkuk
+ansible_private_key_file = ~/.ssh/id_rsa
 
 # by default tries to use python2 that is absent on ubuntu 16.04
 ansible_python_interpreter=/usr/bin/python3

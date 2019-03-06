@@ -8,30 +8,30 @@
 
   tasks:
 
-  ##########
-  #
-  #  CUDA
-  #  https://developer.nvidia.com/cuda-90-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu
-  #
-  ########
+  # ##########
+  # #
+  # #  CUDA
+  # #  https://developer.nvidia.com/cuda-90-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu
+  # #
+  # ########
 
-  - name: Fetch CUDA Apt
-    get_url:
-      url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
-      dest: /cuda.deb
+  # - name: Fetch CUDA Apt
+  #   get_url:
+  #     url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.0.176-1_amd64.deb
+  #     dest: /cuda.deb
 
-  - name: Add CUDA Apt
-    apt:
-      deb: /cuda.deb
+  # - name: Add CUDA Apt
+  #   apt:
+  #     deb: /cuda.deb
 
-  - name: Add CUDA GPG
-    apt_key:
-      url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+  # - name: Add CUDA GPG
+  #   apt_key:
+  #     url: http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 
-  - name: Install CUDA
-    apt:
-      update_cache: yes
-      name: cuda-9-0
+  # - name: Install CUDA
+  #   apt:
+  #     update_cache: yes
+  #     name: cuda-9-0
 
   ##########
   #
@@ -61,34 +61,34 @@
     apt:
       name: docker-ce
 
-  ########
-  # 
-  #  NVIDIA DOCKER
-  #  https://github.com/NVIDIA/nvidia-docker
-  #
-  ########
+  # ########
+  # # 
+  # #  NVIDIA DOCKER
+  # #  https://github.com/NVIDIA/nvidia-docker
+  # #
+  # ########
 
-  - name: Add NVidia Docker GPG
-    apt_key:
-      url: https://nvidia.github.io/nvidia-docker/gpgkey
+  # - name: Add NVidia Docker GPG
+  #   apt_key:
+  #     url: https://nvidia.github.io/nvidia-docker/gpgkey
 
-  - name: Add NVidia Docker Apt
-    get_url:
-      url: https://nvidia.github.io/nvidia-docker/ubuntu16.04/nvidia-docker.list
-      dest: /etc/apt/sources.list.d/nvidia-docker.list
+  # - name: Add NVidia Docker Apt
+  #   get_url:
+  #     url: https://nvidia.github.io/nvidia-docker/ubuntu16.04/nvidia-docker.list
+  #     dest: /etc/apt/sources.list.d/nvidia-docker.list
 
-  - name: Install NVidia Docker
-    apt:
-      update_cache: yes
-      name: nvidia-docker2
+  # - name: Install NVidia Docker
+  #   apt:
+  #     update_cache: yes
+  #     name: nvidia-docker2
 
-  - name: Change Docker runtime
-    copy:
-      content: docker_daemon.json
-      dest: /etc/docker/daemon.json
+  # - name: Change Docker runtime
+  #   copy:
+  #     content: docker_daemon.json
+  #     dest: /etc/docker/daemon.json
 
-  - name: Reboot
-    reboot:
+  # - name: Reboot
+  #   reboot:
 
   ########
   #
@@ -109,7 +109,7 @@
 
   - name: Copy .env
     copy:
-      src: ../docker/gpu.env
+      src: ../docker/cpu.env
       dest: /.env
 
   - name: Up compose
