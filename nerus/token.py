@@ -42,12 +42,13 @@ def try_fix_chunk(chunk):
     if chunk in CHUNK_ALIASES:
         yield CHUNK_ALIASES[chunk]
 
-    if chunk.startswith("'") and chunk != "'":
+    if chunk.startswith("'"):
         # for mitie
         #  `est -> ’est
         #  'est -> ’est
         #  's -> '’s
         #  'Рейли -> '’Рейли
+        #  ' -> ’
         suffix = chunk[1:]
         yield '`' + suffix
         yield '’' + suffix
@@ -59,8 +60,8 @@ def try_skip_chunk(suffix):
             return skip
 
 
-def lstrip(text):
-    space = re.match('^(\s*)', text).group(1)
+def lstrip(text, chars=r'\s'):
+    space = re.match(r'^([' + chars + ']*)', text).group(1)
     offset = len(space)
     return offset, text[offset:]
 
@@ -72,15 +73,15 @@ class FindTokenError(Exception):
         self.text = text
 
 
-def find_tokens(chunks, text, start=0):
-    offset, suffix = lstrip(text)
+def find_tokens(chunks, text, start=0, strip=r'\s'):
+    offset, suffix = lstrip(text, strip)
     start += offset
     for index, chunk in enumerate(chunks):
         if suffix.startswith(chunk):
             size = len(chunk)
             stop = start + size
             yield Token(start, stop, chunk)
-            offset, suffix = lstrip(suffix[size:])
+            offset, suffix = lstrip(suffix[size:], strip)
             start += size + offset
         else:
             skip = try_skip_chunk(suffix)
@@ -92,7 +93,8 @@ def find_tokens(chunks, text, start=0):
                     tokens = list(find_tokens(
                         chunks[index:],
                         suffix[len(skip):],
-                        start=start
+                        start=start,
+                        strip=strip
                     ))
                 except FindTokenError:
                     # in case need to try_fix_chunk instead
@@ -106,7 +108,8 @@ def find_tokens(chunks, text, start=0):
                     tokens = list(find_tokens(
                         [fix] + chunks[index + 1:],
                         suffix,
-                        start=start
+                        start=start,
+                        strip=strip
                     ))
                 except FindTokenError:
                     # to try other fix

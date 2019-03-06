@@ -41,9 +41,12 @@ def parse_spans(tokens, spans):
         yield Span(start, stop, type)
 
 
+MITIE_STRIP = '\xa0\t '
+
+
 def parse(text, data):
     chunks, spans = data
-    tokens = list(find_tokens(chunks, text))
+    tokens = list(find_tokens(chunks, text, strip=MITIE_STRIP))
     spans = list(parse_spans(tokens, spans))
     return MitieMarkup(text, spans)
 
