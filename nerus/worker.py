@@ -1,5 +1,6 @@
 
 from .utils import strict_zip
+from .path import join_path
 from .const import (
     WORKER_ANNOTATOR,
     WORKER_QUEUE,
@@ -17,6 +18,27 @@ from .db import (
     chunk_insert,
 )
 from .annotators import find as find_annotator
+from .const import (
+    YC_HDD,
+    YC_UBUNTU_1604,
+
+    WORKER_DIR,
+)
+from .ssh import (
+    exec,
+    cp
+)
+
+
+CONFIG = dict(
+    cores=1,
+    share=100,
+    memory=2,
+    disk_size=50,
+    disk_type=YC_HDD,
+    image=YC_UBUNTU_1604,
+    spot=True,
+)
 
 
 def decode_corpus(docs):
@@ -55,3 +77,16 @@ def run(queue=WORKER_QUEUE, annotator=WORKER_ANNOTATOR):
 
     queue = get_queue(queue)
     work_on(queue)
+
+
+def deploy(client):
+    files = {
+        'install.sh': 'install.sh',
+        'cpu.env': '.env',
+        'docker-compose.yml': 'docker-compose.yml'
+    }
+    for filename, target in files.items():
+        source = join_path(WORKER_DIR, filename)
+        cp(client, source, target)
+
+    exec(client, '/bin/bash install.sh 2>&1')

@@ -1,6 +1,6 @@
 
 from collections import OrderedDict
-from itertools import islice as head  # noqa
+from itertools import islice
 
 
 def parse_annotation(annotation):
@@ -126,7 +126,7 @@ class Record(object):
 
 
 def strict_zip(*items):
-    head = first(items)  # noqa
+    head = first(items)
     for item in items:
         if len(head) != len(item):
             raise ValueError('expected same size, head: {head}, item: {item}'.format(
@@ -149,6 +149,14 @@ def transpose(items):
 
 def first(items):
     return next(iter(items))
+
+
+def head(items, count):
+    return islice(items, count)
+
+
+def skip(items, count):
+    return islice(items, count, None)
 
 
 def iter_len(items):

@@ -4,7 +4,8 @@ from os import getenv
 from .path import (
     get_dir,
     join_path,
-    norm_path
+    norm_path,
+    expand_user
 )
 
 
@@ -34,6 +35,17 @@ LOC = 'LOC'
 B = 'B'
 I = 'I'
 O = 'O'
+
+
+#########
+#
+#   NERUS
+#
+########
+
+
+NERUS = 'nerus'
+NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
 
 
 #######
@@ -82,8 +94,7 @@ LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 
 
 CORPORA = [FACTRU, NE5, LENTA]
-
-CORPORA_DIR = norm_path(join_path(get_dir(__file__), '..', 'data'))
+CORPORA_DIR = join_path(NERUS_DIR, 'data')
 
 
 ########
@@ -217,6 +228,8 @@ ANNOTATORS = [DEEPPAVLOV, MITIE, NATASHA, PULLENTI, TEXTERRA, TOMITA]
 #########
 
 
+WORKER_DIR = join_path(NERUS_DIR, 'worker')
+WORKER_NAME = getenv('WORKER_NAME', NERUS)
 WORKER_ANNOTATOR = getenv('WORKER_ANNOTATOR', NATASHA)
 WORKER_QUEUE = getenv('WORKER_QUEUE', NATASHA)
 
@@ -249,3 +262,32 @@ DB_PORT = int(getenv('DB_PORT', 27017))
 DB_NAME = 'db'
 DB_USERNAME = getenv('DB_USERNAME', 'root')
 DB_PASSWORD = getenv('DB_PASSWORD', 'Yax6mUVzdXzsCCo')
+
+
+########
+#
+#   YC
+#
+#########
+
+
+YC_TOKEN = getenv('YC_TOKEN')
+YC_CLOUD = getenv('YC_CLOUD')
+YC_FOLDER = getenv('YC_FOLDER', 'default')
+YC_SUBNET = getenv('YC_SUBNET', 'default')
+
+YC_UBUNTU_1604 = 'standard-images/ubuntu-1604-lts'
+YC_HDD = 'network-hdd'
+YC_PLATFORM = 'standard-v1'
+
+
+#######
+#
+#  SSH
+#
+########
+
+
+SSH_USER = NERUS
+SSH_KEY = getenv('SSH_KEY', expand_user('~/.ssh/id_rsa.pub'))
+SSH_PRIVATE_KEY = getenv('SSH_PRIVATE_KEY', expand_user('~/.ssh/id_rsa'))

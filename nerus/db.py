@@ -21,7 +21,7 @@ def get_db(host=DB_HOST, port=DB_PORT):
     return client[DB_NAME]
 
 
-class InsertBuffer:
+class Buffer:
     def __init__(self, collection, size):
         self.collection = collection
         self.size = size
@@ -40,7 +40,7 @@ class InsertBuffer:
 
 
 def chunk_insert(collection, docs, size):
-    buffer = InsertBuffer(collection, size)
+    buffer = Buffer(collection, size)
     for doc in docs:
         buffer.append(doc)
         buffer.maybe_flush()
@@ -59,33 +59,7 @@ def read_index(collection, offset=0, count=None):
         yield doc[_ID]
 
 
-def docs_index(docs):
-    for doc in docs:
-        yield doc[_ID]
-
-
-class DiffBuffer:
-    def __init__(self, collection, size):
-        self.collection = collection
-        self.size = size
-
-        self.ids = set()
-        self.add = self.ids.add
-
-    def maybe_flush(self):
-        if len(self.ids) >= self.size:
-            yield from self.flush()
-
-    def flush(self):
-        docs = query_index(self.collection, self.ids)
-        ids = set(docs_index(docs))
-        yield from self.ids - ids
-        self.ids.clear()
-
-
-def diff_index(collection, ids):
-    buffer = DiffBuffer(collection, size=1000)
-    for id in ids:
-        buffer.add(id)
-        yield from buffer.maybe_flush()
-    yield from buffer.flush()
+def get_stats(db):
+    for name in db.list_collection_names():
+        count = db[name].estimated_document_count()
+        yield count, name

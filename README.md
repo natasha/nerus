@@ -71,3 +71,10 @@ A = 2:
 ## License
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+
+# Dev
+# GPU vs CPU
+
+On AWS p2.xlarge one can process ~100 000 Lenta docs in 1.5 hours
+On YC 8 cores 16Gb instance same thing takes 3 hours, 2x slower
+But AWS costs 0.9$ (60 rub) per hour, YC 10 rub per hour (3 rub for spot instance), so use YC

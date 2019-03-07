@@ -9,4 +9,4 @@ COPY nerus nerus
 COPY setup.py .
 RUN pip install --no-cache-dir -e .
 
-ENTRYPOINT ["python", "-m", "nerus.ctl", "worker"]
+ENTRYPOINT ["nerus-ctl", "worker", "run"]
