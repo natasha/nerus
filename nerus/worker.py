@@ -89,4 +89,4 @@ def deploy(client):
         source = join_path(WORKER_DIR, filename)
         cp(client, source, target)
 
-    exec(client, '/bin/bash install.sh 2>&1')
+    exec(client, 'sh install.sh 2>&1')

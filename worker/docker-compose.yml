@@ -36,7 +36,7 @@ services:
   ##########
 
   pullenti:
-    image: pullenti/pullenti-server
+    image: pullenti/pullenti-server:3.17
     restart: always
     ports:
       - 8080:8080

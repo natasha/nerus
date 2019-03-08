@@ -3,7 +3,7 @@ intervaltree==2.1.0
 requests==2.18.4
 
 razdel==0.3.0
-pullenti_client==0.1.0
+pullenti_client==0.2.0
 
 yandexcloud==0.8.0
 # brew install libssh2

@@ -5,10 +5,6 @@ from pullenti_client.result import (
     Match as PullentiMatch_,
     Result as PullentiMarkup_,
 )
-from pullenti_client.referent import (
-    Slot as PullentiSlot_,
-    Referent as PullentiReferent_
-)
 
 from nerus.const import (
     PULLENTI,
@@ -18,10 +14,7 @@ from nerus.const import (
     PULLENTI_CONTAINER_PORT,
     PULLENTI_IMAGE,
 )
-from nerus.utils import (
-    Record,
-    parse_annotation
-)
+from nerus.utils import Record
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
@@ -35,59 +28,19 @@ from .base import (
 )
 
 
-class PullentiRecord(Record):
-    @classmethod
-    def from_client(cls, record):
-        args = []
-        for key in cls.__attributes__:
-            annotation = cls.__annotations__.get(key)
-            type, repeatable, is_record = parse_annotation(annotation)
-            value = getattr(record, key)
-            if repeatable and is_record:
-                value = [type.from_client(_) for _ in value]
-            elif is_record:
-                value = type.from_client(value)
-            args.append(value)
-        return cls(*args)
-
-
-class PullentiSpan(PullentiSpan_, Span, PullentiRecord):
+class PullentiSpan(PullentiSpan_, Span):
     def offset(self, delta):
         return PullentiSpan(
             self.start + delta,
             self.stop + delta
         )
 
-
-class PullentiSlot(PullentiSlot_, PullentiRecord):
-    # annotation is not supported
-    #   value: (str, PullentiReferent)}
-
     @classmethod
-    def from_client(cls, slot):
-        value = slot.value
-        if isinstance(value, PullentiReferent_):
-            value = PullentiReferent.from_client(value)
-        return PullentiSlot(
-            slot.key,
-            value
-        )
-
-    @classmethod
-    def from_json(cls, data):
-        key, value = [data[_] for _ in cls.__attributes__]
-        if not isinstance(value, str):
-            value = PullentiReferent.from_json(value)
-        return cls(key, value)
+    def from_client(cls, span):
+        return PullentiSpan(span.start, span.stop)
 
 
-class PullentiReferent(PullentiReferent_, PullentiRecord):
-    __annotations__ = {
-        'slots': [PullentiSlot]
-    }
-
-
-class PullentiMatch(PullentiMatch_, PullentiRecord):
+class PullentiMatch(PullentiMatch_, Record):
     def offset(self, delta):
         return PullentiMatch(
             self.referent,
@@ -110,19 +63,16 @@ class PullentiMatch(PullentiMatch_, PullentiRecord):
         else:
             return 1 + max(_.depth for _ in self.children)
 
+    @classmethod
+    def from_client(cls, match):
+        return PullentiMatch(
+            match.referent,
+            PullentiSpan.from_client(match.span),
+            [PullentiMatch.from_client(_) for _ in match.children]
+        )
 
-PullentiMatch.__annotations__ = {
-    'referent': PullentiReferent,
-    'span': PullentiSpan,
-    'children': [PullentiMatch]
-}
 
-
-class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup, PullentiRecord):
-    __annotations__ = {
-        'matches': [PullentiMatch]
-    }
-
+class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
     label = PULLENTI
 
     @property
@@ -143,33 +93,27 @@ class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup, PullentiRecord):
             return
         return max(_.depth for _ in self.matches)
 
+    @classmethod
+    def from_client(cls, result):
+        return PullentiMarkup(
+            result.text,
+            [PullentiMatch.from_client(_) for _ in result.matches]
+        )
 
-LOOP = PullentiReferent_('LOOP')
+    @property
+    def as_json(self):
+        return PullentiMarkup_.as_json.fget(self)
 
-
-def remove_loops_(referent, visited):
-    visited.add(id(referent))
-    for slot in referent.slots:
-        value = slot.value
-        if isinstance(value, PullentiReferent_):
-            if id(value) in visited:
-                slot.value = LOOP
-            else:
-                remove_loops_(value, visited)
-
-
-def remove_loops(result):
-    for match in result.walk():
-        visited = set()
-        remove_loops_(match.referent, visited)
+    @classmethod
+    def from_json(cls, data):
+        result = PullentiMarkup_.from_json(data)
+        return cls.from_client(result)
 
 
 def map(texts, host=PULLENTI_HOST, port=PULLENTI_PORT):
     client = PullentiClient(host, port)
     for text in texts:
         result = client(text)
-        # ~2% of docs, just ignore, maybe TODO
-        remove_loops(result)
         yield PullentiMarkup.from_client(result)
 
 

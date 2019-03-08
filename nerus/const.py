@@ -171,7 +171,7 @@ PULLENTI = 'pullenti'
 PULLENTI_HOST = getenv('PULLENTI_HOST', ANNOTATORS_HOST)
 PULLENTI_PORT = int(getenv('PULLENTI_PORT', 8080))
 
-PULLENTI_IMAGE = 'pullenti/pullenti-server'
+PULLENTI_IMAGE = 'pullenti/pullenti-server:3.17'
 PULLENTI_CONTAINER_PORT = 8080
 
 
