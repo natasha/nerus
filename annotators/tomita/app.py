@@ -95,6 +95,12 @@ def read(stream):
         return EMPTY
 
 
+def clear_stderr(stream):
+    # tomita dumps runtime stats to stderr, buffer size is ~8Kb, it
+    # overflows quickly, process gets stuck
+    stream.flush()
+
+
 def terminate(process):
     if not process:
         return
@@ -140,10 +146,18 @@ class HTTPHandler(BaseHTTPRequestHandler):
             )
             return
 
-        write(text, TOMITA.stdin)
-        xml = read(TOMITA.stdout)
-        log('Process: in %d chars, out %d bytes', len(text), len(xml))
+        try:
+            write(text, TOMITA.stdin)
+            xml = read(TOMITA.stdout)
+            clear_stderr(TOMITA.stderr)
+        except Exception as error:
+            self.send_error(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                'Read/write error: "%s"' % error
+            )
+            return
 
+        log('Process: in %d chars, out %d bytes', len(text), len(xml))
         self.send_response(200)
         self.send_header('Content-Type', 'application/xml; charset=utf-8')
         self.end_headers()
