@@ -9,8 +9,32 @@ from .path import (
 )
 
 
+#########
+#
+#   NERUS
+#
+########
+
+
+NERUS = 'nerus'
+NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
+
+
+##########
+#
+#   WORKER
+#
+#########
+
+
+WORKER_DIR = join_path(NERUS_DIR, 'worker')
+WORKER_IP = join_path(WORKER_DIR, '.ip')
+
+WORKER_NAME = getenv('WORKER_NAME', NERUS)
 LOCALHOST = 'localhost'
 WORKER_HOST = getenv('WORKER_HOST', LOCALHOST)
+WORKER_ANNOTATOR = getenv('WORKER_ANNOTATOR')
+WORKER_QUEUE = getenv('WORKER_QUEUE')
 
 
 #######
@@ -35,17 +59,6 @@ LOC = 'LOC'
 B = 'B'
 I = 'I'
 O = 'O'
-
-
-#########
-#
-#   NERUS
-#
-########
-
-
-NERUS = 'nerus'
-NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
 
 
 #######
@@ -219,19 +232,6 @@ TOMITA_URL = 'http://{host}:{port}/'
 
 
 ANNOTATORS = [DEEPPAVLOV, MITIE, NATASHA, PULLENTI, TEXTERRA, TOMITA]
-
-
-##########
-#
-#   WORKER
-#
-#########
-
-
-WORKER_DIR = join_path(NERUS_DIR, 'worker')
-WORKER_NAME = getenv('WORKER_NAME', NERUS)
-WORKER_ANNOTATOR = getenv('WORKER_ANNOTATOR', NATASHA)
-WORKER_QUEUE = getenv('WORKER_QUEUE', NATASHA)
 
 
 ########

@@ -59,7 +59,7 @@ def read_index(collection, offset=0, count=None):
         yield doc[_ID]
 
 
-def get_stats(db):
+def collection_counts(db):
     for name in db.list_collection_names():
         count = db[name].estimated_document_count()
         yield count, name

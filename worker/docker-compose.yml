@@ -76,7 +76,8 @@ services:
   ##########
 
   natasha_worker:
-    image: natasha/nerus-worker
+    image: natasha/nerus-ctl
+    command: worker run
     restart: always
     environment:
       QUEUE_HOST: redis

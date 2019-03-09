@@ -14,6 +14,11 @@ def load_text(path):
         return file.read()
 
 
+def dump_text(text, path):
+    with open(path, 'w') as file:
+        file.write(text)
+
+
 def load_lines(path):
     with open(path) as file:
         for line in file:

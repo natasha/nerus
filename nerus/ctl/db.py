@@ -11,11 +11,12 @@ from nerus.corpora import find as find_corpus
 from nerus.db import (
     get_db,
     chunk_insert,
-    get_stats as db_stats_
+    collection_counts as collection_counts_
 )
 from nerus.const import (
     CORPUS,
-    ANNOTATORS
+    ANNOTATORS,
+    WORKER_HOST
 )
 
 
@@ -24,22 +25,22 @@ def insert_corpus(args):
 
 
 def insert_corpus_(corpus, offset, count, chunk):
+    log('Inserting corpus')
     schema = find_corpus(corpus)
     path = schema.get()
     corpus = schema.load(path)
     corpus = log_progress(corpus)
     corpus = head(skip(corpus, offset), count)
 
-    db = get_db()
-    log('Inserting corpus: %s', schema.name)
+    db = get_db(host=WORKER_HOST)
     docs = (_.as_bson for _ in corpus)
     chunk_insert(db[CORPUS], docs, chunk)
 
 
-def db_stats(args):
-    log('Getting stats')
-    db = get_db()
-    for count, name in db_stats_(db):
+def collection_counts(args):
+    log('Counting docs')
+    db = get_db(host=WORKER_HOST)
+    for count, name in collection_counts_(db):
         print(count, name, sep='\t')
 
 
@@ -49,7 +50,7 @@ def remove_collections(args):
 
 
 def remove_collections_(collections):
-    db = get_db()
+    db = get_db(host=WORKER_HOST)
     for collection in collections:
         log('Removing %s' % collection)
         db[collection].remove()

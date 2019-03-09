@@ -72,7 +72,32 @@ A = 2:
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
-# Dev
+# Development
+
+```bash
+nerus-ctl worker create
+nerus-ctl worker deploy
+
+nerus-ctl worker ssh 'docker-compose up -d 2>&1'
+
+nerus-ctl worker show
+http://84.201.129.47:8060 nerus:nerus
+
+nerus-ctl worker ssh 'docker stats'
+nerus-ctl worker ssh 'docker-compose pull'
+nerus-ctl worker ssh 'docker-compose up -d'
+
+nerus-ctl db rm
+
+nerus-ctl db insert lenta --count=1000 --chunk=1000
+nerus-ctl q --chunk=100
+
+nerus-ctl db insert lenta --offset=1000 --count=100000 --chunk=1000
+nerus-ctl q --offset=1000 --chunk=100
+
+```
+
+
 # GPU vs CPU
 
 On AWS p2.xlarge one can process ~100 000 Lenta docs in 1.5 hours

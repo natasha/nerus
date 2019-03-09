@@ -1,5 +1,5 @@
 
-from pssh.clients.native.single import SSHClient
+import paramiko
 
 from .const import (
     SSH_USER,
@@ -8,20 +8,34 @@ from .const import (
 
 
 def get_client(host, user=SSH_USER, key=SSH_PRIVATE_KEY):
-    return SSHClient(
-        host,
-        user=user,
-        pkey=key
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(
+        hostname=host,
+        username=user,
+        key_filename=key
     )
+    return client
 
 
-def exec(client, command, sudo=True):
-    _, host, stdout, stderr, _ = client.run_command(command, sudo=sudo)
-    for line in stdout:
-        print(line)
-    for line in stderr:
-        print('[err] %s' % line)
+def exec(client, command):
+    # https://stackoverflow.com/questions/3823862/paramiko-combine-stdout-and-stderr
+    transport = client.get_transport()
+    channel = transport.open_session()
+    channel.get_pty()
+    file = channel.makefile()
+    channel.exec_command(command)
+    for line in file:
+        print(line, end='', flush=True)
 
 
-def cp(client, source, target):
-    client.copy_file(source, target)
+def upload(client, source, target):
+    connection = client.open_sftp()
+    connection.put(source, target)
+    connection.close()
+
+
+def download(client, source, target):
+    connection = client.open_sftp()
+    connection.get(source, target)
+    connection.close()

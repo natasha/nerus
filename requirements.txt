@@ -6,9 +6,7 @@ razdel==0.3.0
 pullenti_client==0.2.0
 
 yandexcloud==0.8.0
-# brew install libssh2
-# SYSTEM_LIBSSH2=1 pip install ssh2-python
-parallel-ssh==1.9.1
+paramiko==2.4.2
 
 pymongo==3.7.2
 redis==2.10.5

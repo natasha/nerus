@@ -1,5 +1,5 @@
 
-IMAGE = natasha/nerus-worker
+IMAGE = natasha/nerus-ctl
 
 image:
 	docker build -t $(IMAGE) .

@@ -9,20 +9,24 @@ from nerus.const import (
     ANNOTATORS
 )
 
-from .db import (
-    insert_corpus,
-    db_stats,
-    remove_collections
-)
-from .worker import (
-    run_worker,
-    show_worker,
-    create_worker,
-    deploy_worker,
-    remove_worker,
-    ssh_worker
-)
-from .queue import enqueue_tasks
+
+# a bit quicker startup
+
+def insert_corpus(*args): from .db import insert_corpus as f; return f(*args)
+def collection_counts(*args): from .db import collection_counts as f; return f(*args)
+def remove_collections(*args): from .db import remove_collections as f; return f(*args)
+
+def run_worker(*args): from .worker import run_worker as f; return f(*args)
+def worker_ip(*args): from .worker import worker_ip as f; return f(*args)
+def create_worker(*args): from .worker import create_worker as f; return f(*args)
+def deploy_worker(*args): from .worker import deploy_worker as f; return f(*args)
+def remove_worker(*args): from .worker import remove_worker as f; return f(*args)
+def ssh_worker(*args): from .worker import ssh_worker as f; return f(*args)
+def worker_upload(*args): from .worker import worker_upload as f; return f(*args)
+def worker_download(*args): from .worker import worker_download as f; return f(*args)
+
+def enqueue_tasks(*args): from .queue import enqueue_tasks as f; return f(*args)
+def show_queues(*args): from .queue import show_queues as f; return f(*args)
 
 
 def main():
@@ -30,6 +34,38 @@ def main():
     parser.set_defaults(function=None)
 
     subs = parser.add_subparsers()
+
+    ########
+    #   WORKER
+    #########
+
+    worker = subs.add_parser('worker').add_subparsers()
+
+    sub = worker.add_parser('run')
+    sub.set_defaults(function=run_worker)
+
+    sub = worker.add_parser('create')
+    sub.set_defaults(function=create_worker)
+
+    sub = worker.add_parser('ip')
+    sub.set_defaults(function=worker_ip)
+
+    sub = worker.add_parser('ssh')
+    sub.set_defaults(function=ssh_worker)
+    sub.add_argument('command')
+
+    sub = worker.add_parser('upload')
+    sub.set_defaults(function=worker_upload)
+    sub.add_argument('source')
+    sub.add_argument('target', nargs='?')
+
+    sub = worker.add_parser('download')
+    sub.set_defaults(function=worker_download)
+    sub.add_argument('source')
+    sub.add_argument('target', nargs='?')
+
+    sub = worker.add_parser('rm')
+    sub.set_defaults(function=remove_worker)
 
     #######
     #  DB
@@ -44,49 +80,30 @@ def main():
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)
 
-    sub = db.add_parser('stats')
-    sub.set_defaults(function=db_stats)
+    sub = db.add_parser('counts')
+    sub.set_defaults(function=collection_counts)
 
     sub = db.add_parser('rm')
     sub.set_defaults(function=remove_collections)
-    sub.add_argument('collections', nargs='*', choices=ANNOTATORS + [CORPUS, []])
-
-    ########
-    #   WORKER
-    #########
-
-    worker = subs.add_parser('worker').add_subparsers()
-
-    sub = worker.add_parser('run')
-    sub.set_defaults(function=run_worker)
-
-    sub = worker.add_parser('create')
-    sub.set_defaults(function=create_worker)
-
-    sub = worker.add_parser('deploy')
-    sub.set_defaults(function=deploy_worker)
-
-    sub = worker.add_parser('show')
-    sub.set_defaults(function=show_worker)
-
-    sub = worker.add_parser('ssh')
-    sub.set_defaults(function=ssh_worker)
-    sub.add_argument('command')
-
-    sub = worker.add_parser('rm')
-    sub.set_defaults(function=remove_worker)
+    # https://utcc.utoronto.ca/~cks/space/blog/python/ArgparseNargsChoicesLimitation
+    sub.add_argument('collections', nargs='*', choices=[[]] + ANNOTATORS + [CORPUS])
 
     ########
     #  QUEUE
     #########
 
-    sub = subs.add_parser('q')
+    queue = subs.add_parser('q').add_subparsers()
+
+    sub = queue.add_parser('insert')
     sub.set_defaults(function=enqueue_tasks)
-    sub.add_argument('annotators', nargs='*', choices=ANNOTATORS + [[]])
+    sub.add_argument('annotators', nargs='*', choices=[[]] + ANNOTATORS)
     sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)
     sub.add_argument('--dry-run', action='store_true')
+
+    sub = queue.add_parser('show')
+    sub.set_defaults(function=show_queues)
 
     ##########
     #   PARSE
@@ -97,4 +114,7 @@ def main():
     if not args.function:
         parser.print_help()
         parser.exit()
-    args.function(args)
+    try:
+        args.function(args)
+    except KeyboardInterrupt:
+        pass

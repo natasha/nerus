@@ -1,6 +1,5 @@
 
 from .utils import strict_zip
-from .path import join_path
 from .const import (
     WORKER_ANNOTATOR,
     WORKER_QUEUE,
@@ -8,6 +7,7 @@ from .const import (
     _ID, TEXT
 )
 from .queue import (
+    get_connection,
     get_queue,
     work_on
 )
@@ -21,12 +21,6 @@ from .annotators import find as find_annotator
 from .const import (
     YC_HDD,
     YC_UBUNTU_1604,
-
-    WORKER_DIR,
-)
-from .ssh import (
-    exec,
-    cp
 )
 
 
@@ -75,18 +69,6 @@ def run(queue=WORKER_QUEUE, annotator=WORKER_ANNOTATOR):
     annotator = constructor()
     annotator.wait()
 
-    queue = get_queue(queue)
+    connection = get_connection()
+    queue = get_queue(queue, connection)
     work_on(queue)
-
-
-def deploy(client):
-    files = {
-        'install.sh': 'install.sh',
-        'cpu.env': '.env',
-        'docker-compose.yml': 'docker-compose.yml'
-    }
-    for filename, target in files.items():
-        source = join_path(WORKER_DIR, filename)
-        cp(client, source, target)
-
-    exec(client, 'sh install.sh 2>&1')

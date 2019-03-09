@@ -1,7 +1,6 @@
 
 from nerus.utils import (
     head,
-    iter_len,
     group_chunks
 )
 from nerus.log import (
@@ -13,42 +12,53 @@ from nerus.const import (
     ANNOTATORS,
 )
 from nerus.queue import (
+    get_connection,
     get_queue,
-    enqueue
+    enqueue,
+    show as show_queues__
 )
 from nerus.worker import task
 from nerus.db import (
     get_db,
     read_index
 )
+from nerus.const import WORKER_HOST
 
 
 def enqueue_tasks(args):
     annotators = args.annotators or ANNOTATORS
-    enqueue_tasks_(annotators, args.offset, args.count, args.chunk, args.dry_run)
+    enqueue_tasks_(annotators, args.offset, args.count, args.chunk)
 
 
-def enqueue_tasks_(annotators, offset, count, chunk, dry_run=False):
+def enqueue_tasks_(annotators, offset, count, chunk):
     log(
         'Annotators: %s; offset: %d, count: %d, chunk: %d',
         ', '.join(annotators), offset, count or -1, chunk
     )
 
-    db = get_db()
+    db = get_db(host=WORKER_HOST)
     ids = read_index(db[CORPUS], offset)
     ids = log_progress(ids)
 
     ids = head(ids, count)
     chunks = group_chunks(ids, size=chunk)
 
-    if dry_run:
-        log('Annotators: %s; chunks: %d', ', '.join(annotators), iter_len(chunks))
-    else:
-        queues = {
-            _: get_queue(_)
-            for _ in annotators
-        }
-        for chunk in chunks:
-            for annotator in annotators:
-                queue = queues[annotator]
-                enqueue(queue, task, chunk)
+    connection = get_connection(host=WORKER_HOST)
+    queues = {
+        _: get_queue(_, connection)
+        for _ in annotators
+    }
+    for chunk in chunks:
+        for annotator in annotators:
+            queue = queues[annotator]
+            enqueue(queue, task, chunk)
+
+
+def show_queues(args):
+    show_queues_()
+
+
+def show_queues_():
+    log('Showing queues')
+    connection = get_connection(host=WORKER_HOST)
+    show_queues__(connection)

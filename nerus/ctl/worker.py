@@ -1,8 +1,17 @@
 
 from nerus.log import log, dot
+from nerus.const import WORKER_IP
+from nerus.path import (
+    exists,
+    maybe_rm,
+    basename
+)
+from nerus.etl import (
+    load_text,
+    dump_text
+)
 from nerus.worker import (
     run as run_worker_,
-    deploy as deploy_worker__,
     CONFIG as WORKER_CONFIG
 )
 from nerus.yc import (
@@ -15,14 +24,30 @@ from nerus.yc import (
 )
 from nerus.ssh import (
     get_client,
-    exec as ssh_exec
+    exec as ssh_exec,
+    upload,
+    download
 )
 from nerus.const import WORKER_NAME
+
+
+#######
+#
+#   RUN
+#
+#######
 
 
 def run_worker(args):
     log('Starting worker')
     run_worker_()
+
+
+#######
+#
+#   CREATE
+#
+#########
 
 
 def find_worker(sdk, name=WORKER_NAME):
@@ -48,19 +73,46 @@ def create_worker_():
         callback=dot,
         **WORKER_CONFIG
     )
+    ip = worker_ip_()
+    log('Created: %r' % ip)
 
 
-def show_worker(args):
-    show_worker_()
+########
+#
+#   IP
+#
+########
 
 
-def show_worker_():
+def worker_ip(args):
+    print(worker_ip_())
+
+
+def worker_ip_():
+    if exists(WORKER_IP):
+        return load_text(WORKER_IP)
+
+    log('Listing instances')
     sdk = get_sdk()
     instance = find_worker(sdk)
-    if instance:
-        print(instance)
-    else:
+    if not instance:
         log('No worker')
+        return
+
+    ip = instance_ip(instance)
+    if not ip:
+        log('No ip (yet?)')
+        return
+
+    dump_text(ip, WORKER_IP)
+    return ip
+
+
+########
+#
+#   SSH
+#
+############
 
 
 def ssh_worker(args):
@@ -68,33 +120,48 @@ def ssh_worker(args):
 
 
 def ssh_worker_(command):
-    sdk = get_sdk()
-    instance = find_worker(sdk)
-    if not instance:
-        log('No worker')
+    ip = worker_ip_()
+    if not ip:
         return
 
-    ip = instance_ip(instance)
     client = get_client(ip)
-    log('Run: %r' % command)
+    log('[%s] %r' % (ip, command))
     ssh_exec(client, command)
 
 
-def deploy_worker(args):
-    deploy_worker_()
+########
+#
+#   TRANSFER
+#
+##########
 
 
-def deploy_worker_():
-    sdk = get_sdk()
-    instance = find_worker(sdk)
-    if not instance:
-        log('No worker')
+def worker_upload(args):
+    worker_transfer(upload, args.source, args.target)
+
+
+def worker_download(args):
+    worker_transfer(download, args.source, args.target)
+
+
+def worker_transfer(method, source, target=None):
+    if not target:
+        target = basename(source)
+
+    ip = worker_ip_()
+    if not ip:
         return
 
-    ip = instance_ip(instance)
     client = get_client(ip)
-    log('Deploying worker')
-    deploy_worker__(client)
+    log('Method: %s, %s -> %s', method.__name__, source, target)
+    method(client, source, target)
+
+
+#######
+#
+#   REMOVE
+#
+#######
 
 
 def remove_worker(args):
@@ -107,5 +174,6 @@ def remove_worker_():
     if instance:
         log('Removing worker')
         remove_instance(sdk, instance, dot)
+        maybe_rm(WORKER_IP)
     else:
         log('No worker')
