@@ -73,7 +73,7 @@ def create_worker_():
         callback=dot,
         **WORKER_CONFIG
     )
-    ip = worker_ip_()
+    ip = worker_ip__()
     log('Created: %r' % ip)
 
 
@@ -85,10 +85,16 @@ def create_worker_():
 
 
 def worker_ip(args):
-    print(worker_ip_())
+    worker_ip_()
 
 
 def worker_ip_():
+    ip = worker_ip__()
+    if ip:
+        print(ip)
+
+
+def worker_ip__():
     if exists(WORKER_IP):
         return load_text(WORKER_IP)
 
@@ -120,7 +126,7 @@ def ssh_worker(args):
 
 
 def ssh_worker_(command):
-    ip = worker_ip_()
+    ip = worker_ip__()
     if not ip:
         return
 
@@ -148,7 +154,7 @@ def worker_transfer(method, source, target=None):
     if not target:
         target = basename(source)
 
-    ip = worker_ip_()
+    ip = worker_ip__()
     if not ip:
         return
 
