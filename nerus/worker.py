@@ -31,9 +31,9 @@ from .ssh import (
 
 
 CONFIG = dict(
-    cores=1,
+    cores=10,
     share=100,
-    memory=2,
+    memory=20,
     disk_size=50,
     disk_type=YC_HDD,
     image=YC_UBUNTU_1604,
