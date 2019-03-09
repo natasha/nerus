@@ -25,6 +25,8 @@ TOMITA = None
 PUTIN = 'Путин'
 HEADER = b'<?xml version=\'1.0\' encoding=\'utf-8\'?><fdo_objects>'
 EMPTY = b'<document></document>'
+# Time:0:0:3 Doc:50 Vol:0.03Mb Speed:35Mb/h (), Used sentences:100.00%\r
+STATS = re.compile(rb'Time:[^\r]+\r')
 
 
 def log(format, *args):
@@ -52,16 +54,16 @@ def run(bin, config):
         [bin, config],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         bufsize=0,
         cwd=CONFIG_DIR
     )
 
     while True:
-        line = process.stderr.readline().decode('utf8')
-        if re.match(r'^  Compiling .+OK$', line):
+        line = process.stdout.readline()
+        if re.match(rb'^  Compiling .+OK$', line):
             continue
-        if re.match(r'^\[.+\] - Start\.  \(Processing files\.\)$', line):
+        if re.match(rb'^\[.+\] - Start\.  \(Processing files\.\)$', line):
             break
         raise Exception('Bad launch line: %r' % line)
 
@@ -85,6 +87,11 @@ def read(stream):
     if line.startswith(HEADER):
         line = line[len(HEADER):]
 
+    match = STATS.match(line)
+    if match:
+        start, stop = match.span()
+        line = line[stop:]
+
     match = re.search(rb'di="([^"]+)"', line)
     index = int(match.group(1))
     if index % 2 == 1:
@@ -95,12 +102,6 @@ def read(stream):
         return EMPTY
 
 
-def clear_stderr(stream):
-    # tomita dumps runtime stats to stderr, buffer size is ~8Kb, it
-    # overflows quickly, process gets stuck
-    stream.flush()
-
-
 def terminate(process):
     if not process:
         return
@@ -108,7 +109,6 @@ def terminate(process):
     process.terminate()
     process.stdin.close()
     process.stdout.close()
-    process.stderr.close()
     process.wait()
 
 
@@ -149,7 +149,6 @@ class HTTPHandler(BaseHTTPRequestHandler):
         try:
             write(text, TOMITA.stdin)
             xml = read(TOMITA.stdout)
-            clear_stderr(TOMITA.stderr)
         except Exception as error:
             self.send_error(
                 HTTPStatus.INTERNAL_SERVER_ERROR,
