@@ -1,12 +1,16 @@
 
 from redis import Redis
 from rq import Queue, Worker, Connection
+from rq.job import requeue_job  # noqa
 from rq.cli.helpers import show_both as show_
 
 from .const import (
     QUEUE_HOST,
     QUEUE_PORT,
-    QUEUE_PASSWORD
+    QUEUE_PASSWORD,
+
+    ANNOTATORS,
+    FAILED
 )
 
 
@@ -39,7 +43,7 @@ def enqueue(queue, function, *args):
 def show(connection):
     with Connection(connection):
         show_(
-            queues=None,  # show all
+            queues=ANNOTATORS + [FAILED],
             raw=False,
             by_queue=False,
             queue_class=Queue,

@@ -26,12 +26,12 @@ NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
 #
 #########
 
+LOCALHOST = 'localhost'
 
 WORKER_DIR = join_path(NERUS_DIR, 'worker')
 WORKER_IP = join_path(WORKER_DIR, '.ip')
 
 WORKER_NAME = getenv('WORKER_NAME', NERUS)
-LOCALHOST = 'localhost'
 WORKER_HOST = getenv('WORKER_HOST', LOCALHOST)
 WORKER_ANNOTATOR = getenv('WORKER_ANNOTATOR')
 WORKER_QUEUE = getenv('WORKER_QUEUE')
@@ -107,7 +107,7 @@ LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 
 
 CORPORA = [FACTRU, NE5, LENTA]
-CORPORA_DIR = join_path(NERUS_DIR, 'data')
+CORPORA_DIR = getenv('CORPORA_DIR', join_path(NERUS_DIR, 'data'))
 
 
 ########
@@ -231,7 +231,7 @@ TOMITA_URL = 'http://{host}:{port}/'
 #########
 
 
-ANNOTATORS = [DEEPPAVLOV, MITIE, NATASHA, PULLENTI, TEXTERRA, TOMITA]
+ANNOTATORS = [DEEPPAVLOV, PULLENTI, TEXTERRA, TOMITA, NATASHA, MITIE]
 
 
 ########
@@ -241,6 +241,7 @@ ANNOTATORS = [DEEPPAVLOV, MITIE, NATASHA, PULLENTI, TEXTERRA, TOMITA]
 ########
 
 
+FAILED = 'failed'
 QUEUE_HOST = getenv('QUEUE_HOST', WORKER_HOST)
 QUEUE_PORT = int(getenv('QUEUE_PORT', 6379))
 QUEUE_PASSWORD = getenv('QUEUE_PASSWORD', 'ENvHwwFLhiKe7hE')

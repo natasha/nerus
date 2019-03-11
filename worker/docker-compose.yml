@@ -20,17 +20,6 @@ services:
     ports:
       - 6379:6379
 
-  rq:
-    image: alexkuk/rq-dashboard
-    restart: always
-    environment:
-      REDIS_URL: redis://:ENvHwwFLhiKe7hE@redis
-      USERNAME: nerus
-      PASSWORD: nerus
-      PORT: 80
-    ports:
-      - 8060:80
-
   ##########
   #   ANNOTATORS
   ##########
