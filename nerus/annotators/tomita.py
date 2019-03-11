@@ -121,10 +121,8 @@ def call_(text, host, port):
         url,
         data=payload
     )
-    try:
-        return parse_xml(response.text)
-    except:
-        raise Exception(response.text)
+    response.raise_for_status()
+    return parse_xml(response.text)
 
 
 def call(text, host=TOMITA_HOST, port=TOMITA_PORT):

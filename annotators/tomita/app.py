@@ -27,6 +27,12 @@ HEADER = b'<?xml version=\'1.0\' encoding=\'utf-8\'?><fdo_objects>'
 EMPTY = b'<document></document>'
 # Time:0:0:3 Doc:50 Vol:0.03Mb Speed:35Mb/h (), Used sentences:100.00%\r
 STATS = re.compile(rb'Time:[^\r]+\r')
+# Too many facts of type "Person" found (47), will be ignored
+# The current limit is 25.
+TOO_MANY = (
+    b'Too many facts of type',
+    b'The current limit is'
+)
 
 
 def log(format, *args):
@@ -84,6 +90,9 @@ def write(text, stream):
 
 def read(stream):
     line = stream.readline()
+    while line.startswith(TOO_MANY):
+        line = stream.readline()
+
     if line.startswith(HEADER):
         line = line[len(HEADER):]
 
@@ -93,6 +102,9 @@ def read(stream):
         line = line[stop:]
 
     match = re.search(rb'di="([^"]+)"', line)
+    if not match:
+        raise Exception('Bad line: %r' % line)
+        
     index = int(match.group(1))
     if index % 2 == 1:
         # not PUTIN
