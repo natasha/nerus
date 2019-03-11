@@ -17,7 +17,7 @@ apt-get update
 apt-get install -y docker-ce
 
 # https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
-sudo gpasswd -a $USER docker
+sudo gpasswd -a nerus docker
 
 wget https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64 -O /usr/bin/docker-compose
 chmod a+x /usr/bin/docker-compose
