@@ -1,4 +1,6 @@
 
+from collections import OrderedDict
+
 from pymongo import MongoClient
 
 from .const import (
@@ -16,7 +18,8 @@ def get_db(host=DB_HOST, port=DB_PORT):
     client = MongoClient(
         host, port,
         username=DB_USERNAME,
-        password=DB_PASSWORD
+        password=DB_PASSWORD,
+        document_class=OrderedDict
     )
     return client[DB_NAME]
 
@@ -47,19 +50,25 @@ def chunk_insert(collection, docs, size):
     buffer.flush()
 
 
-def query_index(collection, ids):
-    return collection.find({_ID: {'$in': list(ids)}})
+def query_index(collection, ids, include_missing=False):
+    docs = collection.find({_ID: {'$in': list(ids)}})
+    mapping = {_[_ID]: _ for _ in docs}
+    for id in ids:
+        if id in mapping:
+            yield mapping[id]
+        elif include_missing:
+            yield
 
 
 def read_index(collection, offset=0, count=None):
     if not count:
         count = 0  # no limit
-    docs = collection.find({}).skip(offset).limit(count)
+    docs = (
+        collection
+        .find({}, {_ID: 1})
+        .sort('_id', 1)
+        .skip(offset)
+        .limit(count)
+    )
     for doc in docs:
         yield doc[_ID]
-
-
-def collection_counts(db):
-    for name in db.list_collection_names():
-        count = db[name].estimated_document_count()
-        yield count, name

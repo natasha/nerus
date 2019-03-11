@@ -15,13 +15,14 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 log = logger.info
+log_error = logger.error
 
 
 def dot():
     print('.', end='', file=sys.stderr, flush=True)
 
 
-def log_progress(items, label=None, hide=False):
+def log_progress(items, prefix=None, total=None):
     # https://github.com/tqdm/tqdm/issues/461#issuecomment-334343230
     tqdm.get_lock().locks = []
-    return tqdm(items, desc=label, leave=not hide)
+    return tqdm(items, desc=prefix, total=total)

@@ -1,12 +1,15 @@
 
 import subprocess
 import zipfile
+import tarfile
 import gzip
 import csv
+import json
 import xml.etree.ElementTree as ET
 
 from .log import log
 from .path import rm, exists
+from .const import NERUS
 
 
 def load_text(path):
@@ -39,12 +42,13 @@ def download(url, path):
     log('Download %s -> %s', url, path)
     try:
         subprocess.run(
-            ['wget', url, '-O', path],
+            ['wget', '--force-directories', '-O', path, url],
             check=True
         )
     except subprocess.CalledProcessError:
         if exists(path):
             rm(path)
+        raise
 
 
 def unzip(path, dir):
@@ -63,3 +67,30 @@ def parse_csv(lines, header=True):
     if header:
         next(lines)
     return csv.reader(lines)
+
+
+def serialize_jsonl(items):
+    for item in items:
+        yield json.dumps(item, ensure_ascii=False)
+
+
+def parse_jsonl(lines):
+    for line in lines:
+        yield json.loads(line)
+
+
+def dump_gz_lines(lines, path):
+    with gzip.open(path, 'wt') as file:
+        for line in lines:
+            file.write(line + '\n')
+
+
+def append_tar(path, part):
+    with tarfile.open(path, 'a') as tar:
+        with open(part, 'rb') as file:
+            info = tar.gettarinfo(part, fileobj=file)
+            info.uid = 1
+            info.gid = 1
+            info.uname = NERUS
+            info.gname = NERUS
+            tar.addfile(info, file)

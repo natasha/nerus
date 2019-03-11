@@ -13,8 +13,9 @@ from nerus.const import (
 # a bit quicker startup
 
 def insert_corpus(*args): from .db import insert_corpus as f; return f(*args)
-def collection_counts(*args): from .db import collection_counts as f; return f(*args)
+def show_db(*args): from .db import show_db as f; return f(*args)
 def remove_collections(*args): from .db import remove_collections as f; return f(*args)
+def dump_db(*args): from .db import dump_db as f; return f(*args)
 
 def run_worker(*args): from .worker import run_worker as f; return f(*args)
 def worker_ip(*args): from .worker import worker_ip as f; return f(*args)
@@ -27,6 +28,8 @@ def worker_download(*args): from .worker import worker_download as f; return f(*
 
 def enqueue_tasks(*args): from .queue import enqueue_tasks as f; return f(*args)
 def show_queues(*args): from .queue import show_queues as f; return f(*args)
+def show_failed(*args): from .queue import show_failed as f; return f(*args)
+def retry_failed(*args): from .queue import retry_failed as f; return f(*args)
 
 
 def main():
@@ -80,13 +83,20 @@ def main():
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)
 
-    sub = db.add_parser('counts')
-    sub.set_defaults(function=collection_counts)
+    sub = db.add_parser('show')
+    sub.set_defaults(function=show_db)
 
     sub = db.add_parser('rm')
     sub.set_defaults(function=remove_collections)
     # https://utcc.utoronto.ca/~cks/space/blog/python/ArgparseNargsChoicesLimitation
     sub.add_argument('collections', nargs='*', choices=[[]] + ANNOTATORS + [CORPUS])
+
+    sub = db.add_parser('dump')
+    sub.set_defaults(function=dump_db)
+    sub.add_argument('path')
+    sub.add_argument('annotators', nargs='*', choices=[[]] + ANNOTATORS)
+    sub.add_argument('--count', type=int)
+    sub.add_argument('--chunk', type=int, default=10000)
 
     ########
     #  QUEUE
@@ -99,11 +109,17 @@ def main():
     sub.add_argument('annotators', nargs='*', choices=[[]] + ANNOTATORS)
     sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
-    sub.add_argument('--chunk', type=int, default=1000)
+    sub.add_argument('--chunk', type=int, default=100)
     sub.add_argument('--dry-run', action='store_true')
 
     sub = queue.add_parser('show')
     sub.set_defaults(function=show_queues)
+
+    sub = queue.add_parser('failed')
+    sub.set_defaults(function=show_failed)
+
+    sub = queue.add_parser('retry')
+    sub.set_defaults(function=retry_failed)
 
     ##########
     #   PARSE
