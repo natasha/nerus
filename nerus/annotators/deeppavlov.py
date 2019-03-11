@@ -44,8 +44,12 @@ class DeeppavlovMarkup(AnnotatorMarkup):
 
 def parse(texts, data):
     for text, (chunks, tags) in strict_zip(texts, data):
-        tokens = list(find_tokens(chunks, text))
-        spans = list(bio_spans(tokens, tags))
+        # see patch_texts
+        if not text.strip():
+            spans = []
+        else:
+            tokens = list(find_tokens(chunks, text))
+            spans = list(bio_spans(tokens, tags))
         yield DeeppavlovMarkup(text, spans)
 
 
@@ -63,9 +67,19 @@ def post(texts, host, port):
     return response.json()
 
 
+def patch_texts(texts):
+    # deeppavlov does not work well with
+    # texts=['', '\t', '   '] and so on
+    for text in texts:
+        if not text.strip():
+            text = '?'  # assume ? is not tagger
+        yield text
+
+
 def map(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT, size=DEEPPAVLOV_CHUNK):
     for chunk in group_chunks(texts, size):
-        data = post(chunk, host, port)
+        patched = list(patch_texts(chunk))
+        data = post(patched, host, port)
         for markup in parse(chunk, data):
             yield markup
 
