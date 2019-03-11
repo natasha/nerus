@@ -1,7 +1,7 @@
 
 from time import sleep
 
-import requests
+from requests import RequestException
 
 from nerus.utils import Record
 from nerus.const import (
@@ -53,7 +53,7 @@ class Annotator(Record):
         try:
             self(PUTIN)
             return True
-        except (requests.ConnectionError, requests.ReadTimeout):
+        except (RequestException, AnnotatorError):
             return False
 
     def wait(self, callback=None, retries=30, delay=2):

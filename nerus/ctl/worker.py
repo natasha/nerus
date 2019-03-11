@@ -1,5 +1,9 @@
 
-from nerus.log import log, dot
+from nerus.log import (
+    dot,
+    log,
+    log_error
+)
 from nerus.const import WORKER_IP
 from nerus.path import (
     exists,
@@ -63,7 +67,7 @@ def create_worker_():
     sdk = get_sdk()
     instance = find_worker(sdk)
     if instance:
-        log('Worker already exists')
+        log_error('Worker already exists')
         return
 
     log('Creating worker')
@@ -74,7 +78,7 @@ def create_worker_():
         **WORKER_CONFIG
     )
     ip = worker_ip__()
-    log('Created: %r' % ip)
+    log('Worker ip: %s' % ip)
 
 
 ########
@@ -102,12 +106,12 @@ def worker_ip__():
     sdk = get_sdk()
     instance = find_worker(sdk)
     if not instance:
-        log('No worker')
+        log_error('No worker')
         return
 
     ip = instance_ip(instance)
     if not ip:
-        log('No ip (yet?)')
+        log_error('No ip (yet?)')
         return
 
     dump_text(ip, WORKER_IP)
@@ -159,8 +163,11 @@ def worker_transfer(method, source, target=None):
         return
 
     client = get_client(ip)
-    log('Method: %s, %s -> %s', method.__name__, source, target)
-    method(client, source, target)
+    log('%s %s -> %s', method.__name__, source, target)
+    try:
+        method(client, source, target)
+    except FileNotFoundError as error:
+        log_error(error)
 
 
 #######
@@ -182,4 +189,4 @@ def remove_worker_():
         remove_instance(sdk, instance, dot)
         maybe_rm(WORKER_IP)
     else:
-        log('No worker')
+        log_error('No worker')

@@ -51,7 +51,7 @@ def encode_markups(markups, ids):
         yield doc
 
 
-def task(ids, annotator=WORKER_ANNOTATOR):
+def task(ids, annotator=WORKER_ANNOTATOR, chunk=100):
     db = get_db()
     docs = query_index(db[CORPUS], ids)
 
@@ -61,7 +61,7 @@ def task(ids, annotator=WORKER_ANNOTATOR):
     markups = list(annotator.map(texts))
 
     docs = encode_markups(markups, ids)
-    chunk_insert(db[annotator.name], docs, 100)
+    chunk_insert(db[annotator.name], docs, chunk)
 
 
 def run(queue=WORKER_QUEUE, annotator=WORKER_ANNOTATOR):
