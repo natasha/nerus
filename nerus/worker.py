@@ -45,7 +45,7 @@ def decode_source(docs):
 
 def encode_markups(markups, ids):
     for markup, id in strict_zip(markups, ids):
-        doc = markups.as_bson
+        doc = markup.as_bson
         doc[_ID] = id
         yield doc
 
