@@ -18,6 +18,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     Annotator,
     ContainerAnnotator
@@ -82,3 +83,11 @@ class MitieAnnotator(Annotator):
 class MitieContainerAnnotator(MitieAnnotator, ContainerAnnotator):
     image = MITIE_IMAGE
     container_port = MITIE_CONTAINER_PORT
+
+
+register(
+    MITIE,
+    MitieMarkup,
+    MitieAnnotator,
+    MitieContainerAnnotator
+)

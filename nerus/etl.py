@@ -1,7 +1,6 @@
 
 import subprocess
 import zipfile
-import tarfile
 import gzip
 import csv
 import json
@@ -9,7 +8,6 @@ import xml.etree.ElementTree as ET
 
 from .log import log
 from .path import rm, exists
-from .const import NERUS
 
 
 def load_text(path):
@@ -83,14 +81,3 @@ def dump_gz_lines(lines, path):
     with gzip.open(path, 'wt') as file:
         for line in lines:
             file.write(line + '\n')
-
-
-def append_tar(path, part):
-    with tarfile.open(path, 'a') as tar:
-        with open(part, 'rb') as file:
-            info = tar.gettarinfo(part, fileobj=file)
-            info.uid = 1
-            info.gid = 1
-            info.uname = NERUS
-            info.gname = NERUS
-            tar.addfile(info, file)

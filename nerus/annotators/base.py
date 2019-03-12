@@ -3,7 +3,10 @@ from time import sleep
 
 from requests import RequestException
 
-from nerus.utils import Record
+from nerus.utils import (
+    Record,
+    LabeledRecord
+)
 from nerus.const import (
     LOCALHOST,
     ANNOTATORS_BASE_PORT
@@ -17,12 +20,30 @@ from nerus.docker import (
 )
 
 
+REGISTRY = {}
+
+
+class RegistryRecord(Record):
+    __attributes__ = ['Markup', 'Annotator', 'ContainerAnnotator']
+
+    def __init__(self, Markup, Annotator, ContainerAnnotator):
+        self.Markup = Markup
+        self.Annotator = Annotator
+        self.ContainerAnnotator = ContainerAnnotator
+
+
+def register(label, Markup, Annotator, ContainerAnnotator):
+    REGISTRY[label] = RegistryRecord(Markup, Annotator, ContainerAnnotator)
+
+
 class AnnotatorError(Exception):
     pass
 
 
-class AnnotatorMarkup(Markup):
-    label = None
+class AnnotatorMarkup(Markup, LabeledRecord):
+    @staticmethod
+    def find(label):
+        return REGISTRY[label].Markup
 
 
 PUTIN = 'Путин'
@@ -66,6 +87,10 @@ class Annotator(Record):
                 sleep(delay)
         else:
             raise AnnotatorError('failed to start')
+
+    @staticmethod
+    def find(name):
+        return REGISTRY[name].Annotator
 
 
 class ChunkAnnotator(Annotator):

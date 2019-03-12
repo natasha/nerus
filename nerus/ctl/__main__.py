@@ -4,15 +4,15 @@ import sys
 import argparse
 
 from nerus.const import (
-    CORPUS,
-    CORPORA,
+    SOURCE,
+    SOURCES,
     ANNOTATORS
 )
 
 
 # a bit quicker startup
 
-def insert_corpus(*args): from .db import insert_corpus as f; return f(*args)
+def insert_source(*args): from .db import insert_source as f; return f(*args)
 def show_db(*args): from .db import show_db as f; return f(*args)
 def remove_collections(*args): from .db import remove_collections as f; return f(*args)
 def dump_db(*args): from .db import dump_db as f; return f(*args)
@@ -77,8 +77,8 @@ def main():
     db = subs.add_parser('db').add_subparsers()
 
     sub = db.add_parser('insert')
-    sub.set_defaults(function=insert_corpus)
-    sub.add_argument('corpus', choices=CORPORA)
+    sub.set_defaults(function=insert_source)
+    sub.add_argument('source', choices=SOURCES)
     sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=1000)
@@ -89,7 +89,7 @@ def main():
     sub = db.add_parser('rm')
     sub.set_defaults(function=remove_collections)
     # https://utcc.utoronto.ca/~cks/space/blog/python/ArgparseNargsChoicesLimitation
-    sub.add_argument('collections', nargs='*', choices=[[]] + ANNOTATORS + [CORPUS])
+    sub.add_argument('collections', nargs='*', choices=[[]] + ANNOTATORS + [SOURCE])
 
     sub = db.add_parser('dump')
     sub.set_defaults(function=dump_db)

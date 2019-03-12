@@ -8,7 +8,7 @@ from nerus.log import (
     log_progress
 )
 from nerus.const import (
-    CORPUS,
+    SOURCE,
     ANNOTATORS,
     FAILED
 )
@@ -39,7 +39,7 @@ def enqueue_tasks_(annotators, offset, count, chunk):
     )
 
     db = get_db(host=WORKER_HOST)
-    ids = read_index(db[CORPUS], offset)
+    ids = read_index(db[SOURCE], offset)
     ids = log_progress(ids, total=count)
 
     ids = head(ids, count)

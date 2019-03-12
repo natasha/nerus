@@ -22,6 +22,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     ChunkAnnotator,
     ContainerAnnotator
@@ -102,7 +103,8 @@ class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
 
     @property
     def as_json(self):
-        return PullentiMarkup_.as_json.fget(self)
+        data = PullentiMarkup_.as_json.fget(self)
+        return self.label_json(data)
 
     @classmethod
     def from_json(cls, data):
@@ -130,3 +132,11 @@ class PullentiAnnotator(ChunkAnnotator):
 class PullentiContainerAnnotator(PullentiAnnotator, ContainerAnnotator):
     image = PULLENTI_IMAGE
     container_port = PULLENTI_CONTAINER_PORT
+
+
+register(
+    PULLENTI,
+    PullentiMarkup,
+    PullentiAnnotator,
+    PullentiContainerAnnotator
+)

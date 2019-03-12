@@ -23,7 +23,7 @@ from nerus.const import (
     FACTRU_TESTSET,
     FACTRU_DEVSET,
 
-    CORPORA_DIR
+    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
@@ -35,8 +35,9 @@ from nerus.span import (
 )
 
 from .base import (
-    CorpusRecord,
-    CorpusSchema
+    register,
+    SourceRecord,
+    Source
 )
 
 
@@ -84,7 +85,7 @@ class FactruObject(Record):
         return max(_.stop for _ in self.spans)
 
 
-class FactruMarkup(CorpusRecord, Markup):
+class FactruMarkup(SourceRecord, Markup):
     __attributes__ = ['id', 'text', 'objects']
     __annotations__ = {
         'objects': [FactruObject]
@@ -177,19 +178,22 @@ def load(dir=FACTRU_DIR, sets=[FACTRU_DEVSET, FACTRU_TESTSET]):
 
 
 def get():
-    dir = join_path(CORPORA_DIR, FACTRU_DIR)
+    dir = join_path(SOURCES_DIR, FACTRU_DIR)
     if exists(dir):
         return dir
 
-    path = join_path(CORPORA_DIR, basename(FACTRU_URL))
+    path = join_path(SOURCES_DIR, basename(FACTRU_URL))
     download(FACTRU_URL, path)
-    unzip(path, CORPORA_DIR)
+    unzip(path, SOURCES_DIR)
     rm(path)
 
     return dir
 
 
-class FactruSchema(CorpusSchema):
+class FactruSource(Source):
     name = FACTRU
-    get = get
-    load = load
+    get = staticmethod(get)
+    load = staticmethod(load)
+
+
+register(FACTRU, FactruMarkup, FactruSource)

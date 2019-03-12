@@ -7,11 +7,11 @@ from nerus.const import (
     FACTRU_DIR,
     FACTRU_DEVSET
 )
-from nerus.corpora.factru import (
+from nerus.sources.factru import (
     FactruMarkup,
     FactruObject,
     FactruSpan,
-    FactruSchema as schema
+    FactruSource
 )
 
 
@@ -23,5 +23,5 @@ ETALON = [
 
 def test_load():
     dir = join_path(DATA_DIR, FACTRU_DIR)
-    guess = list(schema.load(dir, sets=[FACTRU_DEVSET]))
+    guess = list(FactruSource.load(dir, sets=[FACTRU_DEVSET]))
     assert guess == ETALON

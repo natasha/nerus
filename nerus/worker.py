@@ -3,7 +3,7 @@ from .utils import strict_zip
 from .const import (
     WORKER_ANNOTATOR,
     WORKER_QUEUE,
-    CORPUS,
+    SOURCE,
     _ID, TEXT
 )
 from .queue import (
@@ -13,11 +13,10 @@ from .queue import (
 )
 from .db import (
     get_db,
-
     query_index,
     chunk_insert,
 )
-from .annotators import find as find_annotator
+from .annotators import Annotator
 from .const import (
     YC_HDD,
     YC_UBUNTU_1604,
@@ -35,7 +34,7 @@ CONFIG = dict(
 )
 
 
-def decode_corpus(docs):
+def decode_source(docs):
     ids = []
     texts = []
     for doc in docs:
@@ -46,17 +45,17 @@ def decode_corpus(docs):
 
 def encode_markups(markups, ids):
     for markup, id in strict_zip(markups, ids):
-        doc = markup.as_bson
+        doc = markups.as_bson
         doc[_ID] = id
         yield doc
 
 
 def task(ids, annotator=WORKER_ANNOTATOR, chunk=100):
     db = get_db()
-    docs = query_index(db[CORPUS], ids)
+    docs = query_index(db[SOURCE], ids)
 
-    ids, texts = decode_corpus(docs)
-    constructor = find_annotator(annotator)
+    ids, texts = decode_source(docs)
+    constructor = Annotator.find(annotator)
     annotator = constructor()
     markups = list(annotator.map(texts))
 
@@ -65,7 +64,7 @@ def task(ids, annotator=WORKER_ANNOTATOR, chunk=100):
 
 
 def run(queue=WORKER_QUEUE, annotator=WORKER_ANNOTATOR):
-    constructor = find_annotator(annotator)
+    constructor = Annotator.find(annotator)
     annotator = constructor()
     annotator.wait()
 

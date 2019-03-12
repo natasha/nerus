@@ -1,23 +1,8 @@
 
-from .deeppavlov import DeeppavlovAnnotator
-from .mitie import MitieAnnotator
-from .natasha import NatashaAnnotator
-from .pullenti import PullentiAnnotator
-from .texterra import TexterraAnnotator
-from .tomita import TomitaAnnotator
-
-
-CONSTRUCTORS = [
-    DeeppavlovAnnotator,
-    MitieAnnotator,
-    NatashaAnnotator,
-    PullentiAnnotator,
-    TexterraAnnotator,
-    TomitaAnnotator
-]
-
-
-def find(name):
-    for constructor in CONSTRUCTORS:
-        if constructor.name == name:
-            return constructor
+from .base import AnnotatorMarkup, Annotator  # noqa
+from .deeppavlov import DeeppavlovMarkup, DeeppavlovAnnotator  # noqa
+from .mitie import MitieMarkup, MitieAnnotator  # noqa
+from .natasha import NatashaMarkup, NatashaAnnotator  # noqa
+from .pullenti import PullentiMarkup, PullentiAnnotator  # noqa
+from .texterra import TexterraMarkup, TexterraAnnotator  # noqa
+from .tomita import TomitaMarkup, TomitaAnnotator  # noqa

@@ -74,29 +74,99 @@ A = 2:
 
 # Development
 
+Tests:
+
+```bash
+make test
+make int  # runs containters with annotators
+```
+
+Containers:
+
+```bash
+make image
+make push
+
+cd annotators
+make images
+make push
+```
+
+Deploy worker:
+
 ```bash
 nerus-ctl worker create
-nerus-ctl worker deploy
+nerus-ctl worker upload worker/setup.sh
+nerus-ctl worker ssh 'sudo sh setup.sh'  # install docker + docker-compose
 
-nerus-ctl worker ssh 'docker-compose up -d 2>&1'
+# ...
+# + docker --version
+# Docker version 18.09.3, build 774a1f4
+# + docker-compose --version
+# docker-compose version 1.23.2, build 1110ad01
 
-nerus-ctl worker show
-http://84.201.129.47:8060 nerus:nerus
-
-nerus-ctl worker ssh 'docker stats'
+nerus-ctl worker upload worker/cpu.env .env
+nerus-ctl worker upload worker/docker-compose.yml
 nerus-ctl worker ssh 'docker-compose pull'
 nerus-ctl worker ssh 'docker-compose up -d'
+```
 
-nerus-ctl db rm
+Update worker:
 
-nerus-ctl db insert lenta --count=1000 --chunk=1000
-nerus-ctl q --chunk=100
+```bash
+nerus-ctl worker ssh 'docker-compose pull'
+nerus-ctl worker ssh 'docker-compose up -d'
+```
 
-nerus-ctl db insert lenta --offset=1000 --count=100000 --chunk=1000
-nerus-ctl q --offset=1000 --chunk=100
+Compute:
+
+```bash
+export WORKER_HOST=`nerus-ctl worker ip`
+
+nerus-ctl db insert lenta --count=10000
+nerus-ctl q insert --count=1000  # enqueue first 1000
+
+# faster version
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert -e CORPORA_DIR=/tmp natasha/nerus-ctl db insert lenta'
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert natasha/nerus-ctl q insert'
 
 ```
 
+Failed:
+
+```bash
+export WORKER_HOST=`nerus-ctl worker ip`
+
+nerus-ctl q failed  # see failed stacktraces
+
+# Id: ...
+# Origin: tomita
+# ...stack trace...
+
+nerus-ctl q retry  # requeue all failed
+```
+
+
+Monitor:
+
+```bash
+export WORKER_HOST=`nerus-ctl worker ip`
+
+nerus-ctl worker ssh 'docker stats'
+nerus-ctl q show
+nerus-ctl db show
+```
+
+Dump:
+
+```bash
+export WORKER_HOST=`nerus-ctl worker ip`
+
+nerus-ctl db dump dump.tar --count=500000
+
+# faster version
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump natasha/nerus-ctl db dump dump.tar --count=400000'
+```
 
 # GPU vs CPU
 

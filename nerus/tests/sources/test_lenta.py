@@ -4,9 +4,9 @@ from nerus.path import (
     get_dir
 )
 from nerus.const import LENTA_FILENAME
-from nerus.corpora.lenta import (
+from nerus.sources.lenta import (
     LentaRecord,
-    LentaSchema as schema
+    LentaSource
 )
 
 
@@ -19,5 +19,5 @@ ETALON = [
 
 def test_load():
     path = join_path(DATA_DIR, LENTA_FILENAME)
-    guess = list(schema.load(path))
+    guess = list(LentaSource.load(path))
     assert guess == ETALON

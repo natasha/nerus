@@ -23,6 +23,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     ChunkAnnotator,
     ContainerAnnotator
@@ -97,3 +98,11 @@ class DeeppavlovAnnotator(ChunkAnnotator):
 class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):
     image = DEEPPAVLOV_IMAGE
     container_port = DEEPPAVLOV_CONTAINER_PORT
+
+
+register(
+    DEEPPAVLOV,
+    DeeppavlovMarkup,
+    DeeppavlovAnnotator,
+    DeeppavlovContainerAnnotator
+)

@@ -1,5 +1,4 @@
 
-
 import requests
 
 from nerus.const import (
@@ -21,6 +20,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     Annotator,
     ContainerAnnotator
@@ -142,3 +142,11 @@ class TomitaAnnotator(Annotator):
 class TomitaContainerAnnotator(TomitaAnnotator, ContainerAnnotator):
     image = TOMITA_IMAGE
     container_port = TOMITA_CONTAINER_PORT
+
+
+register(
+    TOMITA,
+    TomitaMarkup,
+    TomitaAnnotator,
+    TomitaContainerAnnotator
+)

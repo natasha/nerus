@@ -2,6 +2,8 @@
 from collections import OrderedDict
 from itertools import islice
 
+from .const import LABEL
+
 
 def parse_annotation(annotation):
     type = annotation or str
@@ -116,6 +118,35 @@ class Record(object):
     @classmethod
     def from_bson(cls, data):
         return cls.from_json(data)
+
+
+class LabeledRecord(Record):
+    label = None
+
+    @staticmethod
+    def find(self, label):
+        raise NotImplementedError
+
+    @classmethod
+    def label_json(cls, data):
+        data[LABEL] = cls.label
+        # move label to front
+        data.move_to_end(LABEL, last=False)
+        return data
+
+    @property
+    def as_json(self):
+        data = super(LabeledRecord, self).as_json
+        return self.label_json(data)
+
+    @classmethod
+    def from_json(cls, data):
+        if LABEL in data:
+            label = data.pop(LABEL)
+            Record = cls.find(label)
+            return Record.from_json(data)
+        else:
+            return super(LabeledRecord, cls).from_json(data)
 
 
 ########

@@ -4,7 +4,7 @@ from nerus.const import (
     LENTA_FILENAME,
     LENTA_URL,
 
-    CORPORA_DIR
+    SOURCES_DIR
 )
 from nerus.etl import (
     download,
@@ -17,12 +17,13 @@ from nerus.path import (
 )
 
 from .base import (
-    CorpusRecord,
-    CorpusSchema
+    register,
+    SourceRecord,
+    Source
 )
 
 
-class LentaRecord(CorpusRecord):
+class LentaRecord(SourceRecord):
     __attributes__ = ['url', 'title', 'text', 'topic', 'tags']
     label = LENTA
 
@@ -46,7 +47,7 @@ def load(path):
 
 
 def get():
-    path = join_path(CORPORA_DIR, LENTA_FILENAME)
+    path = join_path(SOURCES_DIR, LENTA_FILENAME)
     if exists(path):
         return path
 
@@ -54,7 +55,10 @@ def get():
     return path
 
 
-class LentaSchema(CorpusSchema):
+class LentaSource(Source):
     name = LENTA
-    get = get
-    load = load
+    get = staticmethod(get)
+    load = staticmethod(load)
+
+
+register(LENTA, LentaRecord, LentaSource)

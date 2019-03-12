@@ -17,6 +17,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     Annotator,
     ContainerAnnotator
@@ -114,3 +115,11 @@ class NatashaAnnotator(Annotator):
 class NatashaContainerAnnotator(NatashaAnnotator, ContainerAnnotator):
     image = NATASHA_IMAGE
     container_port = NATASHA_CONTAINER_PORT
+
+
+register(
+    NATASHA,
+    NatashaMarkup,
+    NatashaAnnotator,
+    NatashaContainerAnnotator
+)

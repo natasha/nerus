@@ -1,49 +1,44 @@
 
 from nerus.utils import (
     head,
-    skip
+    skip,
 )
 from nerus.log import (
     log,
     log_progress
 )
-from nerus.corpora import find as find_corpus
+from nerus.sources import Source
 from nerus.db import (
     get_db,
     chunk_insert,
 )
 from nerus.const import (
-    CORPUS,
+    SOURCE,
     ANNOTATORS,
     WORKER_HOST
 )
-from nerus.path import (
-    exists,
-    rm
+from nerus.etl import (
+    serialize_jsonl,
+    dump_gz_lines
 )
-from nerus.dump import (
-    read_collection,
-    encode_corpus,
-    encode_annotator,
-    dump_collection
-)
+from nerus.dump import dump
 
 
-def insert_corpus(args):
-    insert_corpus_(args.corpus, args.offset, args.count, args.chunk)
+def insert_source(args):
+    insert_source_(args.source, args.offset, args.count, args.chunk)
 
 
-def insert_corpus_(corpus, offset, count, chunk):
-    log('Inserting corpus')
-    schema = find_corpus(corpus)
-    path = schema.get()
-    corpus = schema.load(path)
-    corpus = log_progress(corpus, total=count)
-    corpus = head(skip(corpus, offset), count)
+def insert_source_(name, offset, count, chunk):
+    log('Inserting source')
+    source = Source.find(name)
+    path = source.get()
+    records = source.load(path)
+    records = log_progress(records, total=count)
+    records = head(skip(records, offset), count)
 
     db = get_db(host=WORKER_HOST)
-    docs = (_.as_bson for _ in corpus)
-    chunk_insert(db[CORPUS], docs, chunk)
+    docs = (_.as_bson for _ in records)
+    chunk_insert(db[SOURCE], docs, chunk)
 
 
 def show_db(args):
@@ -53,7 +48,7 @@ def show_db(args):
 def show_db_():
     log('Counting docs')
     db = get_db(host=WORKER_HOST)
-    for name in [CORPUS] + ANNOTATORS:
+    for name in [SOURCE] + ANNOTATORS:
         count = db[name].estimated_document_count()
         print('{count:>10} {name}'.format(
             name=name,
@@ -62,7 +57,7 @@ def show_db_():
 
 
 def remove_collections(args):
-    collections = args.collections or ANNOTATORS + [CORPUS]
+    collections = args.collections or ANNOTATORS + [SOURCE]
     remove_collections_(collections)
 
 
@@ -79,19 +74,10 @@ def dump_db(args):
 
 
 def dump_db_(path, annotators, count, chunk):
-    if exists(path):
-        rm(path)
-
-    log('Dumping')
+    log('Dumping %s', ', '.join(annotators))
     db = get_db(host=WORKER_HOST)
-    docs = read_collection(db[CORPUS], count, chunk)
-    docs = encode_corpus(docs)
-    docs = log_progress(docs, prefix=CORPUS, total=count)
-    dump_collection(path, CORPUS, docs)
-
-    for annotator in annotators:
-        docs = read_collection(db[annotator], count, chunk)
-        docs = encode_annotator(docs)
-        docs = log_progress(docs, prefix=annotator, total=count)
-        dump_collection(path, annotator, docs)
-    log('Dump: %s' % path)
+    records = dump(db, annotators, count, chunk)
+    records = log_progress(records, total=count)
+    items = (_.as_json for _ in records)
+    lines = serialize_jsonl(items)
+    dump_gz_lines(lines, path)

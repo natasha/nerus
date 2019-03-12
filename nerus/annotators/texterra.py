@@ -18,6 +18,7 @@ from nerus.sent import (
 )
 
 from .base import (
+    register,
     AnnotatorMarkup,
     ChunkAnnotator,
     ContainerAnnotator
@@ -87,3 +88,11 @@ class TexterraAnnotator(ChunkAnnotator):
 class TexterraContainerAnnotator(TexterraAnnotator, ContainerAnnotator):
     image = TEXTERRA_IMAGE
     container_port = TEXTERRA_CONTAINER_PORT
+
+
+register(
+    TEXTERRA,
+    TexterraMarkup,
+    TexterraAnnotator,
+    TexterraContainerAnnotator
+)

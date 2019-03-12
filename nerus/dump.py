@@ -1,55 +1,55 @@
 
-from .utils import group_chunks
+from .utils import (
+    Record,
+    group_chunks,
+)
 from .db import (
     read_index,
     query_index,
 )
-from .const import (
-    _ID,
-    TEXT
-)
 from .etl import (
-    serialize_jsonl,
-    dump_gz_lines,
-    append_tar
+    load_gz_lines,
+    parse_jsonl
 )
-from .path import maybe_rm
+from .const import SOURCE
+from .annotators import AnnotatorMarkup
+from .sources import SourceRecord
 
 
-JSONL_GZ = '.jsonl.gz'
+class DumpRecord(Record):
+    __attributes__ = ['source', 'markups']
+    __annotations__ = {
+        'source': SourceRecord,
+        'markups': [AnnotatorMarkup]
+    }
+
+    def __init__(self, source, markups):
+        self.source = source
+        self.markups = markups
 
 
-def read_collection(collection, count, chunk):
-    ids = read_index(collection, count=count)
+def query_index_(db, collection, chunk, Record):
+    docs = query_index(db[collection], ids=chunk, include_missing=True)
+    return (Record.from_bson(_) for _ in docs)
+
+
+def query_indexes(db, collections, chunk, Record):
+    for collection in collections:
+        yield query_index_(db, collection, chunk, Record)
+
+
+def dump(db, annotators, count, chunk):
+    ids = read_index(db[SOURCE], count=count)
     chunks = group_chunks(ids, size=chunk)
     for chunk in chunks:
-        docs = query_index(collection, ids=chunk, include_missing=True)
-        for doc in docs:
-            yield doc
+        source = query_index_(db, SOURCE, chunk, SourceRecord)
+        markups = query_indexes(db, annotators, chunk, AnnotatorMarkup)
+        for source, *markups in zip(source, *markups):
+            yield DumpRecord(source, markups)
 
 
-def encode_corpus(docs):
-    for doc in docs:
-        doc.pop(_ID)
-        yield doc
-
-
-def encode_annotator(docs):
-    for doc in docs:
-        if doc:  # in case annotator failed on text
-            doc.pop(_ID)
-            doc.pop(TEXT)
-        yield doc
-
-
-def dump_collection(path, name, docs):
-    lines = serialize_jsonl(docs)
-    part = name + JSONL_GZ
-    try:
-        dump_gz_lines(lines, part)
-        append_tar(path, part)
-    except:
-        maybe_rm(path)
-        raise
-    finally:
-        maybe_rm(part)
+def load(path):
+    lines = load_gz_lines(path)
+    records = parse_jsonl(lines)
+    for record in records:
+        yield DumpRecord.from_json(record)

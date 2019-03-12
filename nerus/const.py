@@ -101,13 +101,13 @@ LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 
 ##########
 #
-#  CORPORA
+#  SOURCES
 #
 #########
 
 
-CORPORA = [FACTRU, NE5, LENTA]
-CORPORA_DIR = getenv('CORPORA_DIR', join_path(NERUS_DIR, 'data'))
+SOURCES = [FACTRU, NE5, LENTA]
+SOURCES_DIR = getenv('SOURCES_DIR', join_path(NERUS_DIR, 'data', 'sources'))
 
 
 ########
@@ -254,7 +254,8 @@ QUEUE_PASSWORD = getenv('QUEUE_PASSWORD', 'ENvHwwFLhiKe7hE')
 ##########
 
 
-CORPUS = 'corpus'
+SOURCE = 'source'
+LABEL = 'label'
 TEXT = 'text'
 _ID = '_id'
 

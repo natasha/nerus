@@ -4,10 +4,10 @@ from nerus.path import (
     get_dir
 )
 from nerus.const import NE5_DIR
-from nerus.corpora.ne5 import (
+from nerus.sources.ne5 import (
     Ne5Markup,
     Ne5Span,
-    Ne5Schema as schema
+    Ne5Source
 )
 
 
@@ -19,5 +19,5 @@ ETALON = [
 
 def test_load():
     dir = join_path(DATA_DIR, NE5_DIR)
-    guess = list(schema.load(dir))
+    guess = list(Ne5Source.load(dir))
     assert guess == ETALON

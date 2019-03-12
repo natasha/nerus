@@ -13,7 +13,7 @@ from nerus.const import (
     NE5_DIR,
     NE5_URL,
 
-    CORPORA_DIR
+    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
@@ -28,8 +28,9 @@ from nerus.span import Span
 from nerus.markup import Markup
 
 from .base import (
-    CorpusRecord,
-    CorpusSchema
+    register,
+    SourceRecord,
+    Source
 )
 
 
@@ -52,7 +53,7 @@ class Ne5Span(Span):
         )
 
 
-class Ne5Markup(CorpusRecord, Markup):
+class Ne5Markup(SourceRecord, Markup):
     __attributes__ = ['id', 'text', 'spans']
     __annotations__ = {
         'spans': [Ne5Span]
@@ -120,19 +121,22 @@ def load(dir=NE5_DIR):
 
 
 def get():
-    dir = join_path(CORPORA_DIR, NE5_DIR)
+    dir = join_path(SOURCES_DIR, NE5_DIR)
     if exists(dir):
         return dir
 
-    path = join_path(CORPORA_DIR, basename(NE5_DIR))
+    path = join_path(SOURCES_DIR, basename(NE5_DIR))
     download(NE5_URL, path)
-    unzip(path, CORPORA_DIR)
+    unzip(path, SOURCES_DIR)
     rm(path)
 
     return dir
 
 
-class Ne5Schema(CorpusSchema):
+class Ne5Source(Source):
     name = NE5
-    get = get
-    load = load
+    get = staticmethod(get)
+    load = staticmethod(load)
+
+
+register(NE5, Ne5Markup, Ne5Source)
