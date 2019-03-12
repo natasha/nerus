@@ -127,7 +127,7 @@ nerus-ctl db insert lenta --count=10000
 nerus-ctl q insert --count=1000  # enqueue first 1000
 
 # faster version
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert -e CORPORA_DIR=/tmp natasha/nerus-ctl db insert lenta'
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert -e SOURCES_DIR=/tmp natasha/nerus-ctl db insert lenta'
 nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert natasha/nerus-ctl q insert'
 
 ```
