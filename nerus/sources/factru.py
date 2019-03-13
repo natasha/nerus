@@ -33,6 +33,7 @@ from nerus.span import (
     Span,
     offset_spans
 )
+from nerus.adapt.factru import adapt
 
 from .base import (
     register,
@@ -115,6 +116,10 @@ class FactruMarkup(SourceRecord, Markup):
                 self.id, sent.text,
                 list(objects)
             )
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def list_ids(dir, set):

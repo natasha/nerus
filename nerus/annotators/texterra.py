@@ -16,6 +16,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.texterra import adapt
 
 from .base import (
     register,
@@ -33,6 +34,10 @@ class TexterraMarkup(AnnotatorMarkup):
         for sent in sentenize(self.text):
             spans = sent_spans(sent, self.spans)
             yield TexterraMarkup(sent.text, list(spans))
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def parse_annotations(data):

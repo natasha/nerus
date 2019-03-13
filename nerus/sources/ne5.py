@@ -26,6 +26,7 @@ from nerus.etl import (
 )
 from nerus.span import Span
 from nerus.markup import Markup
+from nerus.adapt.ne5 import adapt
 
 from .base import (
     register,
@@ -74,6 +75,10 @@ class Ne5Markup(SourceRecord, Markup):
                 self.id, sent.text,
                 list(spans)
             )
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def list_ids(dir):

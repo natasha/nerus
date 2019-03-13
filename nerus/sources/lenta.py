@@ -15,6 +15,7 @@ from nerus.path import (
     exists,
     join_path
 )
+from nerus.sent import sentenize
 
 from .base import (
     register,
@@ -25,6 +26,7 @@ from .base import (
 
 class LentaRecord(SourceRecord):
     __attributes__ = ['url', 'title', 'text', 'topic', 'tags']
+
     label = LENTA
 
     def __init__(self, url, title, text, topic, tags):
@@ -33,6 +35,15 @@ class LentaRecord(SourceRecord):
         self.text = text
         self.topic = topic
         self.tags = tags
+
+    @property
+    def sents(self):
+        for sent in sentenize(self.text):
+            yield LentaRecord(
+                self.url, self.title,
+                sent.text,
+                self.topic, self.tags
+            )
 
 
 def parse(lines):

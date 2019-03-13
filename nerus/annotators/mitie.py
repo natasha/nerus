@@ -16,6 +16,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.mitie import adapt
 
 from .base import (
     register,
@@ -33,6 +34,10 @@ class MitieMarkup(AnnotatorMarkup):
         for sent in sentenize(self.text):
             spans = sent_spans(sent, self.spans)
             yield MitieMarkup(sent.text, list(spans))
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def parse_spans(tokens, spans):

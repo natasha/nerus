@@ -20,6 +20,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.pullenti import adapt
 
 from .base import (
     register,
@@ -87,6 +88,10 @@ class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
         for sent in sentenize(self.text):
             matches = sent_spans(sent, self.matches)
             yield PullentiMarkup(sent.text, list(matches))
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
     @property
     def depth(self):

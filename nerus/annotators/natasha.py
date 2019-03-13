@@ -15,6 +15,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.natasha import adapt
 
 from .base import (
     register,
@@ -69,6 +70,10 @@ class NatashaMarkup(AnnotatorMarkup):
         for sent in sentenize(self.text):
             matches = sent_spans(sent, self.matches)
             yield NatashaMarkup(sent.text, list(matches))
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def parse_matches(data):

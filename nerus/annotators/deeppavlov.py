@@ -21,6 +21,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.deeppavlov import adapt
 
 from .base import (
     register,
@@ -41,6 +42,10 @@ class DeeppavlovMarkup(AnnotatorMarkup):
                 sent.text,
                 list(spans)
             )
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def parse(texts, data):
