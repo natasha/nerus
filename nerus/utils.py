@@ -220,3 +220,19 @@ def group_chunks(items, size):
     while group:
         yield group
         group = list(read_iter(items, size))
+
+
+def group_weighted_chunks(items, size, measure):
+    items = iter(items)
+    chunk = []
+    accumulator = 0
+    for item in items:
+        weight = measure(item)
+        accumulator += weight
+        if accumulator >= size and chunk:
+            yield chunk
+            chunk = []
+            accumulator = weight
+        chunk.append(item)
+    if chunk:
+        yield chunk

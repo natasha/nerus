@@ -135,7 +135,7 @@ DEEPPAVLOV_PORT = int(getenv('DEEPPAVLOV_PORT', 8081))
 DEEPPAVLOV_IMAGE = getenv('DEEPPAVLOV_IMAGE', 'natasha/deeppavlov-ner-ru')
 DEEPPAVLOV_CONTAINER_PORT = 6004
 
-DEEPPAVLOV_CHUNK = int(getenv('DEEPPAVLOV_CHUNK', 3))
+DEEPPAVLOV_CHUNK = int(getenv('DEEPPAVLOV_CHUNK', 10000))
 DEEPPAVLOV_URL = 'http://{host}:{port}/answer'
 
 
@@ -202,7 +202,7 @@ TEXTERRA_PORT = int(getenv('TEXTERRA_PORT', 8082))
 TEXTERRA_IMAGE = 'natasha/texterra-russian'
 TEXTERRA_CONTAINER_PORT = 8080
 
-TEXTERRA_CHUNK = 30
+TEXTERRA_CHUNK = 30000
 # if lang is undefined may try to load eng model and fail
 TEXTERRA_URL = 'http://{host}:{port}/texterra/nlp?targetType=named-entity&language=ru'
 

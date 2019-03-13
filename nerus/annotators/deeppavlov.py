@@ -13,7 +13,7 @@ from nerus.const import (
 )
 from nerus.utils import (
     strict_zip,
-    group_chunks
+    group_weighted_chunks
 )
 from nerus.token import find_tokens
 from nerus.bio import bio_spans
@@ -83,7 +83,9 @@ def patch_texts(texts):
 
 
 def map(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT, size=DEEPPAVLOV_CHUNK):
-    for chunk in group_chunks(texts, size):
+    texts = (_[:size] for _ in texts)
+    chunks = group_weighted_chunks(texts, size, len)
+    for chunk in chunks:
         patched = list(patch_texts(chunk))
         data = post(patched, host, port)
         for markup in parse(chunk, data):

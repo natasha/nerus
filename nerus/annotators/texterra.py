@@ -10,7 +10,7 @@ from nerus.const import (
     TEXTERRA_IMAGE,
     TEXTERRA_URL,
 )
-from nerus.utils import group_chunks
+from nerus.utils import group_weighted_chunks
 from nerus.span import Span
 from nerus.sent import (
     sentenize,
@@ -74,7 +74,8 @@ def post(texts, host, port, timeout):
 
 
 def map(texts, host=TEXTERRA_HOST, port=TEXTERRA_PORT, size=TEXTERRA_CHUNK, timeout=120):
-    for chunk in group_chunks(texts, size):
+    chunks = group_weighted_chunks(texts, size, len)
+    for chunk in chunks:
         data = post(chunk, host, port, timeout)
         for markup in parse(data):
             yield markup
