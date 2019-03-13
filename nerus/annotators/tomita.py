@@ -18,6 +18,7 @@ from nerus.sent import (
     sentenize,
     sent_spans
 )
+from nerus.adapt.tomita import adapt
 
 from .base import (
     register,
@@ -75,6 +76,10 @@ class TomitaMarkup(AnnotatorMarkup):
         for sent in sentenize(self.text):
             facts = sent_spans(sent, self.facts)
             yield TomitaMarkup(sent.text, list(facts))
+
+    @property
+    def adapted(self):
+        return adapt(self)
 
 
 def parse_facts(xml):
