@@ -15,7 +15,7 @@ from nerus.etl import (
     dump_text
 )
 from nerus.worker import (
-    run as run_worker_,
+    run as worker_run_,
     CONFIG as WORKER_CONFIG
 )
 from nerus.yc import (
@@ -42,9 +42,9 @@ from nerus.const import WORKER_NAME
 #######
 
 
-def run_worker(args):
+def worker_run(args):
     log('Starting worker')
-    run_worker_()
+    worker_run_()
 
 
 #######
@@ -59,11 +59,11 @@ def find_worker(sdk, name=WORKER_NAME):
     return find_instance(sdk, folder, name)
 
 
-def create_worker(args):
-    create_worker_()
+def worker_create(args):
+    worker_create_()
 
 
-def create_worker_():
+def worker_create_():
     sdk = get_sdk()
     instance = find_worker(sdk)
     if instance:
@@ -125,11 +125,11 @@ def worker_ip__():
 ############
 
 
-def ssh_worker(args):
-    ssh_worker_(args.command)
+def worker_ssh(args):
+    worker_ssh_(args.command)
 
 
-def ssh_worker_(command):
+def worker_ssh_(command):
     ip = worker_ip__()
     if not ip:
         return
@@ -177,11 +177,11 @@ def worker_transfer(method, source, target=None):
 #######
 
 
-def remove_worker(args):
-    remove_worker_()
+def worker_remove(args):
+    worker_remove_()
 
 
-def remove_worker_():
+def worker_remove_():
     sdk = get_sdk()
     instance = find_worker(sdk)
     if instance:

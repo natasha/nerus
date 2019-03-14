@@ -19,7 +19,7 @@ from nerus.queue import (
     get_queue,
     get_queues,
     enqueue,
-    show as show_queues__,
+    show
 )
 from nerus.worker import task
 from nerus.db import (
@@ -29,12 +29,12 @@ from nerus.db import (
 from nerus.const import WORKER_HOST
 
 
-def enqueue_tasks(args):
+def queue_insert(args):
     annotators = args.annotators or ANNOTATORS
-    enqueue_tasks_(annotators, args.offset, args.count, args.chunk)
+    queue_insert_(annotators, args.offset, args.count, args.chunk)
 
 
-def enqueue_tasks_(annotators, offset, count, chunk):
+def queue_insert_(annotators, offset, count, chunk):
     log(
         'Annotators: %s; offset: %d, count: %d, chunk: %d',
         ', '.join(annotators), offset, count or -1, chunk
@@ -55,21 +55,21 @@ def enqueue_tasks_(annotators, offset, count, chunk):
             enqueue(queue, task, chunk)
 
 
-def show_queues(args):
-    show_queues_()
+def queue_show(args):
+    queue_show_()
 
 
-def show_queues_():
+def queue_show_():
     log('Showing queues')
     connection = get_connection(host=WORKER_HOST)
-    show_queues__(connection)
+    show(connection)
 
 
-def show_failed(args):
-    show_failed_()
+def queue_failed(args):
+    queue_failed_()
 
 
-def show_failed_():
+def queue_failed_():
     log('Listing failed')
     connection = get_connection(host=WORKER_HOST)
     queue = get_queue(FAILED, connection=connection)
@@ -79,8 +79,8 @@ def show_failed_():
         print(job.exc_info, end='\n\n')
 
 
-def retry_failed(args):
-    retry_failed_(args.chunk)
+def queue_retry(args):
+    queue_retry_(args.chunk)
 
 
 def annotators_ids(jobs):
@@ -91,7 +91,7 @@ def annotators_ids(jobs):
     return ids
 
 
-def retry_failed_(chunk):
+def queue_retry_(chunk):
     log('Retrying')
     connection = get_connection(host=WORKER_HOST)
     queue = get_queue(FAILED, connection=connection)
