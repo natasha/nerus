@@ -110,7 +110,6 @@ def main():
     sub.add_argument('--offset', type=int, default=0)
     sub.add_argument('--count', type=int)
     sub.add_argument('--chunk', type=int, default=100)
-    sub.add_argument('--dry-run', action='store_true')
 
     sub = queue.add_parser('show')
     sub.set_defaults(function=show_queues)
@@ -120,6 +119,7 @@ def main():
 
     sub = queue.add_parser('retry')
     sub.set_defaults(function=retry_failed)
+    sub.add_argument('--chunk', type=int, default=100)
 
     ##########
     #   PARSE

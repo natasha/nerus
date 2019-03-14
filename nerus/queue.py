@@ -1,7 +1,6 @@
 
 from redis import Redis
 from rq import Queue, Worker, Connection
-from rq.job import requeue_job  # noqa
 from rq.cli.helpers import show_both as show_
 
 from .const import (
@@ -24,6 +23,11 @@ def get_connection(host=QUEUE_HOST, port=QUEUE_PORT, password=QUEUE_PASSWORD):
 
 def get_queue(name, connection):
     return Queue(name, connection=connection)
+
+
+def get_queues(names, connection):
+    for name in names:
+        yield name, get_queue(name, connection)
 
 
 def work_on(queue):

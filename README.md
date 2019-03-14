@@ -143,7 +143,8 @@ nerus-ctl q failed  # see failed stacktraces
 # Origin: tomita
 # ...stack trace...
 
-nerus-ctl q retry  # requeue all failed
+nerus-ctl q retry --chunk=10  # regroup chunks
+nerus-ctl q retry --chunk=1
 ```
 
 

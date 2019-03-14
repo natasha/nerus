@@ -1,4 +1,6 @@
 
+from collections import defaultdict
+
 from nerus.utils import (
     head,
     group_chunks
@@ -15,9 +17,9 @@ from nerus.const import (
 from nerus.queue import (
     get_connection,
     get_queue,
+    get_queues,
     enqueue,
     show as show_queues__,
-    requeue_job
 )
 from nerus.worker import task
 from nerus.db import (
@@ -46,10 +48,7 @@ def enqueue_tasks_(annotators, offset, count, chunk):
     chunks = group_chunks(ids, size=chunk)
 
     connection = get_connection(host=WORKER_HOST)
-    queues = {
-        _: get_queue(_, connection)
-        for _ in annotators
-    }
+    queues = dict(get_queues(annotators, connection))
     for chunk in chunks:
         for annotator in annotators:
             queue = queues[annotator]
@@ -70,28 +69,40 @@ def show_failed(args):
     show_failed_()
 
 
-def list_failed(connection):
-    queue = get_queue(FAILED, connection=connection)
-    return queue.jobs
-
-
 def show_failed_():
     log('Listing failed')
     connection = get_connection(host=WORKER_HOST)
-    jobs = list_failed(connection)
-    for job in jobs:
+    queue = get_queue(FAILED, connection=connection)
+    for job in queue.jobs:
         print('Origin: %s' % job.origin)
         print('Id: %s' % job.get_id())
         print(job.exc_info, end='\n\n')
 
 
 def retry_failed(args):
-    retry_failed_()
+    retry_failed_(args.chunk)
 
 
-def retry_failed_():
+def annotators_ids(jobs):
+    ids = defaultdict(list)
+    for job in jobs:
+        annotator_ids, = job.args
+        ids[job.origin].extend(annotator_ids)
+    return ids
+
+
+def retry_failed_(chunk):
     log('Retrying')
     connection = get_connection(host=WORKER_HOST)
-    jobs = list_failed(connection)
-    for job in log_progress(jobs):
-        requeue_job(job.id, connection=connection)
+    queue = get_queue(FAILED, connection=connection)
+
+    ids = annotators_ids(queue.jobs)
+    queue.empty()
+
+    for annotator in ids:
+        annotator_ids = ids[annotator]
+        annotator_ids = log_progress(annotator_ids, prefix=annotator)
+        chunks = group_chunks(annotator_ids, size=chunk)
+        queue = get_queue(annotator, connection=connection)
+        for chunk_ in chunks:
+            enqueue(queue, task, chunk_)
