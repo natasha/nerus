@@ -60,13 +60,15 @@ def query_index(collection, ids, include_missing=False):
             yield
 
 
-def read_index(collection, offset=0, count=None):
+def read_index(collection, offset=0, count=None, chunk=1000):
     if not count:
         count = 0  # no limit
     docs = (
         collection
         .find({}, {_ID: 1})
-        .sort('_id', 1)
+        # https://stackoverflow.com/questions/32731140/how-to-get-rid-of-cursor-id-error-in-mongodb/34261202
+        .batch_size(chunk)
+        .sort(_ID, 1)
         .skip(offset)
         .limit(count)
     )

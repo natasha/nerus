@@ -49,16 +49,3 @@ def db_show_():
             name=name,
             count=count
         ))
-def dump_db(args):
-    annotators = args.annotators or ANNOTATORS
-    dump_db_(args.path, annotators, args.count, args.chunk)
-
-
-def dump_db_(path, annotators, count, chunk):
-    log('Dumping %s', ', '.join(annotators))
-    db = get_db(host=WORKER_HOST)
-    records = dump(db, annotators, count, chunk)
-    records = log_progress(records, total=count)
-    items = (_.as_json for _ in records)
-    lines = serialize_jsonl(items)
-    dump_gz_lines(lines, path)

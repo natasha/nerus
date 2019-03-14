@@ -1,4 +1,6 @@
 
+from collections import OrderedDict
+
 from .utils import (
     Record,
     group_chunks,
@@ -9,14 +11,27 @@ from .db import (
 )
 from .etl import (
     load_gz_lines,
-    parse_jsonl
+    parse_jsonl,
+    serialize_jsonl,
+    dump_gz_lines
 )
 from .const import SOURCE
 from .annotators import AnnotatorMarkup
 from .sources import SourceRecord
+from .markup import (
+    Markup,
+    Multimarkup
+)
 
 
-class DumpRecord(Record):
+###########
+#
+#   RAW
+#
+##########
+
+
+class DumpRecord(Multimarkup):
     __attributes__ = ['source', 'markups']
     __annotations__ = {
         'source': SourceRecord,
@@ -27,10 +42,26 @@ class DumpRecord(Record):
         self.source = source
         self.markups = markups
 
+    @property
+    def text(self):
+        return self.source.text
+
+    @property
+    def sents(self):
+        source = self.source.sents
+        markups = (_.sents for _ in self.markups)
+        for source, *markups in zip(source, *markups):
+            yield DumpRecord(source, markups)
+
 
 def query_index_(db, collection, chunk, Record):
     docs = query_index(db[collection], ids=chunk, include_missing=True)
-    return (Record.from_bson(_) for _ in docs)
+    for doc in docs:
+        if doc:
+            yield Record.from_bson(doc)
+        else:
+            # include missing
+            yield
 
 
 def query_indexes(db, collections, chunk, Record):
@@ -38,18 +69,88 @@ def query_indexes(db, collections, chunk, Record):
         yield query_index_(db, collection, chunk, Record)
 
 
-def dump(db, annotators, count, chunk):
+def read_raw(db, annotators, count, chunk):
     ids = read_index(db[SOURCE], count=count)
     chunks = group_chunks(ids, size=chunk)
     for chunk in chunks:
         source = query_index_(db, SOURCE, chunk, SourceRecord)
         markups = query_indexes(db, annotators, chunk, AnnotatorMarkup)
         for source, *markups in zip(source, *markups):
-            yield DumpRecord(source, markups)
+            markups = filter(None, markups)  # since include_missing
+            yield DumpRecord(source, list(markups))
 
 
-def load(path):
+def dump_raw(records, path):
+    lines = serialize_jsonl(_.as_json for _ in records)
+    dump_gz_lines(lines, path)
+
+
+def load_raw(path):
     lines = load_gz_lines(path)
     records = parse_jsonl(lines)
     for record in records:
         yield DumpRecord.from_json(record)
+
+
+##########
+#
+#    NORM
+#
+############
+
+
+def norm_raw(records):
+    for record in records:
+        yield record.adapted.mixed
+
+
+# {
+#   "article_id": 100,
+#   "content": " ... ",
+#   "annotations": [
+#       {
+#         "span": {
+#           "start": 10,
+#           "end": 31
+#         },
+#         "type": "PER",
+#         "text": "Дмитрием Светозаровым"
+#       }
+#   ]
+# }
+
+
+def serialize_spans(text, records):
+    records = sorted(records, key=lambda _: _.start)
+    for start, stop, type in records:
+        chunk = text[start:stop]
+        yield OrderedDict([
+            ('span', OrderedDict([
+                ('start', start),
+                ('stop', stop)
+            ])),
+            ('type', type),
+            ('text', chunk)
+        ])
+
+
+def serialize_norm(records):
+    for index, record in enumerate(records):
+        spans = list(serialize_spans(record.text, record.spans))
+        yield OrderedDict([
+            ('article_id', index),
+            ('content', record.text),
+            ('annotations', spans)
+        ])
+
+
+def dump_norm(records, path):
+    lines = serialize_jsonl(serialize_norm(records))
+    dump_gz_lines(lines, path)
+
+
+def load_norm(path):
+    lines = load_gz_lines(path)
+    records = parse_jsonl(lines)
+    for record in records:
+        yield Markup.from_json(record)

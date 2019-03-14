@@ -109,6 +109,24 @@ def main():
     sub.set_defaults(function=queue_retry)
     sub.add_argument('--chunk', type=int, default=100)
 
+    #########
+    #  DUMP
+    ##########
+
+    dump = subs.add_parser('dump').add_subparsers()
+
+    sub = dump.add_parser('raw')
+    sub.set_defaults(function=dump_raw)
+    sub.add_argument('path')
+    sub.add_argument('annotators', nargs='*', choices=[[]] + ANNOTATORS)
+    sub.add_argument('--count', type=int)
+    sub.add_argument('--chunk', type=int, default=10000)
+
+    sub = dump.add_parser('norm')
+    sub.set_defaults(function=dump_norm)
+    sub.add_argument('source')
+    sub.add_argument('target')
+
     ##########
     #   PARSE
     ########

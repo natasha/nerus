@@ -26,3 +26,41 @@ class Markup(Record):
                 sent.text,
                 list(spans)
             )
+
+    @property
+    def adapted(self):
+        raise NotImplementedError
+
+
+class Multimarkup(Markup):
+    __attributes__ = ['text', 'markups']
+    __annotations__ = {
+        'markups': [Markup]
+    }
+
+    def __init__(self, text, markups):
+        self.text = text
+        self.markups = markups
+
+    @property
+    def sents(self):
+        sents = sentenize(self.text)
+        markups = (_.sents for _ in self.markups)
+        for sent, *markups in zip(sents, *markups):
+            yield Multimarkup(sent.text, markups)
+
+    @property
+    def adapted(self):
+        return Multimarkup(
+            self.text,
+            [_.adapted for _ in self.markups]
+        )
+
+    @property
+    def mixed(self):
+        from .mix import mix
+        return mix(self)
+
+    @property
+    def spans(self):
+        return self.mixed.spans
