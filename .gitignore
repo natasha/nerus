@@ -7,5 +7,4 @@ __pycache__
 .ipynb_checkpoints
 .pytest_cache/
 
-data
-eval.ipynb
+notes.ipynb

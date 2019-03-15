@@ -293,3 +293,16 @@ YC_PLATFORM = 'standard-v1'
 SSH_USER = NERUS
 SSH_KEY = getenv('SSH_KEY', expand_user('~/.ssh/id_rsa.pub'))
 SSH_PRIVATE_KEY = getenv('SSH_PRIVATE_KEY', expand_user('~/.ssh/id_rsa'))
+
+
+######
+#
+#   DUMP
+#
+#######
+
+
+DUMPS_DIR = join_path(NERUS_DIR, 'data', 'dumps')
+RAW = 'raw'
+NORM = 'norm'
+JSONL_GZ = '.jsonl.gz'
