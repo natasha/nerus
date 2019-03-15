@@ -163,14 +163,25 @@ Dump:
 ```bash
 export WORKER_HOST=`nerus-ctl worker ip`
 
-nerus-ctl db dump dump.tar --count=500000
+nerus-ctl dump raw data/dumps/raw/t.jsonl.gz --count=10000
+# norm 2x faster with pypy
+nerus-ctl dump norm data/dumps/{raw,norm}/t.jsonl.gz
 
 # faster version
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump natasha/nerus-ctl db dump dump.tar --count=400000'
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/ne
+rus-ctl dump raw /tmp/raw.jsonl.gz'
+nerus-ctl worker download /tmp/lenta.jsonl.gz data/dumps/raw/lenta.jsonl.gz
 ```
 
-# GPU vs CPU
+Reset:
 
-On AWS p2.xlarge one can process ~100 000 Lenta docs in 1.5 hours
-On YC 8 cores 16Gb instance same thing takes 3 hours, 2x slower
-But AWS costs 0.9$ (60 rub) per hour, YC 10 rub per hour (3 rub for spot instance), so use YC
+```bash
+nerus-ctl worker ssh 'docker-compose down'
+nerus-ctl worker ssh 'docker-compose up -d'
+```
+
+Remove instance
+
+```bash
+nerus-ctl worker rm
+```
