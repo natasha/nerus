@@ -4,9 +4,9 @@
 This corpus was bootstapped from [Lenta.ru news dataset](https://github.com/yutkin/Lenta.Ru-News-Dataset), using several freely available NER toolkits for russian language:
 
 - [deepmipt/ner](https://github.com/deepmipt/ner)
-- [Natasha](https://github.com/natasha/natasha)
 - [ISPRAS Texterra](https://texterra.ispras.ru)
-- [Lang.org.ua MITIE model for russian language](http://lang.org.ua/en/models/#anchor3)
+- [PullEnti](http://www.pullenti.ru/)
+- [Tomita](https://tech.yandex.ru/tomita/)
 
 This corpus shares almost same ideas, as for example, [GICR (General Internet Corpus of Russian Language)](http://www.webcorpora.ru/en/) which was annotated in automated manner, but in contrast - we use greater count of  annotators, hoping that there'll be less errors.
 
@@ -45,28 +45,6 @@ Each annotated article from original dataset stored as JSON file with following 
 ```
 
 We decided to not use any tokenization - mostly because each of used toolkits have built-in tokenizer and, so `span` of each entity is actual position inside article's `content`. 
-
-## Statistics (actual on 06.10.18)
-
-Total entities with A = 3:
-
-```
-   tag | count
--------+--------
-   PER | 316951
-   ORG | 105442
-   LOC | 471528
-```
-
-A = 2:
-```
-   tag |  count
--------+---------
-   PER | 1280616
-   ORG |  753189
-   LOC | 1787637
-```
-
 
 ## License
 
