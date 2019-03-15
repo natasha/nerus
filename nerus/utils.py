@@ -167,10 +167,6 @@ def strict_zip(*items):
     return zip(*items)
 
 
-def transpose(items):
-    return strict_zip(*items)
-
-
 #######
 #
 #   ITER
