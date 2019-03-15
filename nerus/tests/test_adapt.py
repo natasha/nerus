@@ -47,6 +47,10 @@ NATASHA_TESTS = [
     [
         NatashaMarkup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', matches=[NatashaMatch(start=52, stop=59, type='Location', fact={'name': 'украина'}), NatashaMatch(start=60, stop=76, type='Name', fact={'first': 'пётр', 'last': 'порошенко'}), NatashaMatch(start=90, stop=101, type='Name', fact={'first': 'варфоломей'}), NatashaMatch(start=141, stop=146, type='Location', fact={'name': 'киев'}), NatashaMatch(start=157, stop=168, type='Organisation', fact={'name': 'РИА Новости'})]),
         Markup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='PER'), Span(start=141, stop=146, type='LOC'), Span(start=157, stop=168, type='ORG')])
+    ],
+    [
+        NatashaMarkup(text='Ранее глава Минэнерго России Александр Новак сообщал, что переговоры, возможно, пройдут во второй половине января, добавляет РИА Новости.', matches=[NatashaMatch(start=12, stop=38, type='Organisation', fact={'name': 'Минэнерго России Александр'}), NatashaMatch(start=22, stop=28, type='Location', fact={'name': 'россия'}), NatashaMatch(start=29, stop=44, type='Name', fact={'first': 'александр', 'last': 'новак'}), NatashaMatch(start=39, stop=44, type='Organisation', fact={'name': 'Новак'}), NatashaMatch(start=125, stop=136, type='Organisation', fact={'name': 'РИА Новости'})]),
+        Markup(text='Ранее глава Минэнерго России Александр Новак сообщал, что переговоры, возможно, пройдут во второй половине января, добавляет РИА Новости.', spans=[Span(start=12, stop=21, type='ORG'), Span(start=22, stop=28, type='LOC'), Span(start=29, stop=38, type='PER'), Span(start=39, stop=44, type='ORG'), Span(start=125, stop=136, type='ORG')])
     ]
 ]
 TEXTERRA_TESTS = [
