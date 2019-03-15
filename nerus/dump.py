@@ -138,7 +138,7 @@ def serialize_spans(text, records):
         yield OrderedDict([
             ('span', OrderedDict([
                 ('start', start),
-                ('stop', stop)
+                ('end', stop)
             ])),
             ('type', type),
             ('text', chunk)
@@ -160,8 +160,24 @@ def dump_norm(records, path):
     dump_gz_lines(lines, path)
 
 
+def parse_spans(items):
+    for item in items:
+        yield Span(
+            item['span']['start'],
+            item['span']['end'],
+            item['type']
+        )
+
+
+def parse_norm(items):
+    for item in items:
+        yield Markup(
+            item['content'],
+            list(parse_spans(item['annotations']))
+        )
+
+
 def load_norm(path):
     lines = load_gz_lines(path)
     records = parse_jsonl(lines)
-    for record in records:
-        yield Markup.from_json(record)
+    return parse_norm(records)
