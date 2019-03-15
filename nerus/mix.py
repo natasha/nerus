@@ -32,21 +32,12 @@ def choose_tag(tags):
             return tags[0]
 
 
-def check(multi):
-    if len(multi.markups) < 2:
-        raise ValueError('expected >= 2, got %d' % len(multi.markups))
-
-    for markup in multi.markups:
-        if markup.text != multi.text:
-            raise ValueError('expected same texts')
-
-
 def mix(multi):
-    check(multi)
     tokens = list(tokenize(multi.text))
     tags = (
         spans_io(tokens, _.spans)
         for _ in multi.markups
+        if _.text == multi.text  # super rare deeppavlov != multi.text
     )
     tags = zip(*tags)
     tags = [choose_tag(_) for _ in tags]
