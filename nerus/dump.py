@@ -1,10 +1,7 @@
 
 from collections import OrderedDict
 
-from .utils import (
-    Record,
-    group_chunks,
-)
+from .utils import group_chunks
 from .db import (
     read_index,
     query_index,
@@ -15,9 +12,13 @@ from .etl import (
     serialize_jsonl,
     dump_gz_lines
 )
-from .const import SOURCE
+from .const import (
+    SOURCE,
+    DEEPPAVLOV, TEXTERRA, PULLENTI, TOMITA
+)
 from .annotators import AnnotatorMarkup
 from .sources import SourceRecord
+from .span import Span
 from .markup import (
     Markup,
     Multimarkup
@@ -52,6 +53,12 @@ class DumpRecord(Multimarkup):
         markups = (_.sents for _ in self.markups)
         for source, *markups in zip(source, *markups):
             yield DumpRecord(source, markups)
+
+    def select(self, labels):
+        return DumpRecord(
+            self.source,
+            [_ for _ in self.markups if _.label in labels]
+        )
 
 
 def query_index_(db, collection, chunk, Record):
@@ -99,8 +106,12 @@ def load_raw(path):
 ############
 
 
+MIX = [DEEPPAVLOV, TEXTERRA, PULLENTI, TOMITA]
+
+
 def norm_raw(records):
     for record in records:
+        record = record.select(MIX)
         yield record.adapted.mixed
 
 
