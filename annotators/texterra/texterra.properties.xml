@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration version="5.2.0">
+  <ru>
+    <ispras>
+      <texterra>
+	<cli>
+	  <server>
+	    <admin>
+	      <TexterraAdminServer>
+		<!-- Port on which special thread is listening for SHUTDOWN command -->
+		<port>1199</port>
+	      </TexterraAdminServer>
+	    </admin>
+	    <rest>
+	      <TexterraRESTServer>
+		<host>0.0.0.0</host>
+		<port>8080</port>
+		<path>texterra</path>
+	      </TexterraRESTServer>
+	    </rest>
+	  </server>
+	</cli>
+      </texterra>
+    </ispras>
+  </ru>
+</configuration>

@@ -1,0 +1,23 @@
+encoding "utf8";
+
+TTextMinerConfig {
+  Input = {
+    Type = dpl;
+  }
+
+  Output = {
+    Format = xml;
+  }
+
+  Dictionary = "mydic.gzt";
+
+  Articles = [
+    { Name = "имя" },
+    { Name = "имя_без_фамилии" },
+    { Name = "People" }
+  ]
+
+  Facts = [
+    { Name = "Person" }
+  ]
+}

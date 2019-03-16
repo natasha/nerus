@@ -1,0 +1,21 @@
+
+intervaltree==2.1.0
+requests==2.18.4
+
+razdel==0.3.0
+pullenti_client==0.2.0
+
+yandexcloud==0.8.0
+paramiko==2.4.2
+
+pymongo==3.7.2
+redis==2.10.5
+rq==0.10.0
+
+tqdm==4.19.7
+
+# dev
+pytest==3.1.2
+pytest-flakes==4.0.0
+pytest-pep8==1.0.6
+pytest-cov==2.5.1
