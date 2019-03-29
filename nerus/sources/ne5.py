@@ -130,7 +130,7 @@ def get():
     if exists(dir):
         return dir
 
-    path = join_path(SOURCES_DIR, basename(NE5_DIR))
+    path = join_path(SOURCES_DIR, basename(NE5_URL))
     download(NE5_URL, path)
     unzip(path, SOURCES_DIR)
     rm(path)
