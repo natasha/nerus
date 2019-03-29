@@ -60,6 +60,12 @@ class DumpRecord(Multimarkup):
             [_ for _ in self.markups if _.label in labels]
         )
 
+    def find(self, label):
+        for markup in self.markups:
+            if markup.label == label:
+                return markup
+        raise KeyError(label)
+
 
 def query_index_(db, collection, chunk, Record):
     docs = query_index(db[collection], ids=chunk, include_missing=True)

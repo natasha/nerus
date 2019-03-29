@@ -79,7 +79,8 @@ def eval_score(tokens, guess, etalon, type):
 
 def eval_markup(guess, etalon, types=TYPES):
     if guess.text != etalon.text:
-        raise ValueError('expected same texts')
+        # super rare for deeppavlov guess is prefix of etalon
+        return
     tokens = list(tokenize(guess.text))
     for type in types:
         score = eval_score(tokens, guess.spans, etalon.spans, type)

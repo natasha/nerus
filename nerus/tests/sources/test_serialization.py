@@ -4,7 +4,9 @@ import pytest
 from . import (
     test_factru,
     test_lenta,
-    test_ne5
+    test_ne5,
+    test_wikiner,
+    test_gareev
 )
 
 
@@ -12,6 +14,8 @@ TESTS = (
     test_factru.ETALON
     + test_lenta.ETALON
     + test_ne5.ETALON
+    + test_wikiner.ETALON
+    + test_gareev.ETALON
 )
 
 

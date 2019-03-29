@@ -26,6 +26,7 @@ NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
 #
 #########
 
+
 LOCALHOST = 'localhost'
 
 WORKER_DIR = join_path(NERUS_DIR, 'worker')
@@ -89,6 +90,29 @@ NE5_DIR = 'Collection5'
 
 #######
 #
+#   GAREEV
+#
+#######
+
+
+GAREEV = 'gareev'
+GAREEV_DIR = 'rus-ner-news-corpus.iob'
+
+
+#########
+#
+#   WIKINER
+#
+#########
+
+
+WIKINER = 'wikiner'
+WIKINER_URL = 'https://github.com/dice-group/FOX/blob/master/input/Wikiner/aij-wikiner-ru-wp3.bz2'
+WIKINER_FILENAME = 'aij-wikiner-ru-wp3.bz2'
+
+
+#######
+#
 #   LENTA
 #
 #######
@@ -106,7 +130,7 @@ LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 #########
 
 
-SOURCES = [FACTRU, NE5, LENTA]
+SOURCES = [FACTRU, NE5, LENTA, WIKINER, GAREEV]
 SOURCES_DIR = getenv('SOURCES_DIR', join_path(NERUS_DIR, 'data', 'sources'))
 
 
@@ -305,4 +329,6 @@ SSH_PRIVATE_KEY = getenv('SSH_PRIVATE_KEY', expand_user('~/.ssh/id_rsa'))
 DUMPS_DIR = join_path(NERUS_DIR, 'data', 'dumps')
 RAW = 'raw'
 NORM = 'norm'
-JSONL_GZ = '.jsonl.gz'
+MIX = 'mix'
+JSONL = '.jsonl'
+GZ = '.gz'

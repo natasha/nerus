@@ -73,8 +73,9 @@ def io_spans(tokens, tags):
     start = None
     stop = None
     for token, tag in strict_zip(tokens, tags):
-        _, type = parse_bio(tag)
-        if previous != type:
+        part, type = parse_bio(tag)
+        # wikiner splits on I-PER B-PER for example
+        if previous != type or part == B:
             if not previous and type:
                 # O I
                 start = token.start

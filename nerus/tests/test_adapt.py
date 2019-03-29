@@ -29,6 +29,8 @@ from nerus.sources.factru import (
     FactruObject,
     FactruSpan
 )
+from nerus.sources.wikiner import WikinerMarkup
+from nerus.sources.gareev import GareevMarkup
 
 
 DEEPPALVOL_TESTS = [
@@ -83,6 +85,18 @@ NE5_TESTS = [
         Markup(text='Назначение Сергея Шойгу министром обороны России поможет решению проблемы военных городков в Подмосковье, заявил РИА Новости председатель Мособлдумы Игорь Брынцалов.', spans=[Span(start=11, stop=23, type='PER'), Span(start=42, stop=48, type='LOC'), Span(start=93, stop=104, type='LOC'), Span(start=113, stop=124, type='ORG'), Span(start=138, stop=148, type='ORG'), Span(start=149, stop=164, type='PER')])
     ]
 ]
+WIKINER_TESTS = [
+    [
+        WikinerMarkup(text='На севере граничит с Латвией , на востоке -- с Белоруссией , на юго-западе -- c Польшей и Калининградской областью России .', spans=[Span(start=21, stop=28, type='LOC'), Span(start=47, stop=58, type='ORG'), Span(start=80, stop=87, type='LOC'), Span(start=90, stop=114, type='PER'), Span(start=115, stop=121, type='MISC')]),
+        Markup(text='На севере граничит с Латвией , на востоке -- с Белоруссией , на юго-западе -- c Польшей и Калининградской областью России .', spans=[Span(start=21, stop=28, type='LOC'), Span(start=47, stop=58, type='ORG'), Span(start=80, stop=87, type='LOC'), Span(start=90, stop=114, type='PER')]),
+    ]
+]
+GAREEV_TESTS = [
+    [
+        GareevMarkup(text='МОСКВА , 21 июня . / БИЗНЕС-ТАСС / . Группа НЛМК заняла второе место в рейтинге 35 наиболее конкурентоспособных сталелитейных компаний мира . Рейтинг составлялся World Steel Dynamics , ведущей международной исследовательской компанией , на основе оценки 23 параметров', spans=[Span(start=21, stop=32, type='ORG'), Span(start=44, stop=48, type='ORG'), Span(start=162, stop=182, type='PER')]),
+        Markup(text='МОСКВА , 21 июня . / БИЗНЕС-ТАСС / . Группа НЛМК заняла второе место в рейтинге 35 наиболее конкурентоспособных сталелитейных компаний мира . Рейтинг составлялся World Steel Dynamics , ведущей международной исследовательской компанией , на основе оценки 23 параметров', spans=[Span(start=21, stop=32, type='ORG'), Span(start=44, stop=48, type='ORG'), Span(start=162, stop=182, type='PER')])
+    ]
+]
 TESTS = (
     DEEPPALVOL_TESTS
     + MITIE_TESTS
@@ -92,6 +106,8 @@ TESTS = (
     + PULLENTI_TESTS
     + FACTRU_TESTS
     + NE5_TESTS
+    + WIKINER_TESTS
+    + GAREEV_TESTS
 )
 
 
