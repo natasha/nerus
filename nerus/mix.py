@@ -21,15 +21,19 @@ def choose_tag(tags):
             return tag
         else:
             return O
-    else:  # >= 2
+    else:
         [(first, first_count), (second, second_count)] = counts[:2]
-        # TODO what about 2 2
         if first_count >= 2:
-            return first
+            if first_count == second_count:
+                # 2 2 for examples, rare
+                # assume tags ordered by annotator strength
+                for tag in tags:
+                    if tag == first or tag == second:
+                        return tag
+            else:
+                return first
         else:
-            # first = 1, second = 1
-            # assume models ordered by strength
-            return tags[0]
+            return O
 
 
 def mix(multi):
