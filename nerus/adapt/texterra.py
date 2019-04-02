@@ -4,8 +4,13 @@ from nerus.const import (
     ORG,
     PER
 )
+from nerus.span import strip_spans
+from nerus.markup import Markup
 
-from .common import adapt as adapt_
+from .common import (
+    QUOTES, SPACES,
+    adapt_spans
+)
 
 
 TYPES = {
@@ -25,12 +30,17 @@ TYPES = {
     'ORGANIZATION_CORPORATION': ORG,  # 1484
     'ORGANIZATION_OTHER': ORG,  # 689
     'ORGANIZATION_EDUCATIONAL': ORG,  # 213
+
+    # For better precision do not treat
+    # WORK_OF_ART, FACILITY as orgs, since
+    # it not alway true (Черная кошка for example)
+
     # РБК daily, The Wall Street Journal
     # News of The World
-    'WORK_OF_ART': ORG,  # 236
+    # 'WORK_OF_ART': ORG,  # 236
     # Русале, Лужников, Кремля, Домодедово
     # Пражском Граде  <- sometimes GEO
-    'FACILITY': ORG,  # 200
+    # 'FACILITY': ORG,  # 200
 
     # 'NORP_RELIGION',  # 24 мусульманским, Бог, еврейских
     # 'NORP_NATIONALITY',  # 21 египтян, мордва
@@ -49,4 +59,6 @@ TYPES = {
 
 
 def adapt(markup):
-    return adapt_(markup, TYPES)
+    spans = list(strip_spans(markup.spans, markup.text, QUOTES + SPACES))
+    spans = list(adapt_spans(spans, markup.text, TYPES))
+    return Markup(markup.text, spans)

@@ -10,10 +10,8 @@ from nerus.span import (
     filter_overlapping
 )
 
-from .common import (
-    adapt_spans,
-    adapt_overlapping_spans
-)
+from .common import adapt_spans
+
 
 # Org 2821
 #     org_name 2333
@@ -73,7 +71,12 @@ def select_spans(markup):
 
 
 def adapt(markup):
-    spans = select_spans(markup)
-    spans = adapt_overlapping_spans(list(spans), markup.text)
-    spans = adapt_spans(list(spans), markup.text, TYPES)
-    return Markup(markup.text, list(spans))
+    spans = list(select_spans(markup))
+
+    # мид Грузии
+    # ORG-------
+    #     LOC---
+    spans = list(filter_overlapping(spans))
+
+    spans = list(adapt_spans(spans, markup.text, TYPES))
+    return Markup(markup.text, spans)

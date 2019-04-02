@@ -38,12 +38,20 @@ DEEPPALVOL_TESTS = [
         DeeppavlovMarkup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='PER'), Span(start=124, stop=140, type='ORG'), Span(start=141, stop=146, type='LOC'), Span(start=157, stop=168, type='ORG')]),
         Markup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='PER'), Span(start=124, stop=140, type='ORG'), Span(start=141, stop=146, type='LOC'), Span(start=157, stop=168, type='ORG')])
     ],
+    [
+        DeeppavlovMarkup(text='Два кинопроекта продюсерского центра "Ленфильм" - лирическая комедия "Трек" Ильи Северова и сказка "Самый рыжий лис" Александры Стреляной - получили поддержку Министерства культуры РФ.', spans=[Span(start=38, stop=47, type='ORG'), Span(start=76, stop=89, type='PER'), Span(start=117, stop=137, type='PER'), Span(start=159, stop=180, type='ORG'), Span(start=181, stop=183, type='LOC')]),
+        Markup(text='Два кинопроекта продюсерского центра "Ленфильм" - лирическая комедия "Трек" Ильи Северова и сказка "Самый рыжий лис" Александры Стреляной - получили поддержку Министерства культуры РФ.', spans=[Span(start=38, stop=46, type='ORG'), Span(start=76, stop=89, type='PER'), Span(start=117, stop=137, type='PER'), Span(start=159, stop=180, type='ORG'), Span(start=181, stop=183, type='LOC')])
+    ]
 ]
 MITIE_TESTS = [
     [
         MitieMarkup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PERS'), Span(start=90, stop=101, type='LOC'), Span(start=141, stop=146, type='LOC')]),
         Markup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='LOC'), Span(start=141, stop=146, type='LOC')])
     ],
+    [
+        MitieMarkup(text='О великом британском учёном, которому в этом году исполнилось 200 лет, читайте в статье «2009-й — год Чарльза Дарвина».', spans=[Span(start=88, stop=95, type='ORG'), Span(start=102, stop=118, type='PERS')]),
+        Markup(text='О великом британском учёном, которому в этом году исполнилось 200 лет, читайте в статье «2009-й — год Чарльза Дарвина».', spans=[Span(start=89, stop=95, type='ORG'), Span(start=102, stop=117, type='PER')])
+    ]
 ]
 NATASHA_TESTS = [
     [
@@ -51,14 +59,18 @@ NATASHA_TESTS = [
         Markup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='PER'), Span(start=141, stop=146, type='LOC'), Span(start=157, stop=168, type='ORG')])
     ],
     [
-        NatashaMarkup(text='Ранее глава Минэнерго России Александр Новак сообщал, что переговоры, возможно, пройдут во второй половине января, добавляет РИА Новости.', matches=[NatashaMatch(start=12, stop=38, type='Organisation', fact={'name': 'Минэнерго России Александр'}), NatashaMatch(start=22, stop=28, type='Location', fact={'name': 'россия'}), NatashaMatch(start=29, stop=44, type='Name', fact={'first': 'александр', 'last': 'новак'}), NatashaMatch(start=39, stop=44, type='Organisation', fact={'name': 'Новак'}), NatashaMatch(start=125, stop=136, type='Organisation', fact={'name': 'РИА Новости'})]),
-        Markup(text='Ранее глава Минэнерго России Александр Новак сообщал, что переговоры, возможно, пройдут во второй половине января, добавляет РИА Новости.', spans=[Span(start=12, stop=21, type='ORG'), Span(start=22, stop=28, type='LOC'), Span(start=29, stop=38, type='PER'), Span(start=39, stop=44, type='ORG'), Span(start=125, stop=136, type='ORG')])
+        NatashaMarkup(text='Исполнительный директор Молочного союза России Владимир Лабинов , считает , что факт демпинга доказать будет сложно .', matches=[NatashaMatch(start=40, stop=46, type='Location', fact={'name': 'россия'}), NatashaMatch(start=47, stop=55, type='Location', fact={'name': 'владимир'}), NatashaMatch(start=47, stop=63, type='Name', fact={'last': 'лабинов', 'first': 'владимир'})]),
+        Markup(text='Исполнительный директор Молочного союза России Владимир Лабинов , считает , что факт демпинга доказать будет сложно .', spans=[Span(start=40, stop=46, type='LOC'), Span(start=47, stop=63, type='PER')])
     ]
 ]
 TEXTERRA_TESTS = [
     [
         TexterraMarkup(text='Подтверждения этих сведений нет, но, как передает РИА Новости со ссылкой на ФСБ России, пограничники, применив оружие, задержали в Черном море в районе Керченского пролива три корабля Военно-морских сил Украины — катера «Бердянск» и «Никополь», а также буксир «Яны Капу».', spans=[Span(start=50, stop=61, type='ORGANIZATION_CORPORATION'), Span(start=76, stop=79, type='ORGANIZATION_POLITICAL'), Span(start=80, stop=86, type='GPE_COUNTRY'), Span(start=131, stop=142, type='LOCATION_LAKE_SEA_OCEAN'), Span(start=152, stop=171, type='FACILITY'), Span(start=221, stop=229, type='GPE_CITY'), Span(start=261, stop=269, type='PERSON')]),
-        Markup(text='Подтверждения этих сведений нет, но, как передает РИА Новости со ссылкой на ФСБ России, пограничники, применив оружие, задержали в Черном море в районе Керченского пролива три корабля Военно-морских сил Украины — катера «Бердянск» и «Никополь», а также буксир «Яны Капу».', spans=[Span(start=50, stop=61, type='ORG'), Span(start=76, stop=79, type='ORG'), Span(start=80, stop=86, type='LOC'), Span(start=131, stop=142, type='LOC'), Span(start=152, stop=171, type='ORG'), Span(start=221, stop=229, type='LOC'), Span(start=261, stop=269, type='PER')])
+        Markup(text='Подтверждения этих сведений нет, но, как передает РИА Новости со ссылкой на ФСБ России, пограничники, применив оружие, задержали в Черном море в районе Керченского пролива три корабля Военно-морских сил Украины — катера «Бердянск» и «Никополь», а также буксир «Яны Капу».', spans=[Span(start=50, stop=61, type='ORG'), Span(start=76, stop=79, type='ORG'), Span(start=80, stop=86, type='LOC'), Span(start=131, stop=142, type='LOC'), Span(start=221, stop=229, type='LOC'), Span(start=261, stop=269, type='PER')])
+    ],
+    [
+        TexterraMarkup(text='Вместе с сайтами партнеров ее контент собирает 75 миллионов просмотров в месяц, сообщил собеседник «Коммерсант».', spans=[Span(start=100, stop=111, type='ORGANIZATION_POLITICAL')]),
+        Markup(text='Вместе с сайтами партнеров ее контент собирает 75 миллионов просмотров в месяц, сообщил собеседник «Коммерсант».', spans=[Span(start=100, stop=110, type='ORG')])
     ]
 ]
 TOMITA_TESTS = [
@@ -83,18 +95,30 @@ NE5_TESTS = [
     [
         Ne5Markup(id='shojgu1', text='Назначение Сергея Шойгу министром обороны России поможет решению проблемы военных городков в Подмосковье, заявил РИА Новости председатель Мособлдумы Игорь Брынцалов.', spans=[Ne5Span(index='T3', type='PER', start=11, stop=23, text='Сергея Шойгу'), Ne5Span(index='T4', type='GEOPOLIT', start=42, stop=48, text='России'), Ne5Span(index='T5', type='LOC', start=93, stop=104, text='Подмосковье'), Ne5Span(index='T6', type='MEDIA', start=113, stop=124, text='РИА Новости'), Ne5Span(index='T7', type='ORG', start=138, stop=148, text='Мособлдумы'), Ne5Span(index='T8', type='PER', start=149, stop=164, text='Игорь Брынцалов')]),
         Markup(text='Назначение Сергея Шойгу министром обороны России поможет решению проблемы военных городков в Подмосковье, заявил РИА Новости председатель Мособлдумы Игорь Брынцалов.', spans=[Span(start=11, stop=23, type='PER'), Span(start=42, stop=48, type='LOC'), Span(start=93, stop=104, type='LOC'), Span(start=113, stop=124, type='ORG'), Span(start=138, stop=148, type='ORG'), Span(start=149, stop=164, type='PER')])
+    ],
+    [
+        Ne5Markup(id='11_01_13b', text='С 1992 года работал в Волгоградском коммерческом лицее, Молодежном центре культуры и кино "Россия", ЗАО ТК "Телемир".', spans=[Ne5Span(index='T8', type='ORG', start=22, stop=54, text='Волгоградском коммерческом лицее'), Ne5Span(index='T9', type='ORG', start=56, stop=98, text='Молодежном центре культуры и кино "Россия"'), Ne5Span(index='T10', type='ORG', start=100, stop=116, text='ЗАО ТК "Телемир"')]),
+        Markup(text='С 1992 года работал в Волгоградском коммерческом лицее, Молодежном центре культуры и кино "Россия", ЗАО ТК "Телемир".', spans=[Span(start=22, stop=54, type='ORG'), Span(start=56, stop=98, type='ORG'), Span(start=100, stop=116, type='ORG')])
     ]
 ]
 WIKINER_TESTS = [
     [
         WikinerMarkup(text='На севере граничит с Латвией , на востоке -- с Белоруссией , на юго-западе -- c Польшей и Калининградской областью России .', spans=[Span(start=21, stop=28, type='LOC'), Span(start=47, stop=58, type='ORG'), Span(start=80, stop=87, type='LOC'), Span(start=90, stop=114, type='PER'), Span(start=115, stop=121, type='MISC')]),
         Markup(text='На севере граничит с Латвией , на востоке -- с Белоруссией , на юго-западе -- c Польшей и Калининградской областью России .', spans=[Span(start=21, stop=28, type='LOC'), Span(start=47, stop=58, type='ORG'), Span(start=80, stop=87, type='LOC'), Span(start=90, stop=114, type='PER')]),
+    ],
+    [
+        WikinerMarkup(text='В 1993 году журнал " Nature " опубликовал информацию о сделанном на острове Врангеля потрясающем открытии .', spans=[Span(start=21, stop=27, type='MISC'), Span(start=68, stop=84, type='LOC')]),
+        Markup(text='В 1993 году журнал " Nature " опубликовал информацию о сделанном на острове Врангеля потрясающем открытии .', spans=[Span(start=68, stop=84, type='LOC')])
     ]
 ]
 GAREEV_TESTS = [
     [
-        GareevMarkup(text='МОСКВА , 21 июня . / БИЗНЕС-ТАСС / . Группа НЛМК заняла второе место в рейтинге 35 наиболее конкурентоспособных сталелитейных компаний мира . Рейтинг составлялся World Steel Dynamics , ведущей международной исследовательской компанией , на основе оценки 23 параметров', spans=[Span(start=21, stop=32, type='ORG'), Span(start=44, stop=48, type='ORG'), Span(start=162, stop=182, type='PER')]),
-        Markup(text='МОСКВА , 21 июня . / БИЗНЕС-ТАСС / . Группа НЛМК заняла второе место в рейтинге 35 наиболее конкурентоспособных сталелитейных компаний мира . Рейтинг составлялся World Steel Dynamics , ведущей международной исследовательской компанией , на основе оценки 23 параметров', spans=[Span(start=21, stop=32, type='ORG'), Span(start=44, stop=48, type='ORG'), Span(start=162, stop=182, type='PER')])
+        GareevMarkup(text='После этого Росавиация ограничила полеты « ВИМ-Авиа » в Европу , но разрешила внутрироссийские полеты « из-за разницы в сертификационных требованиях России и Европы » .', spans=[Span(start=12, stop=22, type='ORG'), Span(start=41, stop=53, type='ORG')]),
+        Markup(text='После этого Росавиация ограничила полеты « ВИМ-Авиа » в Европу , но разрешила внутрироссийские полеты « из-за разницы в сертификационных требованиях России и Европы » .', spans=[Span(start=12, stop=22, type='ORG'), Span(start=43, stop=51, type='ORG')])
+    ],
+    [
+        GareevMarkup(text='Операционная прибыль News Corp . составила $ 4,2 млрд , из них за счет издательского бизнеса компания получила лишь $ 458 млн .', spans=[Span(start=21, stop=32, type='ORG')]),
+        Markup(text='Операционная прибыль News Corp . составила $ 4,2 млрд , из них за счет издательского бизнеса компания получила лишь $ 458 млн .', spans=[Span(start=21, stop=30, type='ORG')])
     ]
 ]
 TESTS = (

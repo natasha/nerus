@@ -6,14 +6,14 @@ from nerus.const import (
 )
 from nerus.span import (
     filter_empty_spans,
+    split_overlapping_spans,
     strip_spans
 )
 from nerus.markup import Markup
 
 from .common import (
-    QUOTES,
-    adapt_spans as adapt_spans_,
-    adapt_overlapping_spans
+    QUOTES, SPACES,
+    adapt_spans
 )
 
 
@@ -32,13 +32,10 @@ BRACKETS = '()'
 DASHES = '-'
 
 
-def adapt_spans(spans, text):
-    spans = list(adapt_overlapping_spans(spans, text))
-    spans = list(strip_spans(spans, text, QUOTES + BRACKETS + DASHES))
-    spans = list(filter_empty_spans(spans))
-    return adapt_spans_(list(spans), text, TYPES)
-
-
 def adapt(markup):
-    spans = adapt_spans(list(markup.spans), markup.text)
-    return Markup(markup.text, list(spans))
+    spans = list(markup.spans)
+    spans = list(split_overlapping_spans(spans))
+    spans = list(strip_spans(spans, markup.text, QUOTES + BRACKETS + DASHES + SPACES))
+    spans = list(filter_empty_spans(spans))
+    spans = list(adapt_spans(spans, markup.text, TYPES))
+    return Markup(markup.text, spans)

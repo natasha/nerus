@@ -4,12 +4,10 @@ from nerus.const import (
     LOC,
     ORG
 )
+from nerus.span import filter_overlapping
 from nerus.markup import Markup
 
-from .common import (
-    adapt_spans as adapt_spans_,
-    adapt_overlapping_spans
-)
+from .common import adapt_spans
 
 
 TYPES = {
@@ -19,11 +17,8 @@ TYPES = {
 }
 
 
-def adapt_spans(spans, text):
-    spans = list(adapt_overlapping_spans(spans, text))
-    return adapt_spans_(list(spans), text, TYPES)
-
-
 def adapt(markup):
-    spans = adapt_spans(list(markup.spans), markup.text)
-    return Markup(markup.text, list(spans))
+    spans = list(markup.spans)
+    spans = list(filter_overlapping(spans))
+    spans = list(adapt_spans(spans, markup.text, TYPES))
+    return Markup(markup.text, spans)

@@ -83,21 +83,19 @@ def assert_aligned_bounds(envelopes, spans):
 
 
 def select_overlapping(spans):
-    if not spans:
-        return
-
+    previous = None
     spans = sorted(spans, key=lambda _: (_.start, -_.stop))
-    for index in range(len(spans) - 1):
-        current = spans[index]
-        next = spans[index + 1]
-        if current.stop > next.start:
-            yield current, next
+    for span in spans:
+        if previous and previous.stop > span.start:
+            yield previous, span
+            continue
+        previous = span
 
 
 def filter_overlapping(spans):
     ids = set()
-    for current, next in select_overlapping(spans):
-        ids.add(id(next))
+    for previous, span in select_overlapping(spans):
+        ids.add(id(span))
     for span in spans:
         if id(span) not in ids:
             yield span
