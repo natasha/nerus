@@ -1,7 +1,4 @@
 
-
-import requests
-
 from nerus.const import (
     NATASHA,
     NATASHA_HOST,
@@ -90,6 +87,8 @@ def parse(text, data):
 
 
 def post(text, host, port):
+    import requests
+
     url = NATASHA_URL.format(
         host=host,
         port=port

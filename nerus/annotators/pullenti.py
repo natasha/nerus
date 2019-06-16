@@ -1,10 +1,19 @@
 
-from pullenti_client import Client as PullentiClient
-from pullenti_client.result import (
-    Span as PullentiSpan_,
-    Match as PullentiMatch_,
-    Result as PullentiMarkup_,
-)
+try:
+    from pullenti_client.result import (
+        Span as PullentiSpan_,
+        Match as PullentiMatch_,
+        Result as PullentiMarkup_,
+    )
+except ImportError:
+    class PullentiObject:
+        def __init__(self, *args, **kwargs):
+            raise ImportError('pullenti')
+
+    PullentiSpan_ = PullentiObject
+    PullentiMatch_ = PullentiObject
+    PullentiMarkup_ = PullentiObject
+
 
 from nerus.const import (
     PULLENTI,
@@ -118,6 +127,8 @@ class PullentiMarkup(PullentiMarkup_, AnnotatorMarkup):
 
 
 def map(texts, host=PULLENTI_HOST, port=PULLENTI_PORT):
+    from pullenti_client import Client as PullentiClient
+
     client = PullentiClient(host, port)
     for text in texts:
         result = client(text)

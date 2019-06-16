@@ -1,6 +1,4 @@
 
-import requests
-
 from nerus.const import (
     DEEPPAVLOV,
     DEEPPAVLOV_HOST,
@@ -60,6 +58,8 @@ def parse(texts, data):
 
 
 def post(texts, host, port):
+    import requests
+
     url = DEEPPAVLOV_URL.format(
         host=host,
         port=port

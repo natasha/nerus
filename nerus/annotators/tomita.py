@@ -1,6 +1,4 @@
 
-import requests
-
 from nerus.const import (
     PER,
 
@@ -117,6 +115,8 @@ def parse(text, xml):
 
 
 def call_(text, host, port):
+    import requests
+
     url = TOMITA_URL.format(
         host=host,
         port=port

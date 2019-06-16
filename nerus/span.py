@@ -1,6 +1,5 @@
 
 from collections import defaultdict
-from intervaltree import IntervalTree as Intervals
 
 from .utils import Record
 
@@ -107,6 +106,8 @@ def assert_non_overlapping(spans):
 
 
 def split_overlapping_spans(spans):
+    from intervaltree import IntervalTree as Intervals
+
     order = {}
     for index, span in enumerate(spans):
         order[id(span)] = index

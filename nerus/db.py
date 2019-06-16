@@ -1,8 +1,6 @@
 
 from collections import OrderedDict
 
-from pymongo import MongoClient
-
 from .const import (
     DB_HOST,
     DB_PORT,
@@ -15,6 +13,8 @@ from .const import (
 
 
 def get_db(host=DB_HOST, port=DB_PORT):
+    from pymongo import MongoClient
+
     client = MongoClient(
         host, port,
         username=DB_USERNAME,

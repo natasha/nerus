@@ -1,6 +1,4 @@
 
-import requests
-
 from nerus.const import (
     MITIE,
     MITIE_HOST,
@@ -58,6 +56,8 @@ def parse(text, data):
 
 
 def post(text, host, port):
+    import requests
+
     url = MITIE_URL.format(
         host=host,
         port=port

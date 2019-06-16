@@ -2,8 +2,6 @@
 import re
 from functools import lru_cache
 
-from razdel import tokenize as tokenize__
-
 from .utils import Record
 
 
@@ -17,6 +15,8 @@ class Token(Record):
 
 
 def tokenize_(text):
+    from razdel import tokenize as tokenize__
+
     for token in tokenize__(text):
         yield Token(
             token.start,

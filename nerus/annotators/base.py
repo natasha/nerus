@@ -1,8 +1,6 @@
 
 from time import sleep
 
-from requests import RequestException
-
 from nerus.utils import (
     Record,
     LabeledRecord
@@ -71,6 +69,8 @@ class Annotator(Record):
 
     @property
     def ready(self):
+        from requests import RequestException
+
         try:
             self(PUTIN)
             return True

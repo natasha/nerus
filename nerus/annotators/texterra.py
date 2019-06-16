@@ -1,6 +1,4 @@
 
-import requests
-
 from nerus.const import (
     TEXTERRA,
     TEXTERRA_HOST,
@@ -59,6 +57,8 @@ def parse(data):
 
 
 def post(texts, host, port, timeout):
+    import requests
+
     url = TEXTERRA_URL.format(
         host=host,
         port=port
