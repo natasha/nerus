@@ -59,6 +59,16 @@ make test
 make int  # runs containters with annotators
 ```
 
+Package:
+
+```bash
+make version
+git push
+git push --tags
+
+make clean wheel upload
+```
+
 Containers:
 
 ```bash
