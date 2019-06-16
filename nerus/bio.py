@@ -50,10 +50,10 @@ def bio_spans(tokens, tags):
         yield Span(start, stop, previous)
 
 
-def spans_bio(tokens, spans):
-    # TODO maybe drop that for speed
-    assert_aligned_bounds(spans, tokens)
-    assert_non_overlapping(spans)
+def spans_bio(tokens, spans, strict=True):
+    if strict:
+        assert_aligned_bounds(spans, tokens)
+        assert_non_overlapping(spans)
     for token in tokens:
         part = O
         type = None
@@ -93,9 +93,10 @@ def io_spans(tokens, tags):
         yield Span(start, stop, previous)
 
 
-def spans_io(tokens, spans):
-    assert_aligned_bounds(spans, tokens)
-    assert_non_overlapping(spans)
+def spans_io(tokens, spans, strict=True):
+    if strict:
+        assert_aligned_bounds(spans, tokens)
+        assert_non_overlapping(spans)
     for token in tokens:
         part = O
         type = None
