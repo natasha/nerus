@@ -151,14 +151,14 @@ Dump:
 ```bash
 export WORKER_HOST=`nerus-ctl worker ip`
 
-nerus-ctl dump raw data/dumps/raw/t.jsonl.gz --count=10000
+nerus-ctl dump raw data/dumps/t.raw.jsonl.gz --count=10000
 # norm 2x faster with pypy
-nerus-ctl dump norm data/dumps/{raw,norm}/t.jsonl.gz
+nerus-ctl dump norm data/dumps/{,.raw}/t.jsonl.gz
 
 # faster version
 nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/ne
-rus-ctl dump raw /tmp/raw.jsonl.gz'
-nerus-ctl worker download /tmp/lenta.jsonl.gz data/dumps/raw/lenta.jsonl.gz
+rus-ctl dump raw /tmp/t.raw.jsonl.gz'
+nerus-ctl worker download /tmp/t.raw.jsonl.gz data/dumps/t.raw.jsonl.gz
 ```
 
 Reset:
