@@ -7,8 +7,6 @@ from .db import (
     query_index,
 )
 from .etl import (
-    load_gz_lines,
-    parse_jsonl,
     serialize_jsonl,
     dump_gz_lines
 )
@@ -18,11 +16,7 @@ from .const import (
 )
 from .annotators import AnnotatorMarkup
 from .sources import SourceRecord
-from .span import Span
-from .markup import (
-    Markup,
-    Multimarkup
-)
+from .markup import Multimarkup
 
 
 ###########
@@ -98,13 +92,6 @@ def dump_raw(records, path):
     dump_gz_lines(lines, path)
 
 
-def load_raw(path):
-    lines = load_gz_lines(path)
-    records = parse_jsonl(lines)
-    for record in records:
-        yield DumpRecord.from_json(record)
-
-
 ##########
 #
 #    NORM
@@ -164,26 +151,3 @@ def serialize_norm(records):
 def dump_norm(records, path):
     lines = serialize_jsonl(serialize_norm(records))
     dump_gz_lines(lines, path)
-
-
-def parse_spans(items):
-    for item in items:
-        yield Span(
-            item['span']['start'],
-            item['span']['end'],
-            item['type']
-        )
-
-
-def parse_norm(items):
-    for item in items:
-        yield Markup(
-            item['content'],
-            list(parse_spans(item['annotations']))
-        )
-
-
-def load_norm(path):
-    lines = load_gz_lines(path)
-    records = parse_jsonl(lines)
-    return parse_norm(records)
