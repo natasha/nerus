@@ -64,7 +64,7 @@ def post(texts, host, port):
         host=host,
         port=port
     )
-    payload = {'text1': texts}
+    payload = {'context': texts}
     response = requests.post(
         url,
         json=payload
@@ -97,6 +97,10 @@ class DeeppavlovAnnotator(ChunkAnnotator):
     host = DEEPPAVLOV_HOST
     port = DEEPPAVLOV_PORT
     chunk = DEEPPAVLOV_CHUNK
+
+    # BERT version starts >2min, requires >3GB
+    retries = 100
+    delay = 5
 
     def map(self, texts):
         return map(texts, self.host, self.port, self.chunk)

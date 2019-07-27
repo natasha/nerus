@@ -52,6 +52,10 @@ class Annotator(Record):
 
     name = None
 
+    payload = PUTIN
+    retries = 30
+    delay = 2
+
     def __init__(self, host=None, port=None):
         if not host:
             host = self.host
@@ -72,19 +76,19 @@ class Annotator(Record):
         from requests import RequestException
 
         try:
-            self(PUTIN)
+            self(self.payload)
             return True
         except (RequestException, AnnotatorError):
             return False
 
-    def wait(self, callback=None, retries=30, delay=2):
-        for _ in range(retries):
+    def wait(self, callback=None):
+        for _ in range(self.retries):
             if self.ready:
                 break
             else:
                 if callback:
                     callback()
-                sleep(delay)
+                sleep(self.delay)
         else:
             raise AnnotatorError('failed to start')
 

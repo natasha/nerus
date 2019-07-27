@@ -1,7 +1,14 @@
-FROM deeppavlov/ner_ru
+FROM deeppavlov/base
 
-EXPOSE 6004
 WORKDIR /app
 
-# dump logs to terminal to see whats going on
-CMD python3.6 -m deeppavlov.deep riseapi /base/DeepPavlov/deeppavlov/configs/ner/ner_rus.json
+RUN cd /base/DeepPavlov && \
+    git pull && \
+    python3.6 setup.py develop
+
+RUN python3.6 -m deeppavlov install ner_rus_bert
+RUN python3.6 -m deeppavlov download ner_rus_bert
+
+EXPOSE 5000
+
+CMD python3.6 -m deeppavlov.deep riseapi ner_rus_bert
