@@ -2,7 +2,8 @@ FROM python:3.5
 
 WORKDIR /
 
-ADD requirements.txt .
+COPY requirements requirements
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY nerus nerus
