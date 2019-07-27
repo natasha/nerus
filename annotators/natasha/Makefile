@@ -1,4 +1,4 @@
-IMAGE = natasha/natasha:0.10.0
+IMAGE = natasha/natasha
 
 image:
 	docker build -t $(IMAGE) .

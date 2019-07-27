@@ -25,7 +25,7 @@ services:
   ##########
 
   pullenti:
-    image: pullenti/pullenti-server:3.17
+    image: pullenti/pullenti-server
     restart: always
     ports:
       - 8080:8080
@@ -55,7 +55,7 @@ services:
       - 8084:8080
 
   natasha:
-    image: natasha/natasha:0.10.0
+    image: natasha/natasha
     restart: always
     ports:
       - 8085:8080
