@@ -159,7 +159,10 @@ DEEPPAVLOV_PORT = int(getenv('DEEPPAVLOV_PORT', 8081))
 DEEPPAVLOV_IMAGE = getenv('DEEPPAVLOV_IMAGE', 'natasha/deeppavlov-ner-ru')
 DEEPPAVLOV_CONTAINER_PORT = 5000
 
-DEEPPAVLOV_CHUNK = int(getenv('DEEPPAVLOV_CHUNK', 10000))
+# assume 200 tokens split be whitespace < 512 bert tokens
+DEEPPAVLOV_SECTION = int(getenv('DEEPPAVLOV_TOKENS', 200))
+DEEPPAVLOV_BATCH = int(getenv('DEEPPAVLOV_BATCH', 10))
+
 DEEPPAVLOV_URL = 'http://{host}:{port}/ner'
 
 

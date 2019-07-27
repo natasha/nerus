@@ -119,3 +119,12 @@ def find_tokens(chunks, text, start=0, strip=r'\s'):
                     return
 
             raise FindTokenError(chunk, chunks, suffix)
+
+
+def space_tokenize(text):
+    for match in re.finditer(r'[^ ]+', text):
+        yield Token(
+            start=match.start(),
+            stop=match.end(),
+            text=match.group()
+        )

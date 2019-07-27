@@ -98,8 +98,6 @@ class Annotator(Record):
 
 
 class ChunkAnnotator(Annotator):
-    __attributes__ = ['host', 'port', 'chunk']
-
     def map(self, texts):
         raise NotImplementedError
 

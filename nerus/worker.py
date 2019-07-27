@@ -24,9 +24,9 @@ from .const import (
 
 
 CONFIG = dict(
-    cores=10,
+    cores=12,
     share=100,
-    memory=20,
+    memory=24,
     disk_size=50,
     disk_type=YC_HDD,
     image=YC_UBUNTU_1604,

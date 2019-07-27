@@ -31,10 +31,10 @@ services:
       - 8080:8080
 
   deeppavlov:
-    image: ${DEEPPAVLOV_IMAGE}
+    image: natasha/deeppavlov-ner-ru
     restart: always
     ports:
-      - 8081:6004
+      - 8081:5000
 
   texterra:
     image: natasha/texterra-russian
@@ -87,8 +87,8 @@ services:
     extends: natasha_worker
     environment:
       DEEPPAVLOV_HOST: deeppavlov
-      DEEPPAVLOV_PORT: 6004
-      DEEPPAVLOV_CHUNK: ${DEEPPAVLOV_CHUNK}
+      DEEPPAVLOV_PORT: 5000
+      DEEPPAVLOV_BATCH: ${DEEPPAVLOV_BATCH}
       WORKER_ANNOTATOR: deeppavlov
       WORKER_QUEUE: deeppavlov
 

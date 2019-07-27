@@ -93,7 +93,7 @@ nerus-ctl worker ssh 'sudo sh setup.sh'  # install docker + docker-compose
 # + docker-compose --version
 # docker-compose version 1.23.2, build 1110ad01
 
-nerus-ctl worker upload worker/cpu.env .env
+nerus-ctl worker upload worker/remote.env .env
 nerus-ctl worker upload worker/docker-compose.yml
 nerus-ctl worker ssh 'docker-compose pull'
 nerus-ctl worker ssh 'docker-compose up -d'
