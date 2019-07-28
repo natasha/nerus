@@ -1,4 +1,6 @@
 
+from corus import load_wikiner as load_
+
 from nerus.const import (
     WIKINER,
     WIKINER_URL,
@@ -6,10 +8,7 @@ from nerus.const import (
 
     SOURCES_DIR
 )
-from nerus.etl import (
-    load_bz2_lines,
-    download
-)
+from nerus.etl import download
 from nerus.sent import (
     sentenize,
     sent_spans
@@ -19,8 +18,7 @@ from nerus.path import (
     exists,
     join_path
 )
-from nerus.token import find_tokens
-from nerus.bio import io_spans
+from nerus.span import Span
 from nerus.adapt.wikiner import adapt
 
 from .base import (
@@ -46,31 +44,17 @@ class WikinerMarkup(Markup, SourceRecord):
     def adapted(self):
         return adapt(self)
 
-
-def parse(line):
-    if not line:
-        # skip empy lines
-        return
-
-    # На|PR|O севере|S|O граничит|V|O с|PR|O Латвией|S|I-LOC
-    chunks = []
-    tags = []
-    for part in line.split():
-        chunk, pos, tag = part.split('|', 2)
-        chunks.append(chunk)
-        tags.append(tag)
-    text = ' '.join(chunks)
-    tokens = list(find_tokens(chunks, text))
-    spans = list(io_spans(tokens, tags))
-    return WikinerMarkup(text, spans)
+    @classmethod
+    def from_corus(cls, record):
+        return WikinerMarkup(
+            record.text,
+            [Span(*_) for _ in record.spans]
+        )
 
 
 def load(path):
-    lines = load_bz2_lines(path)
-    for line in lines:
-        record = parse(line)
-        if record:
-            yield record
+    for record in load_(path):
+        yield WikinerMarkup.from_corus(record)
 
 
 def get():

@@ -1,8 +1,7 @@
 
-import re
+from corus import load_ne5 as load_
 
 from nerus.path import (
-    list_dir,
     join_path,
     exists,
     basename,
@@ -20,7 +19,6 @@ from nerus.sent import (
     sent_spans
 )
 from nerus.etl import (
-    load_lines,
     download,
     unzip
 )
@@ -53,6 +51,10 @@ class Ne5Span(Span):
             self.text
         )
 
+    @classmethod
+    def from_corus(cls, record):
+        return Ne5Span(*record)
+
 
 class Ne5Markup(SourceRecord, Markup):
     __attributes__ = ['id', 'text', 'spans']
@@ -80,49 +82,17 @@ class Ne5Markup(SourceRecord, Markup):
     def adapted(self):
         return adapt(self)
 
-
-def list_ids(dir):
-    for filename in list_dir(dir):
-        match = re.match(r'^(.+).txt$', filename)
-        if match:
-            yield match.group(1)
-
-
-def txt_path(id, dir):
-    return join_path(dir, '%s.txt' % id)
-
-
-def ann_path(id, dir):
-    return join_path(dir, '%s.ann' % id)
-
-
-def parse_spans(lines):
-    # brat format http://brat.nlplab.org/standoff.html
-    for line in lines:
-        index, type, start, stop, text = line.split(None, 4)
-        start = int(start)
-        stop = int(stop)
-        yield Ne5Span(index, type, start, stop, text)
-
-
-def load_text(path):
-    # do not convert \r\n to \n
-    with open(path, newline='') as file:
-        return file.read()
-
-
-def load_id(id, dir):
-    path = txt_path(id, dir)
-    text = load_text(path)
-    path = ann_path(id, dir)
-    lines = load_lines(path)
-    spans = list(parse_spans(lines))
-    return Ne5Markup(id, text, spans)
+    @classmethod
+    def from_corus(cls, record):
+        return Ne5Markup(
+            record.id, record.text,
+            [Ne5Span.from_corus(_) for _ in record.spans]
+        )
 
 
 def load(dir=NE5_DIR):
-    for id in list_ids(dir):
-        yield load_id(id, dir)
+    for record in load_(dir):
+        yield Ne5Markup.from_corus(record)
 
 
 def get():

@@ -1,4 +1,6 @@
 
+from corus import load_lenta as load_
+
 from nerus.const import (
     LENTA,
     LENTA_FILENAME,
@@ -6,11 +8,7 @@ from nerus.const import (
 
     SOURCES_DIR
 )
-from nerus.etl import (
-    download,
-    load_gz_lines,
-    parse_csv
-)
+from nerus.etl import download
 from nerus.path import (
     exists,
     join_path
@@ -45,16 +43,14 @@ class LentaRecord(SourceRecord):
                 self.topic, self.tags
             )
 
-
-def parse(lines):
-    rows = parse_csv(lines)
-    for cells in rows:
-        yield LentaRecord(*cells)
+    @classmethod
+    def from_corus(cls, record):
+        return LentaRecord(*record)
 
 
 def load(path):
-    lines = load_gz_lines(path)
-    return parse(lines)
+    for record in load_(path):
+        yield LentaRecord.from_corus(record)
 
 
 def get():

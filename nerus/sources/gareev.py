@@ -1,5 +1,5 @@
 
-import re
+from corus import load_gareev as load_
 
 from nerus.const import (
     GAREEV,
@@ -9,17 +9,14 @@ from nerus.const import (
 )
 from nerus.path import (
     exists,
-    list_dir,
     join_path
 )
 from nerus.sent import (
     sentenize,
     sent_spans
 )
-from nerus.etl import load_lines
 from nerus.markup import Markup
-from nerus.token import find_tokens
-from nerus.bio import bio_spans
+from nerus.span import Span
 from nerus.adapt.gareev import adapt
 
 from .base import (
@@ -45,36 +42,17 @@ class GareevMarkup(Markup, SourceRecord):
     def adapted(self):
         return adapt(self)
 
-
-def parse_conll(lines):
-    chunks = []
-    tags = []
-    for line in lines:
-        chunk, tag = line.split('\t', 1)
-        chunks.append(chunk)
-        tags.append(tag)
-    text = ' '.join(chunks)
-    tokens = list(find_tokens(chunks, text))
-    spans = list(bio_spans(tokens, tags))
-    return GareevMarkup(text, spans)
-
-
-def load_id(id, dir):
-    path = join_path(dir, '%s.txt.iob' % id)
-    lines = load_lines(path)
-    return parse_conll(lines)
-
-
-def list_ids(dir):
-    for filename in list_dir(dir):
-        match = re.match(r'^(.+).txt.iob', filename)
-        if match:
-            yield match.group(1)
+    @classmethod
+    def from_corus(self, record):
+        return GareevMarkup(
+            record.text,
+            [Span(*_) for _ in record.spans]
+        )
 
 
 def load(dir=GAREEV_DIR):
-    for id in list_ids(dir):
-        yield load_id(id, dir)
+    for record in load_(dir):
+        yield GareevMarkup.from_corus(record)
 
 
 def get():
