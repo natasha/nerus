@@ -108,7 +108,7 @@ def merge_markups(sections):
     return DeeppavlovMarkup(text, spans)
 
 
-DEEPPAVLOV_STRIP = '\t\r\n '  # \xa0 in tokens
+DEEPPAVLOV_STRIP = '\r\n '  # \xa0 in tokens
 
 
 def parse(texts, data):
