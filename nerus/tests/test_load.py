@@ -9,8 +9,6 @@ from nerus.load import (
 )
 from nerus.span import Span
 
-import pytest
-
 
 DATA_DIR = join_path(get_dir(__file__), 'data')
 # cat data/dumps/lenta.raw.jsonl.gz | gunzip | head -1 | gzip > nerus/tests/data/test.raw.jsonl.gz
