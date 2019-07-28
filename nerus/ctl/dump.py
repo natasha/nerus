@@ -8,10 +8,10 @@ from nerus.const import (
     ANNOTATORS
 )
 from nerus.db import get_db
+from nerus.load import load_raw
 from nerus.dump import (
     read_raw,
     dump_raw as dump_raw__,
-    load_raw,
     norm_raw,
     dump_norm as dump_norm__
 )
