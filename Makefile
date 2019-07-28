@@ -13,8 +13,8 @@ test:
 int:
 	pytest -vv --capture=no --int nerus --cov nerus --cov-report term-missing
 
-cov:
-	pytest -vv --cov nerus --cov-report term-missing
+ci:
+	pytest -vv nerus/tests/test_api.py
 
 wheel:
 	python setup.py bdist_wheel
