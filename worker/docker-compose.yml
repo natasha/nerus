@@ -9,14 +9,18 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: Yax6mUVzdXzsCCo
+    volumes:
+      - ./data/mongo:/data/db
     ports:
       - 27017:27017
     command: --wiredTigerCacheSizeGB=${DB_CACHE}
 
   redis:
     image: redis
-    command: redis-server --requirepass ENvHwwFLhiKe7hE
+    command: redis-server --requirepass ENvHwwFLhiKe7hE --appendonly yes
     restart: always
+    volumes:
+      - ./data/redis:/data
     ports:
       - 6379:6379
 
