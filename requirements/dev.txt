@@ -1,5 +1,5 @@
 intervaltree==2.1.0
-requests==2.18.4
+requests==2.20.0
 
 razdel==0.3.0
 corus==0.3.0
