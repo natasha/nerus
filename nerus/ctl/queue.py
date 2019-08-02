@@ -106,3 +106,15 @@ def queue_retry_(chunk):
         queue = get_queue(annotator, connection=connection)
         for chunk_ in chunks:
             enqueue(queue, task, chunk_)
+
+
+def queue_clear(args):
+    queue_clear_()
+
+
+def queue_clear_():
+    log('Clear queues')
+    connection = get_connection(host=WORKER_HOST)
+    queues = get_queues(ANNOTATORS, connection)
+    for name, queue in queues:
+        queue.empty()

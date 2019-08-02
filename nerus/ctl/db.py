@@ -49,3 +49,14 @@ def db_show_():
             name=name,
             count=count
         ))
+
+
+def db_clear(args):
+    db_clear_()
+
+
+def db_clear_():
+    log('Removing docs')
+    db = get_db(host=WORKER_HOST)
+    for name in [SOURCE] + ANNOTATORS:
+        db[name].remove()

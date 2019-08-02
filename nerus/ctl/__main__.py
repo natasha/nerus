@@ -22,11 +22,13 @@ def worker_download(*args): from .worker import worker_download as f; return f(*
 
 def db_insert(*args): from .db import db_insert as f; return f(*args)
 def db_show(*args): from .db import db_show as f; return f(*args)
+def db_clear(*args): from .db import db_clear as f; return f(*args)
 
 def queue_insert(*args): from .queue import queue_insert as f; return f(*args)
 def queue_show(*args): from .queue import queue_show as f; return f(*args)
 def queue_failed(*args): from .queue import queue_failed as f; return f(*args)
 def queue_retry(*args): from .queue import queue_retry as f; return f(*args)
+def queue_clear(*args): from .queue import queue_clear as f; return f(*args)
 
 def dump_raw(*args): from .dump import dump_raw as f; return f(*args)
 def dump_norm(*args): from .dump import dump_norm as f; return f(*args)
@@ -86,6 +88,9 @@ def main():
     sub = db.add_parser('show')
     sub.set_defaults(function=db_show)
 
+    sub = db.add_parser('clear')
+    sub.set_defaults(function=db_clear)
+
     ########
     #  QUEUE
     #########
@@ -108,6 +113,9 @@ def main():
     sub = queue.add_parser('retry')
     sub.set_defaults(function=queue_retry)
     sub.add_argument('--chunk', type=int, default=100)
+
+    sub = queue.add_parser('clear')
+    sub.set_defaults(function=queue_clear)
 
     #########
     #  DUMP
