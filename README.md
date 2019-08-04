@@ -156,8 +156,7 @@ nerus-ctl dump raw data/dumps/t.raw.jsonl.gz --count=10000
 nerus-ctl dump norm data/dumps/{,.raw}/t.jsonl.gz
 
 # faster version
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/ne
-rus-ctl dump raw /tmp/t.raw.jsonl.gz'
+nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/nerus-ctl dump raw /tmp/t.raw.jsonl.gz'
 nerus-ctl worker download /tmp/t.raw.jsonl.gz data/dumps/t.raw.jsonl.gz
 ```
 
