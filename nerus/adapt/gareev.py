@@ -3,7 +3,10 @@ from nerus.const import (
     PER,
     ORG
 )
-from nerus.span import strip_spans
+from nerus.span import (
+    strip_spans,
+    strip_spans_bounds
+)
 from nerus.markup import Markup
 
 from .common import (
@@ -19,6 +22,15 @@ TYPES = {
 
 
 def adapt(markup):
-    spans = strip_spans(markup.spans, markup.text, QUOTES + SPACES + DOT)
+    # extra spaces + dots in spans
+
+    # News Corp .
+    # -----------
+
+    # « Русал »
+    # ---------
+
+    spans = strip_spans(markup.spans, markup.text, DOT + SPACES)
+    spans = strip_spans_bounds(spans, markup.text, QUOTES + SPACES)
     spans = adapt_spans(spans, markup.text, TYPES)
     return Markup(markup.text, list(spans))

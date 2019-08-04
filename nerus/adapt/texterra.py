@@ -4,13 +4,8 @@ from nerus.const import (
     ORG,
     PER
 )
-from nerus.span import strip_spans
-from nerus.markup import Markup
 
-from .common import (
-    QUOTES, SPACES,
-    adapt_spans
-)
+from .common import adapt as adapt_
 
 
 TYPES = {
@@ -59,6 +54,4 @@ TYPES = {
 
 
 def adapt(markup):
-    spans = list(strip_spans(markup.spans, markup.text, QUOTES + SPACES))
-    spans = list(adapt_spans(spans, markup.text, TYPES))
-    return Markup(markup.text, spans)
+    return adapt_(markup, TYPES)

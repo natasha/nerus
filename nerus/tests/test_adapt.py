@@ -39,7 +39,7 @@ DEEPPALVOL_TESTS = [
         Markup(text='«Объединительный собор», инициированный президентом Украины Петром Порошенко и патриархом Варфоломеем, пройдет 15 декабря в Софийском соборе Киева, передает РИА Новости.', spans=[Span(start=52, stop=59, type='LOC'), Span(start=60, stop=76, type='PER'), Span(start=90, stop=101, type='PER'), Span(start=124, stop=140, type='ORG'), Span(start=141, stop=146, type='LOC'), Span(start=157, stop=168, type='ORG')])
     ],
     [
-        DeeppavlovMarkup(text='Два кинопроекта продюсерского центра "Ленфильм" - лирическая комедия "Трек" Ильи Северова и сказка "Самый рыжий лис" Александры Стреляной - получили поддержку Министерства культуры РФ.', spans=[Span(start=38, stop=47, type='ORG'), Span(start=76, stop=89, type='PER'), Span(start=117, stop=137, type='PER'), Span(start=159, stop=180, type='ORG'), Span(start=181, stop=183, type='LOC')]),
+        DeeppavlovMarkup(text='Два кинопроекта продюсерского центра "Ленфильм" - лирическая комедия "Трек" Ильи Северова и сказка "Самый рыжий лис" Александры Стреляной - получили поддержку Министерства культуры РФ.', spans=[Span(start=38, stop=46, type='ORG'), Span(start=76, stop=89, type='PER'), Span(start=117, stop=137, type='PER'), Span(start=159, stop=180, type='ORG'), Span(start=181, stop=183, type='LOC')]),
         Markup(text='Два кинопроекта продюсерского центра "Ленфильм" - лирическая комедия "Трек" Ильи Северова и сказка "Самый рыжий лис" Александры Стреляной - получили поддержку Министерства культуры РФ.', spans=[Span(start=38, stop=46, type='ORG'), Span(start=76, stop=89, type='PER'), Span(start=117, stop=137, type='PER'), Span(start=159, stop=180, type='ORG'), Span(start=181, stop=183, type='LOC')])
     ]
 ]
@@ -69,7 +69,7 @@ TEXTERRA_TESTS = [
         Markup(text='Подтверждения этих сведений нет, но, как передает РИА Новости со ссылкой на ФСБ России, пограничники, применив оружие, задержали в Черном море в районе Керченского пролива три корабля Военно-морских сил Украины — катера «Бердянск» и «Никополь», а также буксир «Яны Капу».', spans=[Span(start=50, stop=61, type='ORG'), Span(start=76, stop=79, type='ORG'), Span(start=80, stop=86, type='LOC'), Span(start=131, stop=142, type='LOC'), Span(start=221, stop=229, type='LOC'), Span(start=261, stop=269, type='PER')])
     ],
     [
-        TexterraMarkup(text='Вместе с сайтами партнеров ее контент собирает 75 миллионов просмотров в месяц, сообщил собеседник «Коммерсант».', spans=[Span(start=100, stop=111, type='ORGANIZATION_POLITICAL')]),
+        TexterraMarkup(text='Вместе с сайтами партнеров ее контент собирает 75 миллионов просмотров в месяц, сообщил собеседник «Коммерсант».', spans=[Span(start=100, stop=110, type='ORGANIZATION_POLITICAL')]),
         Markup(text='Вместе с сайтами партнеров ее контент собирает 75 миллионов просмотров в месяц, сообщил собеседник «Коммерсант».', spans=[Span(start=100, stop=110, type='ORG')])
     ]
 ]

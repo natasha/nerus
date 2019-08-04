@@ -21,6 +21,8 @@ TYPES = {
 
 
 def adapt(markup):
+    # Чувашской Республики".
+    # ----------------------
     # год Чарльза Дарвина»
     #     ----------------
     spans = list(strip_spans(markup.spans, markup.text, QUOTES + DOT + SPACES))

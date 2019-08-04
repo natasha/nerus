@@ -176,6 +176,19 @@ def strip_spans(spans, text, chars):
         yield strip_span(span, text, chars)
 
 
+def strip_span_bounds(span, text, chars):
+    span_ = strip_span(span, text, chars)
+    # check both sides stripped
+    if span_.start > span.start and span_.stop < span.stop:
+        return span_  # "Lukoil"
+    return span  # OOO "Lukoil"
+
+
+def strip_spans_bounds(spans, text, chars):
+    for span in spans:
+        yield strip_span_bounds(span, text, chars)
+
+
 def filter_empty_spans(spans):
     for span in spans:
         if span.start != span.stop:
