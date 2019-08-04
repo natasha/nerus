@@ -160,11 +160,11 @@ nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp na
 nerus-ctl worker download /tmp/t.raw.jsonl.gz data/dumps/t.raw.jsonl.gz
 ```
 
-Reset:
+Clear:
 
 ```bash
-nerus-ctl worker ssh 'docker-compose down'
-nerus-ctl worker ssh 'docker-compose up -d'
+nerus-ctl db clear
+nerus-ctl q clear
 ```
 
 Remove instance
