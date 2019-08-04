@@ -4,8 +4,13 @@ from nerus.const import (
     LOC,
     ORG
 )
+from nerus.span import strip_spans_bounds
+from nerus.markup import Markup
 
-from .common import adapt as adapt_
+from .common import (
+    QUOTES, SPACES,
+    adapt_spans
+)
 
 
 TYPES = {
@@ -17,4 +22,8 @@ TYPES = {
 
 
 def adapt(markup):
-    return adapt_(markup, TYPES)
+    # большевистской газете " Правда " .
+    #                       ----------
+    spans = strip_spans_bounds(markup.spans, markup.text, QUOTES + SPACES)
+    spans = adapt_spans(spans, markup.text, TYPES)
+    return Markup(markup.text, list(spans))
