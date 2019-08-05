@@ -12,7 +12,7 @@ from .etl import (
 )
 from .const import (
     SOURCE,
-    DEEPPAVLOV, TEXTERRA, PULLENTI, TOMITA
+    DEEPPAVLOV
 )
 from .annotators import AnnotatorMarkup
 from .sources import SourceRecord
@@ -48,17 +48,10 @@ class DumpRecord(Multimarkup):
         for source, *markups in zip(source, *markups):
             yield DumpRecord(source, markups)
 
-    def select(self, labels):
-        return DumpRecord(
-            self.source,
-            [_ for _ in self.markups if _.label in labels]
-        )
-
     def find(self, label):
         for markup in self.markups:
             if markup.label == label:
                 return markup
-        raise KeyError(label)
 
 
 def query_index_(db, collection, chunk, Record):
@@ -99,13 +92,11 @@ def dump_raw(records, path):
 ############
 
 
-MIX = [DEEPPAVLOV, TEXTERRA, PULLENTI, TOMITA]
-
-
 def norm_raw(records):
     for record in records:
-        record = record.select(MIX)
-        yield record.adapted.mixed
+        record = record.find(DEEPPAVLOV)
+        if record:  # rarele deeppavlov can not process text
+            yield record.adapted
 
 
 # {

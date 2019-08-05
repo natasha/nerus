@@ -331,7 +331,6 @@ SSH_PRIVATE_KEY = getenv('SSH_PRIVATE_KEY', expand_user('~/.ssh/id_rsa'))
 
 DUMPS_DIR = join_path(NERUS_DIR, 'data', 'dumps')
 NORM = 'norm'
-MIX = 'mix'
 RAW = '.raw'
 JSONL = '.jsonl'
 GZ = '.gz'

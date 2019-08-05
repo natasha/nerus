@@ -7,6 +7,7 @@ from nerus.load import (
     load_raw,
     load_norm
 )
+from nerus.const import DEEPPAVLOV
 from nerus.span import Span
 
 
@@ -33,7 +34,7 @@ SPANS = [
 
 def test_load_raw():
     record = next(load_raw(RAW))
-    assert record.adapted.spans == SPANS
+    assert record.find(DEEPPAVLOV).spans == SPANS
 
 
 def test_load_norm():
