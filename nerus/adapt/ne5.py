@@ -4,10 +4,16 @@ from nerus.const import (
     ORG,
     PER
 )
-from nerus.span import filter_overlapping
+from nerus.span import (
+    filter_overlapping,
+    strip_spans_bounds
+)
 from nerus.markup import Markup
 
-from .common import adapt_spans
+from .common import (
+    QUOTES,
+    adapt_spans
+)
 
 
 TYPES = {
@@ -24,6 +30,11 @@ def adapt(markup):
     #   Бражский район Подмосковья
     #   --------------
     #            -----------------
+
+    # компания "Союзкалий"
+    #          -----------
+
     spans = list(filter_overlapping(markup.spans))
-    spans = list(adapt_spans(spans, markup.text, TYPES))
-    return Markup(markup.text, spans)
+    spans = strip_spans_bounds(spans, markup.text, QUOTES)
+    spans = adapt_spans(spans, markup.text, TYPES)
+    return Markup(markup.text, list(spans))
