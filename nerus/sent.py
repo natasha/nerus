@@ -1,8 +1,8 @@
 
 import re
-from functools import lru_cache
 
 from .utils import Record
+from .third.functools_lru_cache import lru_cache
 from .span import (
     envelop_spans,
     offset_spans

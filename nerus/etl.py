@@ -55,9 +55,9 @@ def unzip(path, dir):
 
 
 def load_gz_lines(path, encoding='utf8', gzip=gzip):
-    with gzip.open(path, mode='rt', encoding=encoding) as file:
+    with gzip.open(path) as file:
         for line in file:
-            yield line.rstrip()
+            yield line.decode(encoding).rstrip()
 
 
 def serialize_jsonl(items):
