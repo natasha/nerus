@@ -1,50 +1,121 @@
-# Silver standard russian named entity recognition corpus [![Download russian named entity recognition corpus](https://img.shields.io/badge/download-v1.0-green.svg)](https://github.com/bureaucratic-labs/russian-ner-corpus/releases)
-## About
 
-This corpus was bootstapped from [Lenta.ru news dataset](https://github.com/yutkin/Lenta.Ru-News-Dataset), using several freely available NER toolkits for russian language:
+<img src="i/logo.svg" height="75">
 
-- [deepmipt/ner](https://github.com/deepmipt/ner)
-- [ISPRAS Texterra](https://texterra.ispras.ru)
-- [PullEnti](http://www.pullenti.ru/)
-- [Tomita](https://tech.yandex.ru/tomita/)
+[![Build Status](https://travis-ci.org/natasha/nerus.svg?branch=master)](https://travis-ci.org/natasha/nerus) [![Download Nerus](https://img.shields.io/badge/download-v1.0-green.svg)](https://github.com/natasha/nerus/releases)
 
-This corpus shares almost same ideas, as for example, [GICR (General Internet Corpus of Russian Language)](http://www.webcorpora.ru/en/) which was annotated in automated manner, but in contrast - we use greater count of  annotators, hoping that there'll be less errors.
+<a href="https://github.com/yutkin/Lenta.Ru-News-Dataset">Lenta.ru dataset</a> annotated with <a href="https://github.com/deepmipt/DeepPavlov">DeepPavlov</a> BERT NER.
 
-## Format
+## Download
 
-### Types of entities
+<dl>
+  <dt>Link</dt>
+  <dd>https://github.com/natasha/nerus/releases/download/v1.0/lenta.jsonl.gz</dd>
 
-Currently, due to differencies in used toolkits, we use only three types of entities:
+  <dt>Size</dt>
+  <dd>612Mb</dd>
 
-- Person [PER]
-- Organisation [ORG]
-- Location [LOC]
+  <dt>Texts</dt>
+  <dd>739 295</dd>
+</dl>
 
-Some toolkits (notably, `Texterra`) have additional types of entities.  
-Since we don't see actual difference, for example, between LOC and GPE entities - we changed tag of all GPE entities to LOC.
+## Usage
 
-### Annotations
+Dataset is gzip-compressed text file with <a href="http://jsonlines.org/">JSON lines</a>:
 
-Each annotated article from original dataset stored as JSON file with following structure:
-
-```json
+```bash
+$ gzcat data/dumps/lenta.jsonl.gz | head -1 | jq .
 {
-  "article_id": 100,
-  "content": " ... ",
+  "article_id": 0,
+  "content": "Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости. По словам Голиковой, чаще всего онкологические заболевания становились причиной смерти в Псковской, Тверской, Тульской и Орловской областях, а также в Севастополе. Вице-премьер напомни
+ла, что главные факторы смертности в России — рак и болезни системы кровообращения. В начале года стало известно, что смертность от онкологических заболеваний среди россиян снизилась впервые за три года. По данным Росстата, в 2017 году от рака умерли 289 тысяч человек. Это на 3,5 процента меньше, чем годом ранее.",
   "annotations": [
-      {
-        "span": {
-          "start": 10,
-          "end": 31
-        },
-        "type": "PER",
-        "text": "Дмитрием Светозаровым"
-      }
+    {
+      "span": {
+        "start": 36,
+        "end": 52
+      },
+      "type": "PER",
+      "text": "Татьяна Голикова"
+    },
+    {
+      "span": {
+        "start": 82,
+        "end": 88
+      },
+      "type": "LOC",
+      "text": "России"
+    },
+	...
+    {
+      "span": {
+        "start": 560,
+        "end": 568
+      },
+      "type": "ORG",
+      "text": "Росстата"
+    }
   ]
 }
 ```
 
-We decided to not use any tokenization - mostly because each of used toolkits have built-in tokenizer and, so `span` of each entity is actual position inside article's `content`. 
+`nerus` provides Python API. Python 2.7+, 3.4+ и PyPy 2, 3 are supported.
+
+```bash
+$ pip install nerus
+
+```
+
+```python
+>>> from nerus.load import load_norm
+
+>>> records = load_norm('data/dumps/lenta.jsonl.gz')
+>>> record = next(records)
+>>> record
+
+Markup(
+    text='Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости. По словам Голиковой, чаще всего онкологические заболевания становились причиной смерти в Псковской, Тверской, Тульской и Орловской областях, а также в Севастополе. Вице-премьер напомнила, что главные факторы смертности в России — рак и болезни системы кровообращения. В начале года стало известно, что смертность от онкологических заболеваний среди россиян снизилась впервые за три года. По данным Росстата, в 2017 году от рака умерли 289 тысяч человек. Это на 3,5 процента меньше, чем годом ранее.',
+    spans=[Span(
+         start=36,
+         stop=52,
+         type='PER'
+     ), Span(
+         start=82,
+         stop=88,
+         type='LOC'
+     ), Span(
+         start=149,
+         stop=160,
+         type='ORG'
+	 ...
+	 ), Span(
+         start=560,
+         stop=568,
+         type='ORG'
+     )]
+)
+
+# pip install ipymarkup
+>>> from ipymarkup import show_ascii_markup as show_markup
+
+>>> show_markup(record.text, record.spans)
+Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в 
+                                    PER-------------               
+каких регионах России зафиксирована наиболее высокая смертность от 
+               LOC---                                              
+рака, сообщает РИА Новости. По словам Голиковой, чаще всего 
+               ORG--------            PER------             
+онкологические заболевания становились причиной смерти в Псковской, 
+                                                         LOC------  
+Тверской, Тульской и Орловской областях, а также в Севастополе. Вице-
+LOC-----  LOC-----   LOC---------------            LOC--------       
+премьер напомнила, что главные факторы смертности в России — рак и 
+                                                    LOC---         
+болезни системы кровообращения. В начале года стало известно, что 
+смертность от онкологических заболеваний среди россиян снизилась 
+впервые за три года. По данным Росстата, в 2017 году от рака умерли 
+                               ORG-----                             
+289 тысяч человек. Это на 3,5 процента меньше, чем годом ранее.
+```
 
 ## License
 
