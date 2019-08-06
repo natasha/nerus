@@ -42,7 +42,7 @@ LOC-------------
 LOC                                LOC--- 
 ...
 ```
-See <a href="examples/lenta_500.txt">examples/lenta_500.txt</a> for ~1Mb of examples.
+See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/lenta_500.txt">examples/lenta_500.txt</a> for ~1Mb of examples.
 
 
 ## Download
@@ -60,7 +60,7 @@ See <a href="examples/lenta_500.txt">examples/lenta_500.txt</a> for ~1Mb of exam
 
 ## Usage
 
-`lenta.jsonl.gz` is gzip-compressed text file with <a href="http://jsonlines.org/">JSON lines</a>. There are three types of entities: `PER`, `LOC` and `ORG`.
+Dataset is gzip-compressed text file with <a href="http://jsonlines.org/">JSON lines</a>:
 
 ```bash
 $ gzcat lenta.jsonl.gz | head -1 | jq .
@@ -105,7 +105,7 @@ $ pip install nerus
 
 ```
 
-Load and vizualize:
+Load and show annotations:
 
 ```python
 >>> from nerus.load import load_norm
@@ -136,9 +136,9 @@ Markup(
      )]
 )
 
->>> from ipymarkup import show_ascii_markup as show_markup  # pip install ipymarkup
+>>> from ipymarkup import show_ascii_markup  # pip install ipymarkup
 
->>> show_markup(record.text, record.spans)
+>>> show_ascii_markup(record.text, record.spans)
 Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в 
                                     PER-------------               
 каких регионах России зафиксирована наиболее высокая смертность от 
@@ -160,11 +160,11 @@ LOC-----  LOC-----   LOC---------------            LOC--------
 
 ## Evaluation
 
-Nerus was annotated with DeepPavlov BERT NER tagger, so let's evaluate its quality on gold standart datasets and assume its performance on Lenta.ru news articles is the same.
+Nerus was annotated with DeepPavlov BERT NER tagger, so let's evaluate its quality on gold standart datasets and assume the performance on Lenta.ru news articles is the same.
 
-`deeppavlov` was trained on `ne5` so the score on this dataset is not informative. `gareev` dataset has no `LOC` annotation so one column is missing. `tomita` has open grammar just for `PER` so cells for `LOC` and `ORG` are empty.
+`deeppavlov` was trained on `ne5` so the score on this dataset is not informative. `gareev` dataset has no `LOC` annotations so one column is missing. `tomita` has open grammar just for `PER` so cells for `LOC` and `ORG` are empty.
 
-On `factru` and `gareev` `deeppavlov` has way higher score then other freely available systems, f1-scores for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively.
+On `factru` and `gareev` `deeppavlov` has much higher scores then other freely available systems, f1 for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively.
 
 <table border="0" class="dataframe">
   <thead>
@@ -286,6 +286,7 @@ It is also usefull to look at sentences with errors, on can see that usually dif
 в этот раз направленная, главным образом, против политики московских и
  подмосковных властей.
 
+
 [ORG] factru / nerus
 Об этом сообщает Комитет защиты журналистов (КЗЖ) (Committee to 
                  ORG-----------------------  ORG   ORG----------
@@ -317,6 +318,7 @@ Sometimes `deeppavlov` annotations are even better than etalon:
 >
 Предприятия НЛМК расположены в России , Европе и США .
                                LOC---   LOC---   LOC  
+
 
 [ORG] gareev / nerus
 Место проведения : Россия , Москва , отель " Марриотт Роял Аврора " , 
