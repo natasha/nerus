@@ -1,17 +1,17 @@
 
 from collections import defaultdict
 
-from .const import (
+from nerus.const import (
     PER, ORG, LOC,
     I, O
 )
-from .utils import (
+from nerus.utils import (
     Record,
     strict_zip
 )
-from .token import tokenize
-from .span import select_type_spans
-from .bio import (
+from nerus.token import tokenize
+from nerus.span import select_type_spans
+from nerus.bio import (
     spans_io,
     parse_bio
 )
