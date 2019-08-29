@@ -159,11 +159,31 @@ DEEPPAVLOV_PORT = int(getenv('DEEPPAVLOV_PORT', 8081))
 DEEPPAVLOV_IMAGE = getenv('DEEPPAVLOV_IMAGE', 'natasha/deeppavlov-ner-ru')
 DEEPPAVLOV_CONTAINER_PORT = 5000
 
-# assume 200 tokens split be whitespace < 512 bert tokens
-DEEPPAVLOV_SECTION = int(getenv('DEEPPAVLOV_TOKENS', 200))
-DEEPPAVLOV_BATCH = int(getenv('DEEPPAVLOV_BATCH', 10))
+DEEPPAVLOV_SECTION = int(getenv('DEEPPAVLOV_TOKENS', 1000))
+DEEPPAVLOV_BATCH = int(getenv('DEEPPAVLOV_BATCH', 100))
 
 DEEPPAVLOV_URL = 'http://{host}:{port}/ner'
+
+
+#######
+#
+#   DEEPPAVLOV BERT
+#
+########
+
+
+DEEPPAVLOV_BERT = 'deeppavlov_bert'
+DEEPPAVLOV_BERT_HOST = getenv('DEEPPAVLOV_BERT_HOST', ANNOTATORS_HOST)
+DEEPPAVLOV_BERT_PORT = int(getenv('DEEPPAVLOV_BERT_PORT', 8086))
+
+DEEPPAVLOV_BERT_IMAGE = getenv('DEEPPAVLOV_IMAGE', 'natasha/deeppavlov-ner-ru-bert')
+DEEPPAVLOV_BERT_CONTAINER_PORT = 5000
+
+# assume 200 tokens split by whitespace < 512 bert tokens
+DEEPPAVLOV_BERT_SECTION = int(getenv('DEEPPAVLOV_BERT_TOKENS', 200))
+DEEPPAVLOV_BERT_BATCH = int(getenv('DEEPPAVLOV_BERT_BATCH', 100))
+
+DEEPPAVLOV_BERT_URL = 'http://{host}:{port}/ner'
 
 
 #########

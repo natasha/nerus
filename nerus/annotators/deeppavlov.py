@@ -11,6 +11,16 @@ from nerus.const import (
     DEEPPAVLOV_CONTAINER_PORT,
     DEEPPAVLOV_IMAGE,
     DEEPPAVLOV_URL,
+
+    DEEPPAVLOV_BERT,
+    DEEPPAVLOV_BERT_HOST,
+    DEEPPAVLOV_BERT_PORT,
+    DEEPPAVLOV_BERT_SECTION,
+    DEEPPAVLOV_BERT_BATCH,
+
+    DEEPPAVLOV_BERT_CONTAINER_PORT,
+    DEEPPAVLOV_BERT_IMAGE,
+    DEEPPAVLOV_BERT_URL,
 )
 from nerus.utils import (
     Record,
@@ -44,7 +54,7 @@ class DeeppavlovMarkup(AnnotatorMarkup):
     def sents(self):
         for sent in sentenize(self.text):
             spans = sent_spans(sent, self.spans)
-            yield DeeppavlovMarkup(
+            yield self.__class__(
                 sent.text,
                 list(spans)
             )
@@ -52,6 +62,10 @@ class DeeppavlovMarkup(AnnotatorMarkup):
     @property
     def adapted(self):
         return adapt(self)
+
+
+class DeeppavlovBertMarkup(DeeppavlovMarkup):
+    label = DEEPPAVLOV_BERT
 
 
 class Section(Record):
@@ -95,7 +109,7 @@ def group_sections(sections):
         yield group
 
 
-def merge_markups(sections):
+def merge_markups(cls, sections):
     chunks = []
     spans = []
     stop = 0
@@ -105,27 +119,28 @@ def merge_markups(sections):
         spans.extend(offset_spans(section.spans, section.start))
         stop = section.stop
     text = ''.join(chunks)
-    return DeeppavlovMarkup(text, spans)
+    return cls.Markup(text, spans)
 
 
-DEEPPAVLOV_STRIP = ' '
+DEEPPAVLOV_STRIP = r'\s'
+DEEPPAVLOV_BERT_STRIP = r' '
 
 
-def parse(texts, data):
+def parse(cls, texts, data):
     for text, (chunks, tags) in strict_zip(texts, data):
         # see patch_texts
         if not text.strip():
             spans = []
         else:
-            tokens = list(find_tokens(chunks, text, strip=DEEPPAVLOV_STRIP))
+            tokens = list(find_tokens(chunks, text, strip=cls.strip))
             spans = list(bio_spans(tokens, tags))
-        yield DeeppavlovMarkup(text, spans)
+        yield cls.Markup(text, spans)
 
 
-def post(texts, host, port):
+def post(cls, texts, host, port):
     import requests
 
-    url = DEEPPAVLOV_URL.format(
+    url = cls.url.format(
         host=host,
         port=port
     )
@@ -147,43 +162,60 @@ def patch_texts(texts):
         yield text
 
 
-def map_(batches, host, port):
+def map_(cls, batches, host, port):
     for sections in batches:
         texts = [_.text for _ in sections]
-        data = post(texts, host, port)
-        markups = list(parse(texts, data))
+        data = post(cls, texts, host, port)
+        markups = list(parse(cls, texts, data))
         for section, markup in strict_zip(sections, markups):
             yield section.annotated(markup.spans)
 
 
-def map(texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT,
+def map(cls, texts, host=DEEPPAVLOV_HOST, port=DEEPPAVLOV_PORT,
         section_size=DEEPPAVLOV_SECTION, batch_size=DEEPPAVLOV_BATCH):
     texts = patch_texts(texts)
     sections = section_texts(texts, section_size)
     batches = group_chunks(sections, batch_size)
-    sections = map_(batches, host, port)
+    sections = map_(cls, batches, host, port)
     groups = group_sections(sections)
     for group in groups:
-        yield merge_markups(group)
+        yield merge_markups(cls, group)
 
 
 class DeeppavlovAnnotator(ChunkAnnotator):
     name = DEEPPAVLOV
     host = DEEPPAVLOV_HOST
     port = DEEPPAVLOV_PORT
+    url = DEEPPAVLOV_URL
+    strip = DEEPPAVLOV_STRIP
 
     section_size = DEEPPAVLOV_SECTION
     batch_size = DEEPPAVLOV_BATCH
 
-    # BERT version starts >2min, requires >3GB
-    retries = 100
-    delay = 5
+    Markup = DeeppavlovMarkup
 
     def map(self, texts):
         return map(
-            texts, self.host, self.port,
+            self, texts, self.host, self.port,
             self.section_size, self.batch_size
         )
+
+
+class DeeppavlovBertAnnotator(ChunkAnnotator):
+    name = DEEPPAVLOV_BERT
+    host = DEEPPAVLOV_BERT_HOST
+    port = DEEPPAVLOV_BERT_PORT
+    url = DEEPPAVLOV_BERT_URL
+    strip = DEEPPAVLOV_BERT_STRIP
+
+    section_size = DEEPPAVLOV_BERT_SECTION
+    batch_size = DEEPPAVLOV_BERT_BATCH
+
+    Markup = DeeppavlovBertMarkup
+
+    # BERT version starts >2min, requires >3GB
+    retries = 100
+    delay = 5
 
 
 class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):
@@ -191,9 +223,20 @@ class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):
     container_port = DEEPPAVLOV_CONTAINER_PORT
 
 
+class DeeppavlovBertContainerAnnotator(DeeppavlovBertAnnotator, ContainerAnnotator):
+    image = DEEPPAVLOV_BERT_IMAGE
+    container_port = DEEPPAVLOV_BERT_CONTAINER_PORT
+
+
 register(
     DEEPPAVLOV,
     DeeppavlovMarkup,
     DeeppavlovAnnotator,
     DeeppavlovContainerAnnotator
+)
+register(
+    DEEPPAVLOV_BERT,
+    DeeppavlovBertMarkup,
+    DeeppavlovBertAnnotator,
+    DeeppavlovBertContainerAnnotator
 )
