@@ -201,7 +201,7 @@ class DeeppavlovAnnotator(ChunkAnnotator):
         )
 
 
-class DeeppavlovBertAnnotator(ChunkAnnotator):
+class DeeppavlovBertAnnotator(DeeppavlovAnnotator):
     name = DEEPPAVLOV_BERT
     host = DEEPPAVLOV_BERT_HOST
     port = DEEPPAVLOV_BERT_PORT
