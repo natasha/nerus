@@ -61,7 +61,7 @@ def try_skip_chunk(suffix):
 
 
 def lstrip(text, chars=r'\s'):
-    space = re.match(r'^([' + chars + ']*)', text).group(1)
+    space = re.match(r'^([' + chars + r']*)', text).group(1)
     offset = len(space)
     return offset, text[offset:]
 
