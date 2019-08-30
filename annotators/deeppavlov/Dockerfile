@@ -1,14 +1,17 @@
-FROM deeppavlov/base
+FROM deeppavlov/base-gpu
 
-WORKDIR /app
+WORKDIR /base/DeepPavlov
 
-RUN cd /base/DeepPavlov && \
+# for some reason download does not work with default
+# /root/.deeppavlov
+ENV DP_ROOT_PATH=/base
+
+RUN git checkout master && \
     git pull && \
-    python3.6 setup.py develop
+    python setup.py develop
 
-RUN python3.6 -m deeppavlov install ner_rus_bert
-RUN python3.6 -m deeppavlov download ner_rus_bert
+RUN python -m deeppavlov install ner_rus
+RUN python -m deeppavlov download ner_rus
 
 EXPOSE 5000
-
-CMD python3.6 -m deeppavlov.deep riseapi ner_rus_bert
+CMD python -m deeppavlov.deep riseapi ner_rus -p 5000

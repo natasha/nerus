@@ -92,9 +92,20 @@ services:
     environment:
       DEEPPAVLOV_HOST: deeppavlov
       DEEPPAVLOV_PORT: 5000
+      DEEPPAVLOV_SECTION: ${DEEPPAVLOV_SECTION}
       DEEPPAVLOV_BATCH: ${DEEPPAVLOV_BATCH}
       WORKER_ANNOTATOR: deeppavlov
       WORKER_QUEUE: deeppavlov
+
+  deeppavlov_bert_worker:
+    extends: natasha_worker
+    environment:
+      DEEPPAVLOV_BERT_HOST: deeppavlov_bert
+      DEEPPAVLOV_BERT_PORT: 5000
+      DEEPPAVLOV_BERT_SECTION: ${DEEPPAVLOV_BERT_SECTION}
+      DEEPPAVLOV_BERT_BATCH: ${DEEPPAVLOV_BERT_BATCH}
+      WORKER_ANNOTATOR: deeppavlov_bert
+      WORKER_QUEUE: deeppavlov_bert
 
   pullenti_worker:
     extends: natasha_worker
