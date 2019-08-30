@@ -4,8 +4,7 @@ from .utils import strict_zip
 from .span import (
     Span,
     assert_aligned_bounds,
-    assert_non_overlapping,
-    envelop_span,
+    assert_non_overlapping
 )
 
 
@@ -50,21 +49,30 @@ def bio_spans(tokens, tags):
         yield Span(start, stop, previous)
 
 
-def spans_bio(tokens, spans, strict=True):
-    if strict:
-        assert_aligned_bounds(spans, tokens)
-        assert_non_overlapping(spans)
+def append_ellipsis(items, ellipsis=None):
+    for item in items:
+        yield item
+    yield ellipsis
+
+
+def spans_bio(tokens, spans):
+    assert_aligned_bounds(spans, tokens)
+    assert_non_overlapping(spans)
+
+    spans = append_ellipsis(spans)
+    span = next(spans)
     for token in tokens:
         part = O
         type = None
-        for span in spans:
-            if envelop_span(span, token):
+        if span:
+            if token.start >= span.start:
                 type = span.type
-                if span.start == token.start:
+                if token.start == span.start:
                     part = B
                 else:
                     part = I
-                break
+            if token.stop >= span.stop:
+                span = next(spans)
         yield format_bio(part, type)
 
 
@@ -93,16 +101,19 @@ def io_spans(tokens, tags):
         yield Span(start, stop, previous)
 
 
-def spans_io(tokens, spans, strict=True):
-    if strict:
-        assert_aligned_bounds(spans, tokens)
-        assert_non_overlapping(spans)
+def spans_io(tokens, spans):
+    assert_aligned_bounds(spans, tokens)
+    assert_non_overlapping(spans)
+
+    spans = append_ellipsis(spans)
+    span = next(spans)
     for token in tokens:
         part = O
         type = None
-        for span in spans:
-            if envelop_span(span, token):
+        if span:
+            if token.start >= span.start:
                 part = I
                 type = span.type
-                break
+            if token.stop >= span.stop:
+                span = next(spans)
         yield format_bio(part, type)
