@@ -7,7 +7,7 @@ from .span import Span
 from .markup import Markup
 
 
-def load_raw_nerus(path):
+def load_raw(path):
     from .dump import DumpRecord
 
     lines = load_gz_lines(path)
@@ -32,7 +32,7 @@ def parse_spans(items):
         )
 
 
-def parse_nerus(items):
+def parse_norm(items):
     for item in items:
         yield Markup(
             item['content'],
@@ -40,7 +40,7 @@ def parse_nerus(items):
         )
 
 
-def load_nerus(path):
+def load_norm(path):
     lines = load_gz_lines(path)
     records = parse_jsonl(lines)
-    return parse_nerus(records)
+    return parse_norm(records)
