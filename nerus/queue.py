@@ -31,7 +31,11 @@ def get_queues(names, connection):
 
 
 def work_on(queue):
-    worker = Worker([queue], connection=queue.connection)
+    worker = Worker(
+        [queue],
+        name=queue.name,
+        connection=queue.connection
+    )
     worker.work()
 
 
