@@ -13,5 +13,7 @@ RUN git checkout master && \
 RUN python -m deeppavlov install ner_rus
 RUN python -m deeppavlov download ner_rus
 
-EXPOSE 5000
-CMD python -m deeppavlov.deep riseapi ner_rus -p 5000
+WORKDIR /root
+COPY onstart.sh .
+
+CMD ["/bin/bash", "onstart.sh"]
