@@ -4,8 +4,8 @@ from nerus.path import (
     get_dir
 )
 from nerus.load import (
-    load_raw,
-    load_norm
+    load_nerus,
+    load_raw_nerus
 )
 from nerus.const import DEEPPAVLOV
 from nerus.span import Span
@@ -33,10 +33,10 @@ SPANS = [
 
 
 def test_load_raw():
-    record = next(load_raw(RAW))
+    record = next(load_raw_nerus(RAW))
     assert record.find(DEEPPAVLOV).spans == SPANS
 
 
 def test_load_norm():
-    record = next(load_norm(NORM))
+    record = next(load_nerus(NORM))
     assert record.spans == SPANS

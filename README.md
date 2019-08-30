@@ -108,9 +108,9 @@ $ pip install nerus
 Load and show annotations:
 
 ```python
->>> from nerus.load import load_norm
+>>> from nerus import load_nerus
 
->>> records = load_norm('lenta.jsonl.gz')
+>>> records = load_nerus('lenta.jsonl.gz')
 >>> record = next(records)
 >>> record
 

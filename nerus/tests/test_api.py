@@ -5,7 +5,7 @@ from nerus.path import (
     join_path,
     get_dir
 )
-from nerus.load import load_norm
+from nerus.load import load_nerus
 from nerus.markup import Markup
 from nerus.span import Span
 
@@ -17,6 +17,6 @@ ETALON = Markup(text='Вице-премьер по социальным вопр
 
 
 # Should work in isolation (just requirements/main.txt)
-def test_load_norm():
-    record = next(load_norm(NORM))
+def test_load_nerus():
+    record = next(load_nerus(NORM))
     assert record == ETALON
