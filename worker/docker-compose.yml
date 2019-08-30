@@ -68,74 +68,67 @@ services:
   #   WORKERS
   ##########
 
-  natasha_worker:
+  pullenti_worker:
     image: natasha/nerus-ctl
     command: worker run
     restart: always
+    network_mode: host
     environment:
-      QUEUE_HOST: redis
       QUEUE_PORT: 6379
       QUEUE_PASSWORD: ENvHwwFLhiKe7hE
 
-      DB_HOST: mongo
       DB_PORT: 27017
       DB_USERNAME: root
       DB_PASSWORD: Yax6mUVzdXzsCCo
 
-      NATASHA_HOST: natasha
-      NATASHA_PORT: 8080
-      WORKER_ANNOTATOR: natasha
-      WORKER_QUEUE: natasha
+      PULLENTI_PORT: 8080
+      WORKER_ANNOTATOR: pullenti
+      WORKER_QUEUE: pullenti
 
   deeppavlov_worker:
-    extends: natasha_worker
+    extends: pullenti_worker
     environment:
-      DEEPPAVLOV_HOST: deeppavlov
-      DEEPPAVLOV_PORT: 5000
+      DEEPPAVLOV_PORT: 8081
       DEEPPAVLOV_SECTION: ${DEEPPAVLOV_SECTION}
       DEEPPAVLOV_BATCH: ${DEEPPAVLOV_BATCH}
       WORKER_ANNOTATOR: deeppavlov
       WORKER_QUEUE: deeppavlov
 
-  deeppavlov_bert_worker:
-    extends: natasha_worker
-    environment:
-      DEEPPAVLOV_BERT_HOST: deeppavlov_bert
-      DEEPPAVLOV_BERT_PORT: 5000
-      DEEPPAVLOV_BERT_SECTION: ${DEEPPAVLOV_BERT_SECTION}
-      DEEPPAVLOV_BERT_BATCH: ${DEEPPAVLOV_BERT_BATCH}
-      WORKER_ANNOTATOR: deeppavlov_bert
-      WORKER_QUEUE: deeppavlov_bert
-
-  pullenti_worker:
-    extends: natasha_worker
-    environment:
-      PULLENTI_HOST: pullenti
-      PULLENTI_PORT: 8080
-      WORKER_ANNOTATOR: pullenti
-      WORKER_QUEUE: pullenti
-
   texterra_worker:
-    extends: natasha_worker
+    extends: pullenti_worker
     environment:
-      TEXTERRA_HOST: texterra
-      TEXTERRA_PORT: 8080
+      TEXTERRA_PORT: 8082
       TEXTERRA_CHUNK: ${TEXTERRA_CHUNK}
       WORKER_ANNOTATOR: texterra
       WORKER_QUEUE: texterra
 
   mitie_worker:
-    extends: natasha_worker
+    extends: pullenti_worker
     environment:
-      MITIE_HOST: mitie
-      MITIE_PORT: 8080
+      MITIE_PORT: 8083
       WORKER_ANNOTATOR: mitie
       WORKER_QUEUE: mitie
 
   tomita_worker:
-    extends: natasha_worker
+    extends: pullenti_worker
     environment:
-      TOMITA_HOST: tomita
-      TOMITA_PORT: 8080
+      TOMITA_PORT: 8084
       WORKER_ANNOTATOR: tomita 
       WORKER_QUEUE: tomita
+
+  natasha_worker:
+    extends: pullenti_worker
+    environment:
+      TOMITA_PORT: 8086
+      WORKER_ANNOTATOR: natasha
+      WORKER_QUEUE: natasha
+
+  deeppavlov_bert_worker:
+    extends: pullenti_worker
+    environment:
+      DEEPPAVLOV_BERT_PORT: 8086
+      DEEPPAVLOV_BERT_SECTION: ${DEEPPAVLOV_BERT_SECTION}
+      DEEPPAVLOV_BERT_BATCH: ${DEEPPAVLOV_BERT_BATCH}
+      WORKER_ANNOTATOR: deeppavlov_bert
+      WORKER_QUEUE: deeppavlov_bert
+
