@@ -70,7 +70,6 @@ O = 'O'
 
 
 FACTRU = 'factru'
-FACTRU_URL = 'https://github.com/dialogue-evaluation/factRuEval-2016/archive/master.zip'
 FACTRU_DIR = 'factRuEval-2016-master'
 FACTRU_TESTSET = 'testset'
 FACTRU_DEVSET = 'devset'
@@ -84,7 +83,6 @@ FACTRU_DEVSET = 'devset'
 
 
 NE5 = 'ne5'
-NE5_URL = 'http://www.labinform.ru/pub/named_entities/collection5.zip'
 NE5_DIR = 'Collection5'
 
 

@@ -1,26 +1,13 @@
 
 from corus import load_ne5 as load_
 
-from nerus.path import (
-    join_path,
-    exists,
-    basename,
-    rm
-)
 from nerus.const import (
     NE5,
     NE5_DIR,
-    NE5_URL,
-
-    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
     sent_spans
-)
-from nerus.etl import (
-    download,
-    unzip
 )
 from nerus.span import Span
 from nerus.markup import Markup
@@ -95,22 +82,8 @@ def load(dir=NE5_DIR):
         yield Ne5Markup.from_corus(record)
 
 
-def get():
-    dir = join_path(SOURCES_DIR, NE5_DIR)
-    if exists(dir):
-        return dir
-
-    path = join_path(SOURCES_DIR, basename(NE5_URL))
-    download(NE5_URL, path)
-    unzip(path, SOURCES_DIR)
-    rm(path)
-
-    return dir
-
-
 class Ne5Source(Source):
     name = NE5
-    get = staticmethod(get)
     load = staticmethod(load)
 
 

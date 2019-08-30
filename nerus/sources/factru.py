@@ -1,26 +1,13 @@
 
 from corus import load_factru as load_
 
-from nerus.path import (
-    join_path,
-    exists,
-    basename,
-    rm
-)
-from nerus.etl import (
-    download,
-    unzip,
-)
 from nerus.markup import Markup
 from nerus.utils import Record
 from nerus.const import (
     FACTRU,
-    FACTRU_URL,
     FACTRU_DIR,
     FACTRU_TESTSET,
     FACTRU_DEVSET,
-
-    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
@@ -142,22 +129,8 @@ def load(dir=FACTRU_DIR, sets=[FACTRU_DEVSET, FACTRU_TESTSET]):
         yield FactruMarkup.from_corus(record)
 
 
-def get():
-    dir = join_path(SOURCES_DIR, FACTRU_DIR)
-    if exists(dir):
-        return dir
-
-    path = join_path(SOURCES_DIR, basename(FACTRU_URL))
-    download(FACTRU_URL, path)
-    unzip(path, SOURCES_DIR)
-    rm(path)
-
-    return dir
-
-
 class FactruSource(Source):
     name = FACTRU
-    get = staticmethod(get)
     load = staticmethod(load)
 
 
