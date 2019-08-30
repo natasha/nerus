@@ -123,6 +123,17 @@ LENTA_URL = 'https://github.com/yutkin/Lenta.Ru-News-Dataset/releases/download/v
 LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 
 
+#######
+#
+#   BSNLP
+#
+#######
+
+
+BSNLP = 'bsnlp'
+BSNLP_DIR = 'bsnlp'
+
+
 ##########
 #
 #  SOURCES
@@ -130,7 +141,7 @@ LENTA_FILENAME = 'lenta-ru-news.csv.gz'
 #########
 
 
-SOURCES = [FACTRU, NE5, LENTA, WIKINER, GAREEV]
+SOURCES = [FACTRU, NE5, LENTA, WIKINER, GAREEV, BSNLP]
 SOURCES_DIR = getenv('SOURCES_DIR', join_path(NERUS_DIR, 'data', 'sources'))
 
 

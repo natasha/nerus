@@ -6,7 +6,8 @@ from . import (
     test_lenta,
     test_ne5,
     test_wikiner,
-    test_gareev
+    test_gareev,
+    test_bsnlp
 )
 
 
@@ -16,6 +17,7 @@ TESTS = (
     + test_ne5.ETALON
     + test_wikiner.ETALON
     + test_gareev.ETALON
+    + test_bsnlp.ETALON
 )
 
 
