@@ -1,15 +1,12 @@
 
 from corus import load_gareev as load_
 
+from nerus.path import join_path
 from nerus.const import (
     GAREEV,
     GAREEV_DIR,
 
     SOURCES_DIR
-)
-from nerus.path import (
-    exists,
-    join_path
 )
 from nerus.sent import (
     sentenize,
@@ -56,15 +53,7 @@ def load(dir=GAREEV_DIR):
 
 
 def get():
-    dir = join_path(SOURCES_DIR, GAREEV_DIR)
-    if not exists(dir):
-        raise NotImplementedError(
-            'Email Rinat Gareev <gareev-rm@yandex.ru> ask for dataset, '
-            'tar -xvf rus-ner-news-corpus.iob.tar.gz, '
-            'rm rus-ner-news-corpus.iob.tar.gz, '
-            'mv rus-ner-news-corpus.iob data/sources'
-        )
-    return dir
+    return join_path(SOURCES_DIR, GAREEV_DIR)
 
 
 class GareevSource(Source):

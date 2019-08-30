@@ -1,6 +1,7 @@
 
 from corus import load_factru as load_
 
+from nerus.path import join_path
 from nerus.markup import Markup
 from nerus.utils import Record
 from nerus.const import (
@@ -8,6 +9,8 @@ from nerus.const import (
     FACTRU_DIR,
     FACTRU_TESTSET,
     FACTRU_DEVSET,
+
+    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
@@ -129,8 +132,13 @@ def load(dir=FACTRU_DIR, sets=[FACTRU_DEVSET, FACTRU_TESTSET]):
         yield FactruMarkup.from_corus(record)
 
 
+def get():
+    return join_path(SOURCES_DIR, FACTRU_DIR)
+
+
 class FactruSource(Source):
     name = FACTRU
+    get = staticmethod(get)
     load = staticmethod(load)
 
 

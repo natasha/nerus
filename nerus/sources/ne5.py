@@ -1,9 +1,12 @@
 
 from corus import load_ne5 as load_
 
+from nerus.path import join_path
 from nerus.const import (
     NE5,
     NE5_DIR,
+
+    SOURCES_DIR
 )
 from nerus.sent import (
     sentenize,
@@ -82,8 +85,13 @@ def load(dir=NE5_DIR):
         yield Ne5Markup.from_corus(record)
 
 
+def get():
+    return join_path(SOURCES_DIR, NE5_DIR)
+
+
 class Ne5Source(Source):
     name = NE5
+    get = staticmethod(get)
     load = staticmethod(load)
 
 

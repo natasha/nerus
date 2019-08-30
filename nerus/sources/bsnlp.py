@@ -1,9 +1,12 @@
 
 from corus import load_bsnlp as load_
 
+from nerus.path import join_path
 from nerus.const import (
     BSNLP,
     BSNLP_DIR,
+
+    SOURCES_DIR
 )
 
 from nerus.sent import (
@@ -50,8 +53,13 @@ def load(dir=BSNLP_DIR):
         yield BsnlpMarkup.from_corus(record)
 
 
+def get():
+    return join_path(SOURCES_DIR, BSNLP_DIR)
+
+
 class BsnlpSource(Source):
     name = BSNLP
+    get = staticmethod(get)
     load = staticmethod(load)
 
 
