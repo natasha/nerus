@@ -4,7 +4,8 @@ from .utils import strict_zip
 from .span import (
     Span,
     assert_aligned_bounds,
-    assert_non_overlapping
+    assert_non_overlapping,
+    assert_sorted
 )
 
 
@@ -58,6 +59,7 @@ def append_ellipsis(items, ellipsis=None):
 def spans_bio(tokens, spans):
     assert_aligned_bounds(spans, tokens)
     assert_non_overlapping(spans)
+    assert_sorted(spans)
 
     spans = append_ellipsis(spans)
     span = next(spans)
@@ -104,6 +106,7 @@ def io_spans(tokens, tags):
 def spans_io(tokens, spans):
     assert_aligned_bounds(spans, tokens)
     assert_non_overlapping(spans)
+    assert_sorted(spans)
 
     spans = append_ellipsis(spans)
     span = next(spans)

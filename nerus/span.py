@@ -193,3 +193,22 @@ def filter_empty_spans(spans):
     for span in spans:
         if span.start != span.stop:
             yield span
+
+
+##########
+#
+#   SORT
+#
+#######
+
+
+def sort_spans(spans):
+    return sorted(spans, key=lambda _: _.start)
+
+
+def assert_sorted(spans):
+    previous = None
+    for span in spans:
+        if previous and previous.start > span.start:
+            raise ValueError('not sorted: %r, %r' % (previous, span))
+        previous = span

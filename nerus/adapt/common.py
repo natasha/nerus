@@ -3,6 +3,7 @@ from nerus.span import (
     select_type_spans,
     convert_span_types,
     filter_misaligned_spans,
+    sort_spans
 )
 from nerus.markup import Markup
 from nerus.token import tokenize
@@ -24,7 +25,8 @@ def adapt_spans(spans, text, types):
     #   поезд Москва-Баку
     #   Yahoo!.
     tokens = list(tokenize(text))
-    return filter_misaligned_spans(spans, tokens)
+    spans = filter_misaligned_spans(spans, tokens)
+    return sort_spans(spans)
 
 
 def adapt(markup, types):
