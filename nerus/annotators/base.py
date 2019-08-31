@@ -1,6 +1,8 @@
 
 from time import sleep
 
+from requests import RequestException as HTTPError
+
 from nerus.utils import (
     Record,
     LabeledRecord
@@ -38,6 +40,9 @@ class AnnotatorError(Exception):
     pass
 
 
+Error = (HTTPError, AnnotatorError)
+
+
 class AnnotatorMarkup(Markup, LabeledRecord):
     @staticmethod
     def find(label):
@@ -73,12 +78,10 @@ class Annotator(Record):
 
     @property
     def ready(self):
-        from requests import RequestException
-
         try:
             self(self.payload)
             return True
-        except (RequestException, AnnotatorError):
+        except Error:
             return False
 
     def wait(self, callback=None):
@@ -91,6 +94,15 @@ class Annotator(Record):
                 sleep(self.delay)
         else:
             raise AnnotatorError('failed to start')
+
+    def retring_map(self, texts, retries=2):
+        for index in reversed(range(retries)):
+            try:
+                return list(self.map(texts))
+            except Error:
+                if not index:
+                    raise
+                self.wait()
 
     @staticmethod
     def find(name):
