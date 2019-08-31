@@ -366,10 +366,21 @@ make images
 make push
 ```
 
+Deploy GPU:
+
+```bash
+nerus-ctl gpu create
+nerus-ctl gpu config > ~/.ssh/nerus.conf
+
+# Select the one with high upload/download, low price and RAM > 8Gb
+```
+
 Deploy worker:
 
 ```bash
 nerus-ctl worker create
+export WORKER_HOST=`nerus-ctl worker ip`
+
 nerus-ctl worker upload worker/setup.sh
 nerus-ctl worker ssh 'sudo sh setup.sh'  # install docker + docker-compose
 
@@ -378,6 +389,11 @@ nerus-ctl worker ssh 'sudo sh setup.sh'  # install docker + docker-compose
 # Docker version 18.09.3, build 774a1f4
 # + docker-compose --version
 # docker-compose version 1.23.2, build 1110ad01
+
+nerus-ctl worker upload ~/.ssh/id_rsa .ssh/id_rsa
+nerus-ctl worker upload ~/.ssh/nerus.conf .ssh/nerus.conf
+nerus-ctl worker upload 
+nerus-ctl worker ssh 'chmod 0400 .ssh/id_rsa .ssh/nerus.conf'
 
 nerus-ctl worker upload worker/remote.env .env
 nerus-ctl worker upload worker/docker-compose.yml
@@ -395,8 +411,6 @@ nerus-ctl worker ssh 'docker-compose up -d'
 Compute:
 
 ```bash
-export WORKER_HOST=`nerus-ctl worker ip`
-
 nerus-ctl db insert lenta --count=10000
 nerus-ctl q insert --count=1000  # enqueue first 1000
 
@@ -409,8 +423,6 @@ nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert natasha/nerus
 Failed:
 
 ```bash
-export WORKER_HOST=`nerus-ctl worker ip`
-
 nerus-ctl q failed  # see failed stacktraces
 
 # Id: ...
@@ -425,8 +437,6 @@ nerus-ctl q retry --chunk=1
 Monitor:
 
 ```bash
-export WORKER_HOST=`nerus-ctl worker ip`
-
 nerus-ctl worker ssh 'docker stats'
 nerus-ctl q show
 nerus-ctl db show
@@ -435,8 +445,6 @@ nerus-ctl db show
 Dump:
 
 ```bash
-export WORKER_HOST=`nerus-ctl worker ip`
-
 nerus-ctl dump raw data/dumps/t.raw.jsonl.gz --count=10000
 # norm 2x faster with pypy
 nerus-ctl dump norm data/dumps/{,.raw}/t.jsonl.gz
