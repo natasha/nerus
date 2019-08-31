@@ -20,6 +20,10 @@ def worker_ssh(*args): from .worker import worker_ssh as f; return f(*args)
 def worker_upload(*args): from .worker import worker_upload as f; return f(*args)
 def worker_download(*args): from .worker import worker_download as f; return f(*args)
 
+def gpu_create(*args): from .gpu import gpu_create as f; return f(*args)
+def gpu_config(*args): from .gpu import gpu_config as f; return f(*args)
+def gpu_bridge(*args): from .gpu import gpu_bridge as f; return f(*args)
+
 def db_insert(*args): from .db import db_insert as f; return f(*args)
 def db_show(*args): from .db import db_show as f; return f(*args)
 def db_clear(*args): from .db import db_clear as f; return f(*args)
@@ -71,6 +75,21 @@ def main():
 
     sub = worker.add_parser('rm')
     sub.set_defaults(function=worker_remove)
+
+    #######
+    #   GPU
+    ########
+
+    gpu = subs.add_parser('gpu').add_subparsers()
+
+    sub = gpu.add_parser('create')
+    sub.set_defaults(function=gpu_create)
+
+    sub = gpu.add_parser('config')
+    sub.set_defaults(function=gpu_config)
+
+    sub = gpu.add_parser('bridge')
+    sub.set_defaults(function=gpu_bridge)
 
     #######
     #  DB

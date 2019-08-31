@@ -64,6 +64,18 @@ services:
     ports:
       - 8085:8080
 
+  deeppavlov_bert:
+    image: natasha/nerus-ctl
+    command: gpu bridge
+    restart: always
+    environment:
+      SSH_PRIVATE_KEY: /.ssh/id_rsa
+      SSH_CONFIG: /.ssh/nerus.conf
+    volumes:
+      - ./.ssh:/.ssh
+    ports:
+      - 8086:5000
+
   ###########
   #   WORKERS
   ##########

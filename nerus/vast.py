@@ -150,12 +150,6 @@ def show_offers(offers):
         ))
 
 
-def select_offer(offers):
-    show_offers(offers)
-    index = int(input('Index:'))
-    return offers[index]
-
-
 #######
 #
 #   CREATE
@@ -275,9 +269,9 @@ def find_label(instances, label):
             return instance
 
 
-def wait_label(label, retries=10, delay=1, callback=None):
+def wait_label(label, retries=60, delay=3, callback=None):
     for _ in range(retries):
-        instance = find_label(list_instances())
+        instance = find_label(list_instances(), label)
         if instance and instance.status == RUNNING:
             break
         if callback:

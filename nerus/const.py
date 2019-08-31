@@ -349,6 +349,7 @@ YC_PLATFORM = 'standard-v1'
 SSH_USER = NERUS
 SSH_KEY = getenv('SSH_KEY', expand_user('~/.ssh/id_rsa.pub'))
 SSH_PRIVATE_KEY = getenv('SSH_PRIVATE_KEY', expand_user('~/.ssh/id_rsa'))
+SSH_CONFIG = getenv('SSH_CONFIG', expand_user('~/.ssh/nerus.conf'))
 
 
 ######
@@ -363,3 +364,16 @@ NORM = 'norm'
 RAW = '.raw'
 JSONL = '.jsonl'
 GZ = '.gz'
+
+
+#########
+#
+#   GPU
+#
+#########
+
+
+GPU_LABEL = NERUS
+GPU_USER = 'root'
+GPU_IMAGE = DEEPPAVLOV_BERT_IMAGE
+GPU_CONTAINER_PORT = DEEPPAVLOV_BERT_CONTAINER_PORT
