@@ -115,6 +115,6 @@ def queue_clear(args):
 def queue_clear_():
     log('Clear queues')
     connection = get_connection(host=WORKER_HOST)
-    queues = get_queues(ANNOTATORS, connection)
+    queues = get_queues(ANNOTATORS + [FAILED], connection)
     for name, queue in queues:
         queue.empty()
