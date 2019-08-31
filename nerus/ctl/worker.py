@@ -99,9 +99,6 @@ def worker_ip_():
 
 
 def worker_ip__():
-    if exists(WORKER_IP):
-        return load_text(WORKER_IP)
-
     log('Listing instances')
     sdk = get_sdk()
     instance = find_worker(sdk)
@@ -114,7 +111,6 @@ def worker_ip__():
         log_error('No ip (yet?)')
         return
 
-    dump_text(ip, WORKER_IP)
     return ip
 
 
@@ -129,13 +125,9 @@ def worker_ssh(args):
     worker_ssh_(args.command)
 
 
-def worker_ssh_(command):
-    ip = worker_ip__()
-    if not ip:
-        return
-
-    client = get_client(ip)
-    log('[%s] %r' % (ip, command))
+def worker_ssh_(command, host=WORKER_HOST):
+    client = get_client(host)
+    log('[%s] %r' % (host, command))
     ssh_exec(client, command)
 
 
@@ -154,15 +146,11 @@ def worker_download(args):
     worker_transfer(download, args.source, args.target)
 
 
-def worker_transfer(method, source, target=None):
+def worker_transfer(method, source, target=None, host=WORKER_HOST):
     if not target:
         target = basename(source)
 
-    ip = worker_ip__()
-    if not ip:
-        return
-
-    client = get_client(ip)
+    client = get_client(host)
     log('%s %s -> %s', method.__name__, source, target)
     try:
         method(client, source, target)

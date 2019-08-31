@@ -29,9 +29,6 @@ NERUS_DIR = norm_path(join_path(get_dir(__file__), '..'))
 
 LOCALHOST = 'localhost'
 
-WORKER_DIR = join_path(NERUS_DIR, 'worker')
-WORKER_IP = join_path(WORKER_DIR, '.ip')
-
 WORKER_NAME = getenv('WORKER_NAME', NERUS)
 WORKER_HOST = getenv('WORKER_HOST', LOCALHOST)
 WORKER_ANNOTATOR = getenv('WORKER_ANNOTATOR')
