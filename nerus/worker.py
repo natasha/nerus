@@ -17,21 +17,6 @@ from .db import (
     chunk_insert,
 )
 from .annotators import Annotator
-from .const import (
-    YC_HDD,
-    YC_UBUNTU_1604,
-)
-
-
-CONFIG = dict(
-    cores=16,
-    share=100,
-    memory=16,
-    disk_size=50,
-    disk_type=YC_HDD,
-    image=YC_UBUNTU_1604,
-    spot=True,
-)
 
 
 def decode_source(docs):

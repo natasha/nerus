@@ -4,20 +4,8 @@ from nerus.log import (
     log,
     log_error
 )
-from nerus.const import WORKER_IP
-from nerus.path import (
-    exists,
-    maybe_rm,
-    basename
-)
-from nerus.etl import (
-    load_text,
-    dump_text
-)
-from nerus.worker import (
-    run as worker_run_,
-    CONFIG as WORKER_CONFIG
-)
+from nerus.path import basename
+from nerus.worker import run as worker_run_
 from nerus.yc import (
     get_sdk,
     find_folder,
@@ -32,7 +20,13 @@ from nerus.ssh import (
     upload,
     download
 )
-from nerus.const import WORKER_NAME
+from nerus.const import (
+    WORKER_NAME,
+    WORKER_HOST,
+
+    YC_HDD,
+    YC_UBUNTU_1604
+)
 
 
 #######
@@ -54,6 +48,17 @@ def worker_run(args):
 #########
 
 
+CONFIG = dict(
+    cores=16,
+    share=100,
+    memory=16,
+    disk_size=50,
+    disk_type=YC_HDD,
+    image=YC_UBUNTU_1604,
+    spot=True,
+)
+
+
 def find_worker(sdk, name=WORKER_NAME):
     folder = find_folder(sdk)
     return find_instance(sdk, folder, name)
@@ -71,11 +76,14 @@ def worker_create_():
         return
 
     log('Creating worker')
+    for key in sorted(CONFIG):
+        log('  %s: %s' % (key, CONFIG[key]))
+
     create_instance(
         sdk,
         name=WORKER_NAME,
         callback=dot,
-        **WORKER_CONFIG
+        **CONFIG
     )
     ip = worker_ip__()
     log('Worker ip: %s' % ip)
@@ -175,6 +183,5 @@ def worker_remove_():
     if instance:
         log('Removing worker')
         remove_instance(sdk, instance, dot)
-        maybe_rm(WORKER_IP)
     else:
         log_error('No worker')
