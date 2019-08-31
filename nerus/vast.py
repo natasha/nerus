@@ -3,6 +3,10 @@ from time import sleep
 import json
 import subprocess
 
+from nerus.path import (
+    join_path,
+    get_dir
+)
 from nerus.utils import Record
 
 
@@ -11,7 +15,8 @@ class VastError(Exception):
 
 
 def call_vast(*args):
-    output = subprocess.check_output(('vast',) + args + ('--raw',))
+    vast = join_path(get_dir(__file__), 'third', 'vast.py')
+    output = subprocess.check_output(('python', vast) + args + ('--raw',))
     return json.loads(output.decode('utf8'))
 
 
