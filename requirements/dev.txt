@@ -1,6 +1,7 @@
 intervaltree>=2.1.0
 requests>=2.20.0
 
+pullenti_client>=0.3.0
 razdel>=0.3.0
 corus>=0.4.0
 
