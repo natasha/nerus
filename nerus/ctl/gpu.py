@@ -8,7 +8,8 @@ from nerus.vast import (
     create_instance_async,
     wait_label,
     list_instances,
-    find_label
+    find_label,
+    remove_instance
 )
 from nerus.log import (
     dot,
@@ -125,3 +126,23 @@ def gpu_bridge_(label=GPU_LABEL):
     ]
     log('Run: %r', command)
     subprocess.call(command)
+
+
+##########
+#
+#    REMOVE
+#
+##########
+
+
+def gpu_remove(args):
+    gpu_remove_()
+
+
+def gpu_remove_(label=GPU_LABEL):
+    instance = find_label(list_instances(), label)
+    if instance:
+        log('Removing gpu')
+        remove_instance(instance.id)
+    else:
+        log_error('No gpu')

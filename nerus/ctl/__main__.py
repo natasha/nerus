@@ -23,6 +23,7 @@ def worker_download(*args): from .worker import worker_download as f; return f(*
 def gpu_create(*args): from .gpu import gpu_create as f; return f(*args)
 def gpu_config(*args): from .gpu import gpu_config as f; return f(*args)
 def gpu_bridge(*args): from .gpu import gpu_bridge as f; return f(*args)
+def gpu_remove(*args): from .gpu import gpu_remove as f; return f(*args)
 
 def db_insert(*args): from .db import db_insert as f; return f(*args)
 def db_show(*args): from .db import db_show as f; return f(*args)
@@ -90,6 +91,9 @@ def main():
 
     sub = gpu.add_parser('bridge')
     sub.set_defaults(function=gpu_bridge)
+
+    sub = gpu.add_parser('rm')
+    sub.set_defaults(function=gpu_remove)
 
     #######
     #  DB

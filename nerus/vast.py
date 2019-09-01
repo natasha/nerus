@@ -17,7 +17,12 @@ class VastError(Exception):
 def call_vast(*args):
     vast = join_path(get_dir(__file__), 'third', 'vast.py')
     output = subprocess.check_output(('python', vast) + args + ('--raw',))
-    return json.loads(output.decode('utf8'))
+    output = output.decode('utf8')
+    try:
+        return json.loads(output)
+    except json.decoder.JSONDecodeError:
+        # from destroy --raw is ignored
+        return output
 
 
 #########
