@@ -63,7 +63,7 @@ See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/len
 Dataset is gzip-compressed text file with <a href="http://jsonlines.org/">JSON lines</a>:
 
 ```bash
-$ gzcat lenta.jsonl.gz | head -1 | jq .
+$ gzcat nerus_lenta.jsonl.gz | head -1 | jq .
 {
   "article_id": 0,
   "content": "Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости. По словам Голиковой, чаще всего онкологические заболевания становились причиной смерти в Псковской, Тверской, Тульской и Орловской областях, а также в Севастополе. Вице-премьер напомни
@@ -110,7 +110,7 @@ Load and show annotations:
 ```python
 >>> from nerus import load_nerus
 
->>> records = load_nerus('lenta.jsonl.gz')
+>>> records = load_nerus('nerus_lenta.jsonl.gz')
 >>> record = next(records)
 >>> record
 
@@ -433,7 +433,6 @@ nerus-ctl q retry --chunk=10  # regroup chunks
 nerus-ctl q retry --chunk=1
 ```
 
-
 Monitor:
 
 ```bash
@@ -447,7 +446,7 @@ Dump:
 ```bash
 nerus-ctl dump raw data/dumps/t.raw.jsonl.gz --count=10000
 # norm 2x faster with pypy
-nerus-ctl dump norm data/dumps/{,.raw}/t.jsonl.gz
+nerus-ctl dump norm data/dumps/t{.raw,}.jsonl.gz
 
 # faster version
 nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/nerus-ctl dump raw /tmp/t.raw.jsonl.gz'
@@ -464,5 +463,6 @@ nerus-ctl q clear
 Remove instance
 
 ```bash
+nerus-ctl gpu rm
 nerus-ctl worker rm
 ```
