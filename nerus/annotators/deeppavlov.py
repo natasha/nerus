@@ -64,7 +64,7 @@ class DeeppavlovMarkup(AnnotatorMarkup):
         return adapt(self)
 
 
-class DeeppavlovBertMarkup(DeeppavlovMarkup):
+class DeeppavlovBERTMarkup(DeeppavlovMarkup):
     label = DEEPPAVLOV_BERT
 
 
@@ -201,7 +201,7 @@ class DeeppavlovAnnotator(ChunkAnnotator):
         )
 
 
-class DeeppavlovBertAnnotator(DeeppavlovAnnotator):
+class DeeppavlovBERTAnnotator(DeeppavlovAnnotator):
     name = DEEPPAVLOV_BERT
     host = DEEPPAVLOV_BERT_HOST
     port = DEEPPAVLOV_BERT_PORT
@@ -211,7 +211,7 @@ class DeeppavlovBertAnnotator(DeeppavlovAnnotator):
     section_size = DEEPPAVLOV_BERT_SECTION
     batch_size = DEEPPAVLOV_BERT_BATCH
 
-    Markup = DeeppavlovBertMarkup
+    Markup = DeeppavlovBERTMarkup
 
     # BERT version starts >2min, requires >3GB
     retries = 100
@@ -223,7 +223,7 @@ class DeeppavlovContainerAnnotator(DeeppavlovAnnotator, ContainerAnnotator):
     container_port = DEEPPAVLOV_CONTAINER_PORT
 
 
-class DeeppavlovBertContainerAnnotator(DeeppavlovBertAnnotator, ContainerAnnotator):
+class DeeppavlovBERTContainerAnnotator(DeeppavlovBERTAnnotator, ContainerAnnotator):
     image = DEEPPAVLOV_BERT_IMAGE
     container_port = DEEPPAVLOV_BERT_CONTAINER_PORT
 
@@ -236,7 +236,7 @@ register(
 )
 register(
     DEEPPAVLOV_BERT,
-    DeeppavlovBertMarkup,
-    DeeppavlovBertAnnotator,
-    DeeppavlovBertContainerAnnotator
+    DeeppavlovBERTMarkup,
+    DeeppavlovBERTAnnotator,
+    DeeppavlovBERTContainerAnnotator
 )
