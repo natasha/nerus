@@ -12,7 +12,7 @@ from .etl import (
 )
 from .const import (
     SOURCE,
-    DEEPPAVLOV
+    DEEPPAVLOV_BERT
 )
 from .annotators import AnnotatorMarkup
 from .sources import SourceRecord
@@ -94,7 +94,7 @@ def dump_raw(records, path):
 
 def norm_raw(records):
     for record in records:
-        record = record.find(DEEPPAVLOV)
+        record = record.find(DEEPPAVLOV_BERT)
         if record:  # rarele deeppavlov can not process text
             yield record.adapted
 
