@@ -357,6 +357,7 @@ SSH_CONFIG = getenv('SSH_CONFIG', expand_user('~/.ssh/nerus.conf'))
 
 
 DUMPS_DIR = join_path(NERUS_DIR, 'data', 'dumps')
+NERUS_ = 'nerus_'
 NORM = 'norm'
 RAW = '.raw'
 JSONL = '.jsonl'
