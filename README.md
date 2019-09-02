@@ -47,7 +47,7 @@ See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/len
 
 ## Download
 
-<code><a href="https://github.com/natasha/nerus/releases/download/v0.0.0/nerus_lenta.jsonl.gz">nerus_lenta.jsonl.gz</a></code> 612 MB, 739 295 texts
+<a href="https://github.com/natasha/nerus/releases/download/v0.0.0/nerus_lenta.jsonl.gz">nerus_lenta.jsonl.gz</a> 612 MB, 739 295 texts
 
 ## Usage
 
