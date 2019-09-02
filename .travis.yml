@@ -6,6 +6,6 @@ python:
   - "pypy"
   - "pypy3"
 install:
-  pip install -r requirements/main.txt -r requirements/test.txt
+  pip install -r requirements/test.txt
 script:
   - make ci
