@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/natasha/nerus.svg?branch=master)](https://travis-ci.org/natasha/nerus)
 
-Nerus is a large silver standard Russian NER corpus. Unlike small manually annotated gold standart <a href="https://github.com/dialogue-evaluation/factRuEval-2016/">factRuEval-2016</a>, <a href="http://www.labinform.ru/pub/named_entities/">Collection5</a> and <a href="https://www.researchgate.net/publication/262203599_Introducing_Baselines_for_Russian_Named_Entity_Recognition">Gareev</a> Nerus has errors in annotation. But overall quality is rather high, f1-scores for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively, see <a href="#evaluation">evaluation section</a> for more.
+Nerus is a large silver standard Russian NER corpus. Unlike small manually annotated gold standart datasets, such as <a href="https://github.com/dialogue-evaluation/factRuEval-2016/">factRuEval-2016</a>, <a href="http://www.labinform.ru/pub/named_entities/">Collection5</a>, <a href="https://www.researchgate.net/publication/262203599_Introducing_Baselines_for_Russian_Named_Entity_Recognition">Gareev</a> and <a href="http://bsnlp.cs.helsinki.fi/shared_task.html">BSNLP-2019</a>, Nerus has errors in annotation. But overall quality is rather high, F1-scores for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively, see <a href="#evaluation">evaluation section</a> for more.
 
 > Nerus = <a href="https://github.com/yutkin/Lenta.Ru-News-Dataset">Lenta.ru dataset</a> + <a href="https://github.com/deepmipt/DeepPavlov">DeepPavlov</a> BERT NER.
 
@@ -42,27 +42,21 @@ LOC-------------
 LOC                                LOC--- 
 ...
 ```
-See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/lenta_500.txt">examples/lenta_500.txt</a> for ~1Mb of examples.
+See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/lenta_500.txt">examples/lenta_500.txt</a> (~1MB) for more examples.
 
 
 ## Download
 
-<dl>
-  <dt>Link</dt>
-  <dd>https://github.com/natasha/nerus/releases/download/v1.0/lenta.jsonl.gz</dd>
-
-  <dt>Size</dt>
-  <dd>612Mb</dd>
-
-  <dt>Texts</dt>
-  <dd>739 295</dd>
-</dl>
+<code><a href="https://github.com/natasha/nerus/releases/download/v0.0.0/nerus_lenta.jsonl.gz">nerus_lenta.jsonl.gz</a></code> 612 MB, 739 295 texts
 
 ## Usage
 
 Dataset is gzip-compressed text file with <a href="http://jsonlines.org/">JSON lines</a>:
 
 ```bash
+$ gzcat nerus_lenta.jsonl.gz | head -1
+{"article_id": 0, "content": "Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости. По словам Голиковой, чаще всего онкологические заболевания становились причиной смерти в Псковской, Тверской, Тульской и Орловской областях, а также в Севастополе. Вице-премьер напомнила, что главные факторы смертности в России — рак и болезни системы кровообращения. В начале года стало известно, что смертность от онкологических заболеваний среди россиян снизилась впервые за три года. По данным Росстата, в 2017 году от рака умерли 289 тысяч человек. Это на 3,5 процента меньше, чем годом ранее.", "annotations": [{"span": {"start": 36, "end": 52}, "type": "PER", "text": "Татьяна Голикова"}, {"span": {"start": 82, "end": 88}, "type": "LOC", "text": "России"}, {"span": {"start": 149, "end": 160}, "type": "ORG", "text": "РИА Новости"}, {"span": {"start": 172, "end": 181}, "type": "PER", "text": "Голиковой"}, {"span": {"start": 251, "end": 260}, "type": "LOC", "text": "Псковской"}, {"span": {"start": 262, "end": 270}, "type": "LOC", "text": "Тверской"}, {"span": {"start": 272, "end": 280}, "type": "LOC", "text": "Тульской"}, {"span": {"start": 283, "end": 301}, "type": "LOC", "text": "Орловской областях"}, {"span": {"start": 313, "end": 324}, "type": "LOC", "text": "Севастополе"}, {"span": {"start": 383, "end": 389}, "type": "LOC", "text": "России"}, {"span": {"start": 560, "end": 568}, "type": "ORG", "text": "Росстата"}]}
+
 $ gzcat nerus_lenta.jsonl.gz | head -1 | jq .
 {
   "article_id": 0,
@@ -109,6 +103,7 @@ Load and show annotations:
 
 ```python
 >>> from nerus import load_nerus
+>>> from ipymarkup import show_ascii_markup  # pip install ipymarkup
 
 >>> records = load_nerus('nerus_lenta.jsonl.gz')
 >>> record = next(records)
@@ -136,8 +131,6 @@ Markup(
      )]
 )
 
->>> from ipymarkup import show_ascii_markup  # pip install ipymarkup
-
 >>> show_ascii_markup(record.text, record.spans)
 Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в 
                                     PER-------------               
@@ -162,9 +155,9 @@ LOC-----  LOC-----   LOC---------------            LOC--------
 
 Nerus was annotated with DeepPavlov BERT NER tagger, so let's evaluate its quality on gold standart datasets and assume the performance on Lenta.ru news articles is the same.
 
-`deeppavlov` was trained on `ne5` so the score on this dataset is not informative. `gareev` dataset has no `LOC` annotations so one column is missing. `tomita` has open grammar just for `PER` so cells for `LOC` and `ORG` are empty.
+`gareev` dataset has no `LOC` annotations so one column is missing. `tomita` has open grammar just for `PER` so cells for `LOC` and `ORG` are empty.
 
-On `factru` and `gareev` `deeppavlov` has much higher scores then other freely available systems, f1 for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively.
+On `factru` and `gareev` `deeppavlov` has much higher scores then other freely available systems, F1 for `PER`, `LOC`, `ORG` are ~0.95+, ~0.9+, ~0.8-0.9 respectively.
 
 <table border="0" class="dataframe">
   <thead>
@@ -173,6 +166,7 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <th colspan="3" halign="left">factru</th>
       <th colspan="2" halign="left">gareev</th>
       <th colspan="3" halign="left">ne5</th>
+      <th colspan="3" halign="left">bsnlp</th>
     </tr>
     <tr>
       <th>f1</th>
@@ -184,19 +178,39 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <th>PER</th>
       <th>LOC</th>
       <th>ORG</th>
+      <th>PER</th>
+      <th>LOC</th>
+      <th>ORG</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>deeppavlov</th>
+      <td>0.909</td>
+      <td>0.885</td>
+      <td>0.742</td>
+      <td>0.944</td>
+      <td>0.799</td>
+      <td>0.942</td>
+      <td>0.919</td>
+      <td>0.882</td>
+      <td>0.866</td>
+      <td>0.767</td>
+      <td>0.624</td>
+    </tr>
+    <tr>
+      <th>deeppavlov_bert</th>
       <td><b>0.971</b></td>
       <td><b>0.926</b></td>
       <td><b>0.824</b></td>
       <td><b>0.984</b></td>
       <td><b>0.917</b></td>
       <td><b>0.997</b></td>
-      <td><b>0.989</b></td>
-      <td><b>0.976</b></td>
+      <td><b>0.991</b></td>
+      <td><b>0.978</b></td>
+      <td><b>0.955</b></td>
+      <td><b>0.840</b></td>
+      <td><b>0.739</b></td>
     </tr>
     <tr>
       <th>pullenti</th>
@@ -208,6 +222,9 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <td>0.950</td>
       <td>0.862</td>
       <td>0.683</td>
+      <td>0.900</td>
+      <td>0.766</td>
+      <td>0.566</td>
     </tr>
     <tr>
       <th>texterra</th>
@@ -219,6 +236,9 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <td>0.901</td>
       <td>0.777</td>
       <td>0.594</td>
+      <td>0.858</td>
+      <td>0.783</td>
+      <td>0.548</td>
     </tr>
     <tr>
       <th>tomita</th>
@@ -228,6 +248,9 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <td>0.921</td>
       <td></td>
       <td>0.945</td>
+      <td></td>
+      <td></td>
+      <td>0.881</td>
       <td></td>
       <td></td>
     </tr>
@@ -241,6 +264,9 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <td>0.852</td>
       <td>0.709</td>
       <td>0.394</td>
+      <td>0.836</td>
+      <td>0.755</td>
+      <td>0.350</td>
     </tr>
     <tr>
       <th>mitie</th>
@@ -252,6 +278,9 @@ On `factru` and `gareev` `deeppavlov` has much higher scores then other freely a
       <td>0.753</td>
       <td>0.642</td>
       <td>0.432</td>
+      <td>0.736</td>
+      <td>0.801</td>
+      <td>0.524</td>
     </tr>
   </tbody>
 </table>
@@ -329,14 +358,14 @@ Sometimes `deeppavlov` annotations are even better than etalon:
 ул . Петровка , д . 11 / 20 / м .
 
 ```
-See <a href="examples/errors.txt">examples/errors.txt</a> for full list of errors.
+See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/errors.txt">examples/errors.txt</a> (1.5 MB) for full list of errors.
 
 
 ## License
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
-# Development
+## Development
 
 Tests:
 
