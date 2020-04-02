@@ -360,7 +360,6 @@ Sometimes `deeppavlov` annotations are even better than etalon:
 ```
 See <a href="https://raw.githubusercontent.com/natasha/nerus/master/examples/errors.txt">examples/errors.txt</a> (1.5 MB) for full list of errors.
 
-
 ## License
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
@@ -376,7 +375,6 @@ Tests:
 
 ```bash
 make test
-make int  # runs containters with annotators
 ```
 
 Package:
@@ -389,114 +387,62 @@ git push --tags
 make clean wheel upload
 ```
 
-Containers:
+Rent YC GPU:
 
 ```bash
-make image
-make push
+yc compute instance create \
+  --name gpu \
+  --zone ru-central1-a \
+  --network-interface subnet-name=default,nat-ip-version=ipv4 \
+  --create-boot-disk image-folder-id=standard-images,image-family=ubuntu-1804-lts-ngc,type=network-ssd,size=20 \
+  --cores=8 \
+  --memory=96 \
+  --gpus=1 \
+  --ssh-key ~/.ssh/id_rsa.pub \
+  --folder-name default \
+  --platform-id gpu-standard-v1 \
+  --preemptible
 
-cd annotators
-make images
-make push
-```
-
-Deploy GPU:
-
-```bash
-nerus-ctl gpu create
-nerus-ctl gpu config > ~/.ssh/nerus.conf
-
-# Select the one with high upload/download, low price and RAM > 8Gb
-```
-
-Deploy worker:
-
-```bash
-nerus-ctl worker create
-export WORKER_HOST=`nerus-ctl worker ip`
-
-nerus-ctl worker upload worker/setup.sh
-nerus-ctl worker ssh 'sudo sh setup.sh'  # install docker + docker-compose
-
-# ...
-# + docker --version
-# Docker version 18.09.3, build 774a1f4
-# + docker-compose --version
-# docker-compose version 1.23.2, build 1110ad01
-
-nerus-ctl worker upload ~/.ssh/id_rsa .ssh/id_rsa
-nerus-ctl worker upload ~/.ssh/nerus.conf .ssh/nerus.conf
-nerus-ctl worker upload 
-nerus-ctl worker ssh 'chmod 0400 .ssh/id_rsa .ssh/nerus.conf'
-
-nerus-ctl worker upload worker/remote.env .env
-nerus-ctl worker upload worker/docker-compose.yml
-nerus-ctl worker ssh 'docker-compose pull'
-nerus-ctl worker ssh 'docker-compose up -d'
-```
-
-Update worker:
-
-```bash
-nerus-ctl worker ssh 'docker-compose pull'
-nerus-ctl worker ssh 'docker-compose up -d'
-```
-
-Compute:
-
-```bash
-nerus-ctl db insert lenta --count=10000
-nerus-ctl q insert --count=1000  # enqueue first 1000
-
-# faster version
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert -e SOURCES_DIR=/tmp natasha/nerus-ctl db insert lenta'
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name insert natasha/nerus-ctl q insert'
+yc compute instance list
+yc compute instance delete fhmj2ftcm32qgqt4igjf
 
 ```
 
-Failed:
+Setup instance:
 
-```bash
-nerus-ctl q failed  # see failed stacktraces
+```
+sudo locale-gen ru_RU.UTF-8
 
-# Id: ...
-# Origin: tomita
-# ...stack trace...
+sudo apt-get update
+sudo apt-get install -y python3-pip
+sudo pip3 install jupyter
 
-nerus-ctl q retry --chunk=10  # regroup chunks
-nerus-ctl q retry --chunk=1
+nohup jupyter notebook \
+  --no-browser \
+  --allow-root \
+  --ip=0.0.0.0 \
+  --port=8888 \
+  --NotebookApp.token='' \
+  --NotebookApp.password='' &
+
+ssh -Nf gpu -L 8888:localhost:8888
+http://localhost:8888/
+
 ```
 
-Monitor:
+Sync remote:
 
-```bash
-nerus-ctl worker ssh 'docker stats'
-nerus-ctl q show
-nerus-ctl db show
+```
+scp ~/.nerus.json gpu:~
+rsync --exclude data -rv . gpu:~/nerus
+rsync -u --exclude data -rv 'gpu:~/nerus/*' .
+
 ```
 
-Dump:
+Intall dev:
 
 ```bash
-nerus-ctl dump raw data/dumps/t.raw.jsonl.gz --count=10000
-# norm 2x faster with pypy
-nerus-ctl dump norm data/dumps/t{.raw,}.jsonl.gz
+sudo pip3 install -r nerus/requirements/dev.txt
+sudo pip3 install -e nerus
 
-# faster version
-nerus-ctl worker ssh 'docker run --net=host -it --rm --name dump -v /tmp:/tmp natasha/nerus-ctl dump raw /tmp/t.raw.jsonl.gz'
-nerus-ctl worker download /tmp/t.raw.jsonl.gz data/dumps/t.raw.jsonl.gz
-```
-
-Clear:
-
-```bash
-nerus-ctl db clear
-nerus-ctl q clear
-```
-
-Remove instance
-
-```bash
-nerus-ctl gpu rm
-nerus-ctl worker rm
 ```
