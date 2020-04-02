@@ -8,4 +8,5 @@ __pycache__
 .pytest_cache/
 build/
 dist/
-notes
+notes/
+data/
