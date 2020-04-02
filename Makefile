@@ -1,20 +1,9 @@
 
-IMAGE = natasha/nerus-ctl
-
-image:
-	docker build -t $(IMAGE) .
-
-push:
-	docker push $(IMAGE)
-
 test:
-	pytest -vv --pep8 --flakes nerus
-
-int:
-	pytest -vv --capture=no --int nerus --cov nerus --cov-report term-missing
-
-ci:
-	pytest -vv nerus/tests/test_api.py
+	pytest \
+		-vv --pep8 --flakes nerus \
+		--cov nerus --cov-config setup.cfg \
+		--cov-report term-missing --cov-report xml nerus
 
 wheel:
 	python setup.py bdist_wheel
@@ -32,4 +21,4 @@ clean:
 		-o -name .DS_Store \
 		| xargs rm -rf
 	rm -rf dist/ build/ .pytest_cache/ .cache/ .ipynb_checkpoints/ \
-		.coverage *.egg-info
+		.coverage *.egg-info/
