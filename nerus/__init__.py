@@ -227,7 +227,7 @@ def format_morph_tag(pos, feats):
         '%s=%s' % (_, feats[_])
         for _ in sorted(feats)
     )
-    return f'{pos}|{feats}'
+    return '%s|%s' % (pos, feats)
 
 
 def format_morph_markup(markup, size=20):
@@ -238,7 +238,7 @@ def format_morph_markup(markup, size=20):
 
     for word, tag in zip(words, tags):
         word = word.rjust(size)
-        yield f'{word}  {tag}'
+        yield '%s  %s' % (word, tag)
 
 
 def show_morph_markup(markup):
