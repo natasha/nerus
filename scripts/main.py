@@ -578,27 +578,20 @@ def merge_tokens(morphs, syntaxes, tags):
         )
 
 
-def find_next(sent, markups):
-    for markup in markups:
-        if not markup.tokens:
-            return markup
-
-        token = markup.tokens[0]
-        if sent.text.startswith(token.text):
-            return markup
-
-
 def merge(docs, ners, morphs, syntaxes):
     for doc_id, doc in enumerate(docs):
         ner = next(ners)
         sents = sentenize(doc.text)
         for sent_index, sent in enumerate(sents):
-            morph = find_next(sent, morphs)
-            syntax = find_next(sent, syntaxes)
-            if not morph or not syntax:
-                break
+            morph = next(morphs)
+            syntax = next(syntaxes)
 
             if len(morph.tokens) != len(syntax.tokens):
+                # basically long sents
+                # empty sent of morph
+                # mask missaligned for syntax
+                # legacy: morph tokens were constrained to 128
+                # ~250 sents / 100 000 texts
                 continue
 
             spans = list(sent_spans(sent, ner.spans))
