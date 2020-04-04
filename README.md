@@ -141,7 +141,6 @@ NerusDoc(
 ...
 
 >>> doc.ner.show()
-
 Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в 
                                     PER─────────────               
 каких регионах России зафиксирована наиболее высокая смертность от 
@@ -162,7 +161,6 @@ LOC─────  LOC─────   LOC────────────
 ​
 >>> sent = doc.sents[0]
 >>> sent.morph.show()
-
         Вице-премьер  NOUN|Animacy=Anim|Case=Nom|Gender=Masc|Number=Sing
                   по  ADP
           социальным  ADJ|Case=Dat|Degree=Pos|Number=Plur
@@ -188,7 +186,6 @@ LOC─────  LOC─────   LOC────────────
                    .  PUNCT
 				   
 >>> sent.syntax.show()
-
   ┌►┌─┌───── Вице-премьер  nsubj
   │ │ │ ┌──► по            case
   │ │ │ │ ┌► социальным    amod
@@ -215,17 +212,13 @@ LOC─────  LOC─────   LOC────────────
 
 ```
 
-### NER
-
-### Syntax
-
 ## Evaluation
 
-Nerus is automatically annotated silver standart dataset. It is important to estimate the quality of annotation and types of errors. In addition to Lenta.ru articles we apply the same pipeline golden datasets: <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>, <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a>, <a href="https://github.com/natasha/corus#load_ne5">Collection5</a>. Then we compare golden markup with our automatic one and estimate error rates. 
+Nerus is automatically annotated silver standart dataset, it has errors in markup. It is important to estimate the quality of annotation and types of errors. We apply the same pipeline to Lenta.ru articles and several golden datasets: <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>, <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a>, <a href="https://github.com/natasha/corus#load_ne5">Collection5</a>. Then we compare golden markup with our automatic one and estimate error rates. 
 
 ### Token segmentation
 
-There are ~5 tokenization errors per 1000 tokens, see <a href="https://github.com/natasha/naeval#tokenization">Naeval tokenization section</a>. Examples of errors, first is golden partition from <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>:
+There are ~5 tokenization errors per 1000 tokens, see <a href="https://github.com/natasha/naeval#tokenization">Naeval tokenization section</a>. Error examples, first is golden partition from <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>:
 
 ```
 Иногда| |на| |первое| |место| |в| |списке| |гаджетов|-|неудачников| |попадают| |устройства|,| |подобной| |участи| |совершенно| |не| |заслуживающие|.
@@ -253,7 +246,7 @@ There are ~5 tokenization errors per 1000 tokens, see <a href="https://github.co
 
 ### Morphology
 
-We use <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/master/morphostandard">morphoRuEval-2017 methodology</a> and <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News dataset</a> to score morphology tags. Standart accuracy is 94%, more relaxed morphoRuEval version is 98% (see <a href="https://github.com/natasha/naeval#morphology-taggers">Naeval morphology section</a>). Examples of errors, top is correct, "!" marks errors, "?" marks different tags that are same according to morphoRuEval:
+We use <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/master/morphostandard">morphoRuEval-2017 methodology</a> and <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News dataset</a> to score morphology tags. Accuracy is 94%, more relaxed morphoRuEval version is 98% (see <a href="https://github.com/natasha/naeval#morphology-taggers">Naeval morphology section</a>). Examples of errors, top is correct, "!" marks errors, "?" marks different tags that are same according to morphoRuEval:
 
 ```
          Официальные   ADJ|Animacy=Inan|Case=Nom|Degree=Pos|Number=Plur
@@ -337,7 +330,7 @@ We use <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/ma
 
 ### Syntax
 
-We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News dataset</a> as test dataset, UAS is 96%, LAS 93% (see <a href="https://github.com/natasha/naeval#syntax-parser">Naeval syntax section</a>). Errors example, left is correct:
+We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a> as test dataset, UAS is 96%, LAS 93% (see <a href="https://github.com/natasha/naeval#syntax-parser">Naeval syntax section</a>). Error examples, left is correct:
 
 ```
     ┌──► Официальные    amod        ┌──► Официальные    amod
@@ -467,7 +460,7 @@ We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga
 
 ### NER
 
-We use first 100 news articles from <a href="https://github.com/natasha/corus#load_ne5">Collection5</a> for evaluation, PER F1 is 99.7%, LOC — 98.6%, ORG — 97.2%. Errors examples, top is correct:
+We use first 100 news articles from <a href="https://github.com/natasha/corus#load_ne5">Collection5</a> for evaluation, PER F1 is 99.7%, LOC — 98.6%, ORG — 97.2%. Error examples, top is correct:
 
 ```
 Выборы Верховного совета Аджарской автономной республики назначены в 
@@ -477,7 +470,7 @@ We use first 100 news articles from <a href="https://github.com/natasha/corus#lo
                         LOC───            LOC──────────────────
 республики>.
 ──────────  
----
+>
 Выборы Верховного совета Аджарской автономной республики назначены в 
        ORG────────────── LOC────────────────────────────             
 соответствии с 241-ой статьей и 4-м пунктом 10-й статьи 
@@ -491,7 +484,7 @@ We use first 100 news articles from <a href="https://github.com/natasha/corus#lo
 ORG────────────────────────────────────                           
 Якутии
 LOC───
----
+>
 Следственное управление при прокуратуре требует наказать премьера 
 ORG────────────────────                                           
 Якутии
@@ -504,7 +497,7 @@ ORG──────────────────── ORG────�
 Российской Федерации по Якутии обжаловало решение прокуратуры 
 LOC─────────────────    LOC───                                
 республики.
----
+>
 Следственное управление Следственного комитета при прокуратуре 
 ORG──────────────────── ORG───────────────────                 
 Российской Федерации по Якутии обжаловало решение прокуратуры 
@@ -523,7 +516,7 @@ LOC─────────────────    LOC───
  ущерба в размере 30 млн руб. государственному унитарному предприятию 
 <Дирекция по строительству железной дороги <Беркакит-Томмот-Якутск>.
  ORG──────────────────────────────────────────────────────────────  
----
+>
 Как сообщили в четверг корреспонденту Агентства национальных новостей 
                                       ORG──────────────────────────── 
 в следственном управлении, еще 16 мая 2007 г. прокуратурой Якутии было
@@ -547,7 +540,7 @@ ORG─────────────────────────�
 признакам составов преступлений, предусмотренных ч. 2 ст. 286, ч. 5 
 ст. 33, ч. 4 ст. 160 и ч. 2 ст. 286 УК РФ.
                                        LO 
----
+>
 Для установления процессуальным путем всех обстоятельств, касающихся 
 причинения ущерба, 4 августа 2008 года Следственное управление 
                                        ORG──────────────────── 
@@ -565,7 +558,7 @@ ORG───────────────────                 LOC
                                             ORG─────    LOC───────────
 области осужден за загрязнение атмосферы и грунтовых вод.
 ───────                                                  
----
+>
 Начальник полигона твердых бытовых отходов <Игумново> в Нижегородской 
                                                         LOC───────────
 области осужден за загрязнение атмосферы и грунтовых вод.
@@ -581,7 +574,7 @@ ORG─────────────────────────�
 продукции, а также экономически и технологически необоснованного 
 отказа от заключения договора на поставку продукции и поддержания 
 монопольно высокой цены на товар.
----
+>
 Федеральная антимонопольная служба (ФАС) России признала, что группа 
 ORG───────────────────────────────────── LOC───                      
 компаний <Мечел> нарушила статью 10 закона <О защите конкуренции> в 
@@ -595,7 +588,7 @@ ORG─────────────────────────�
 
 Страны Азии и Африки поддержали позицию России в конфликте с Грузией
        LOC─   LOC───                    LOC───               LOC────
----
+>
 Страны Азии и Африки поддержали позицию России в конфликте с Грузией
                                         LOC───               LOC────
 
