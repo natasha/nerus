@@ -60,7 +60,7 @@ DATA = '''
 26	.	_	PUNCT	_	_	9	punct	_	Tag=O
 '''.strip().splitlines()
 
-REPR = '''NerusDoc(id='0', sents=[NerusSent(id='0_0', text='Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости.', tokens=[NerusToken(id='1', text='Вице-премьер', pos='NOUN', feats={'Animacy': 'Anim', 'Case': 'Nom', 'Gender': 'Masc', 'Number': 'Sing'}, head_id='7', rel='nsubj', tag='O')'''
+REPR = '''NerusDoc(id='0', sents=[NerusSent(id='0_0', text='Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в каких регионах России зафиксирована наиболее высокая смертность от рака, сообщает РИА Новости.', tokens=[NerusToken(id='1', text='Вице-премьер', pos='NOUN', feats='''
 
 
 NER = '''
