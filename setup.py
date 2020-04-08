@@ -8,7 +8,7 @@ with open('README.md') as file:
 
 setup(
     name='nerus',
-    version='1.5.0',
+    version='1.6.0',
     description='Large silver standart Russian corpus with NER, morphology and syntax markup',
     long_description=description,
     long_description_content_type='text/markdown',
