@@ -343,7 +343,7 @@ def join_ner_markups(markups, sep=' '):
 
 
 def parse_feats(feats):
-    if not feats:
+    if feats == '_':
         return
 
     for pair in feats.split('|'):
@@ -356,14 +356,8 @@ def parse_tag(tag):
     return tag[4:]
 
 
-def _none(value):
-    if value == '_':
-        return
-    return value
-
-
 def parse_row(line):
-    return [_none(_) for _ in line.split('\t')]
+    return line.split('\t')
 
 
 def parse_token(line):
