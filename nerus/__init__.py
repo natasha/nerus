@@ -379,6 +379,10 @@ def group_sents(lines):
         yield buffer
 
 
+def is_comment(line):
+    return line.startswith('# ')
+
+
 def parse_attr(line):
     line = line.lstrip('# ')
     return line.split(' = ', 1)
@@ -389,7 +393,7 @@ def parse_sents(lines):
         attrs = {}
         tokens = []
         for line in group:
-            if line.startswith('#'):
+            if is_comment(line):
                 key, value = parse_attr(line)
                 attrs[key] = value
             else:
