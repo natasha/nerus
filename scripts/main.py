@@ -16,7 +16,7 @@ import requests
 
 from tqdm.notebook import tqdm as log_progress
 
-from corus import load_lenta
+from corus import load_lenta as load_lenta_
 from razdel import sentenize, tokenize
 
 
@@ -289,6 +289,21 @@ def chop(items, size):
             buffer = []
     if buffer:
         yield buffer
+
+
+######
+#
+#  LENTA
+#
+#####
+
+
+def load_lenta(path):
+    for record in load_lenta_(path):
+        if not record.text.strip():
+            # ~5 texts / whole lenta
+            continue
+        yield record
 
 
 ######
@@ -587,10 +602,9 @@ def merge(docs, ners, morphs, syntaxes):
             syntax = next(syntaxes)
 
             if len(morph.tokens) != len(syntax.tokens):
-                # basically long sents
-                # empty sent of morph
-                # mask missaligned for syntax
-                # legacy: morph tokens were constrained to 128
+                # long sents
+                # empty sent
+                # syntax mask missaligned
                 # ~250 sents / 100 000 texts
                 continue
 
