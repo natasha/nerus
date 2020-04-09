@@ -654,7 +654,7 @@ sudo pip3 install jupyter
 nohup jupyter notebook \
   --no-browser \
   --allow-root \
-  --ip=0.0.0.0 \
+  --ip=localhost \
   --port=8888 \
   --NotebookApp.token='' \
   --NotebookApp.password='' &
