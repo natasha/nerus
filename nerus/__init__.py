@@ -14,7 +14,7 @@ from itertools import groupby
 def load_gz_lines(path, encoding='utf8'):
     with gzip.open(path) as file:
         for line in file:
-            yield line.decode(encoding).rstrip()
+            yield line.decode(encoding).rstrip('\n')
 
 
 ######
