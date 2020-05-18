@@ -184,7 +184,7 @@ def bio_spans(tokens, tags):
 class NERMarkup(Record):
     __attributes__ = ['text', 'spans']
 
-    def show(self):
+    def print(self):
         return show_ner_markup(self)
 
 
@@ -195,7 +195,7 @@ class MorphToken(Record):
 class MorphMarkup(Record):
     __attributes__ = ['tokens']
 
-    def show(self):
+    def print(self):
         return show_morph_markup(self)
 
 
@@ -206,7 +206,7 @@ class SyntaxToken(Record):
 class SyntaxMarkup(Record):
     __attributes__ = ['tokens']
 
-    def show(self):
+    def print(self):
         return show_syntax_markup(self)
 
 

@@ -134,12 +134,12 @@ def test(capsys):
 
     assert repr(doc).startswith(REPR)
 
-    doc.ner.show()
+    doc.ner.print()
     assert capsys.readouterr().out == NER
 
     sent = doc.sents[0]
-    sent.morph.show()
+    sent.morph.print()
     assert capsys.readouterr().out == MORPH
 
-    sent.syntax.show()
+    sent.syntax.print()
     assert capsys.readouterr().out == SYNTAX

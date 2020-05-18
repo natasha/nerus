@@ -140,7 +140,7 @@ NerusDoc(
               pos='ADP',
 ...
 
->>> doc.ner.show()
+>>> doc.ner.print()
 Вице-премьер по социальным вопросам Татьяна Голикова рассказала, в 
                                     PER─────────────               
 каких регионах России зафиксирована наиболее высокая смертность от 
@@ -160,7 +160,7 @@ LOC─────  LOC─────   LOC────────────
 289 тысяч человек. Это на 3,5 процента меньше, чем годом ранее.
 ​
 >>> sent = doc.sents[0]
->>> sent.morph.show()
+>>> sent.morph.print()
         Вице-премьер  NOUN|Animacy=Anim|Case=Nom|Gender=Masc|Number=Sing
                   по  ADP
           социальным  ADJ|Case=Dat|Degree=Pos|Number=Plur
@@ -185,7 +185,7 @@ LOC─────  LOC─────   LOC────────────
              Новости  PROPN|Animacy=Inan|Case=Nom|Gender=Fem|Number=Plur
                    .  PUNCT
 				   
->>> sent.syntax.show()
+>>> sent.syntax.print()
   ┌►┌─┌───── Вице-премьер  nsubj
   │ │ │ ┌──► по            case
   │ │ │ │ ┌► социальным    amod
