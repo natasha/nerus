@@ -602,6 +602,7 @@ ORG─────────────────────────�
 
 - Chat — https://telegram.me/natural_language_processing
 - Issues — https://github.com/natasha/nerus/issues
+- Commercial support — https://lab.alexkuk.ru
 
 ## Development
 
