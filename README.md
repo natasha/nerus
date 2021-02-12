@@ -50,6 +50,15 @@ Nerus is a large silver standard Russian corpus annotated with morphology tags, 
 
 <a href="https://storage.yandexcloud.net/natasha-nerus/data/nerus_lenta.conllu.gz">nerus_lenta.conllu.gz</a> ~2GB, ~700K texts
 
+## Install
+
+Nerus package provides convenient Python 3.5+ API:
+
+```bash
+$ pip install nerus
+
+```
+
 ## Usage
 
 Dataset is gzip-compressed <a href="https://universaldependencies.org/format.html">CoNLL-U</a> file:
@@ -98,13 +107,6 @@ $ gunzip -c nerus_lenta.conllu.gz | head
 10	причиной	_	NOUN	_	Animacy=Inan|Case=Ins|Gender=Fem|Number=Sing	9	xcomp	_	Tag=O
 11	смерти	_	NOUN	_	Animacy=Inan|Case=Gen|Gender=Fem|Number=Sing	10	nmod	_	Tag=O
 ...
-
-```
-
-Nerus package provides convenient Python 3.5+ API:
-
-```bash
-$ pip install nerus
 
 ```
 
