@@ -3,7 +3,7 @@
 
 ![CI](https://github.com/natasha/nerus/workflows/CI/badge.svg) [![codecov](https://codecov.io/gh/natasha/nerus/branch/master/graph/badge.svg)](https://codecov.io/gh/natasha/nerus)
 
-Nerus is a large silver standard Russian corpus annotated with morphology tags, syntax trees and PER, LOC, ORG NER-tags. Nerus has errors in markup, but quality is high, see <a href="#evaluation">evaluation section</a>. Corpus contains ~700K news articles from Lenta.ru. Tools from <a href="https://github.com/natasha">project Natasha</a> were used: <a href="https://github.com/natasha/razdel">Razdel</a> for sentence and token segmentation, <a href="https://github.com/natasha/slovnet">Slovnet</a> BERT models for morphology, syntax and NER annotation. Markup is stored in standart <a href="https://universaldependencies.org/format.html">CoNLL-U</a> format.
+Nerus is a large silver standard Russian corpus annotated with POS tags, syntax trees and NER tags (PER, LOC, ORG). Nerus has a certain degree of errors in markup, but the quality is high, see the <a href="#evaluation">evaluation section</a>. The corpus contains ~700K news articles from Lenta.ru. Tools from <a href="https://github.com/natasha">project Natasha</a> were used: <a href="https://github.com/natasha/razdel">Razdel</a> for sentence and token segmentation, <a href="https://github.com/natasha/slovnet">Slovnet</a> BERT models for morphology, syntax and NER annotation. Markup is stored in the standard <a href="https://universaldependencies.org/format.html">CoNLL-U</a> format.
 
 > Nerus = <a href="https://github.com/yutkin/Lenta.Ru-News-Dataset">Lenta.ru dataset</a> + <a href="https://github.com/natasha/razdel">Razdel</a> + <a href="https://github.com/natasha/slovnet">Slovnet</a> BERT morphology, syntax, NER + <a href="https://universaldependencies.org/format.html">CoNLL-U</a>.
 
@@ -52,11 +52,10 @@ Nerus is a large silver standard Russian corpus annotated with morphology tags, 
 
 ## Install
 
-Nerus package provides convenient Python 3.5+ API:
+The Nerus package provides a convenient Python 3.5+ API:
 
 ```bash
 $ pip install nerus
-
 ```
 
 ## Usage
@@ -216,11 +215,11 @@ LOC─────  LOC─────   LOC────────────
 
 ## Documentation
 
-<a href="https://natasha.github.io/nerus">Nerus page on natasha.github.io: motivation, examples, usage</a> (in Russian)
+See the <a href="https://natasha.github.io/nerus">Nerus page on natasha.github.io</a> for motivation, examples and usage (in Russian).
 
 ## Evaluation
 
-Nerus is automatically annotated silver standart dataset, it has errors in markup. It is important to estimate the quality of annotation and types of errors. We apply the same pipeline to Lenta.ru articles and several golden datasets: <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>, <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a>, <a href="https://github.com/natasha/corus#load_ne5">Collection5</a>. Then we compare golden markup with our automatic one and estimate error rates. 
+Nerus is an automatically annotated silver standard dataset, it has errors in markup. It is important to estimate the quality of annotation and types of errors. We apply the same pipeline to Lenta.ru articles and several golden datasets: <a href="https://github.com/natasha/corus#load_ud_syntag">SynTagRus</a>, <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a>, <a href="https://github.com/natasha/corus#load_ne5">Collection5</a>. Then we compare the golden markup with our automatic one and estimate error rates. 
 
 ### Token segmentation
 
@@ -252,7 +251,7 @@ There are ~5 tokenization errors per 1000 tokens, see <a href="https://github.co
 
 ### Morphology
 
-We use <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/master/morphostandard">morphoRuEval-2017 methodology</a> and <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News dataset</a> to score morphology tags. Accuracy is 94%, more relaxed morphoRuEval version is 98% (see <a href="https://github.com/natasha/naeval#morphology-taggers">Naeval morphology section</a>). Examples of errors, top is correct, "!" marks errors, "?" marks different tags that are same according to morphoRuEval:
+We use the <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/master/morphostandard">morphoRuEval-2017 methodology</a> and the <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News dataset</a> to score morphology tags. The overall accuracy is 94%, while the more relaxed morphoRuEval version is at 98% (see the <a href="https://github.com/natasha/naeval#morphology-taggers">Naeval morphology section</a>). Examples of errors, top is correct, "!" marks errors, "?" marks different tags that have the same meaning according to morphoRuEval:
 
 ```
          Официальные   ADJ|Animacy=Inan|Case=Nom|Degree=Pos|Number=Plur
@@ -336,7 +335,7 @@ We use <a href="https://github.com/dialogue-evaluation/morphoRuEval-2017/blob/ma
 
 ### Syntax
 
-We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a> as test dataset, UAS is 96%, LAS 93% (see <a href="https://github.com/natasha/naeval#syntax-parser">Naeval syntax section</a>). Error examples, left is correct:
+We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga News</a> as a test dataset, UAS is 96%, LAS is 93% (see <a href="https://github.com/natasha/naeval#syntax-parser">Naeval syntax section</a>). Examples of errors, left is correct:
 
 ```
     ┌──► Официальные    amod        ┌──► Официальные    amod
@@ -466,7 +465,7 @@ We use <a href="https://github.com/natasha/corus#load_gramru">GramEval2020 Taiga
 
 ### NER
 
-We use first 100 news articles from <a href="https://github.com/natasha/corus#load_ne5">Collection5</a> for evaluation, PER F1 is 99.7%, LOC — 98.6%, ORG — 97.2%. Error examples, top is correct:
+We used the first 100 news articles from <a href="https://github.com/natasha/corus#load_ne5">Collection5</a> for evaluation, PER F1 is 99.7%, LOC — 98.6%, ORG — 97.2%. Examples of errors, top is correct:
 
 ```
 Выборы Верховного совета Аджарской автономной республики назначены в 
