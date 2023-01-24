@@ -140,7 +140,7 @@ def find_tokens(text, chunks):
 ########
 
 
-B, I, O = 'BIO'
+B, I, O = 'BIO'  # noqa E741
 
 
 def parse_bio(tag):
