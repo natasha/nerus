@@ -1,7 +1,7 @@
 
 <img src="https://github.com/natasha/natasha-logos/blob/master/nerus.svg">
 
-![CI](https://github.com/natasha/nerus/workflows/CI/badge.svg) [![codecov](https://codecov.io/gh/natasha/nerus/branch/master/graph/badge.svg)](https://codecov.io/gh/natasha/nerus)
+![CI](https://github.com/natasha/nerus/actions/workflows/test.yml/badge.svg)
 
 Nerus is a large silver standard Russian corpus annotated with POS tags, syntax trees and NER tags (PER, LOC, ORG). Nerus has a certain degree of errors in markup, but the quality is high, see the <a href="#evaluation">evaluation section</a>. The corpus contains ~700K news articles from Lenta.ru. Tools from <a href="https://github.com/natasha">project Natasha</a> were used: <a href="https://github.com/natasha/razdel">Razdel</a> for sentence and token segmentation, <a href="https://github.com/natasha/slovnet">Slovnet</a> BERT models for morphology, syntax and NER annotation. Markup is stored in the standard <a href="https://universaldependencies.org/format.html">CoNLL-U</a> format.
 
@@ -52,7 +52,7 @@ Nerus is a large silver standard Russian corpus annotated with POS tags, syntax 
 
 ## Install
 
-The Nerus package provides a convenient Python 3.5+ API:
+The Nerus package provides a convenient Python 3.7+ API:
 
 ```bash
 $ pip install nerus
@@ -601,29 +601,41 @@ ORG─────────────────────────�
 
 ## Support
 
-- Chat — https://telegram.me/natural_language_processing
+- Chat — https://t.me/natural_language_processing
 - Issues — https://github.com/natasha/nerus/issues
 - Commercial support — https://lab.alexkuk.ru
 
 ## Development
 
-Tests:
+Dev env
+
+```bash
+python -m venv ~/.venvs/natasha-nerus
+source ~/.venvs/natasha-nerus/bin/activate
+
+pip install -r requirements/dev.txt
+pip install -e .
+```
+
+Lint + test
 
 ```bash
 make test
 ```
 
-Package:
+Release
 
 ```bash
-make version
+# Update setup.py version
+
+git commit -am 'Up version'
+git tag v0.9.0
+
 git push
 git push --tags
-
-make clean wheel upload
 ```
 
-Rent YC GPU:
+Rent YC GPU
 
 ```bash
 yc compute instance create \
@@ -641,10 +653,9 @@ yc compute instance create \
 
 yc compute instance list
 yc compute instance delete fhmj2ftcm32qgqt4igjf
-
 ```
 
-Setup instance:
+Setup instance
 
 ```
 sudo locale-gen ru_RU.UTF-8
@@ -663,22 +674,19 @@ nohup jupyter notebook \
 
 ssh -Nf gpu -L 8888:localhost:8888
 http://localhost:8888/
-
 ```
 
-Sync remote:
+Sync remote
 
 ```
 scp ~/.nerus.json gpu:~
 rsync --exclude data -rv . gpu:~/nerus
 rsync -u --exclude data -rv 'gpu:~/nerus/*' .
-
 ```
 
-Intall dev:
+Intall dev
 
 ```bash
 sudo pip3 install -r nerus/requirements/dev.txt
 sudo pip3 install -e nerus
-
 ```
