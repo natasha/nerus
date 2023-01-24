@@ -6,3 +6,6 @@ corus
 razdel
 naeval
 ipymarkup
+
+pytest
+flake8

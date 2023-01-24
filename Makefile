@@ -1,4 +1,4 @@
 
 test:
-	flake8 nerus
-	pytest -vv nerus
+	flake8 nerus/__init__.py
+	pytest -vv nerus/test.py
